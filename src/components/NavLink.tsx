@@ -1,28 +1,47 @@
-import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
-import { forwardRef } from "react";
-import { cn } from "@/lib/utils";
+import { Link, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
-interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
+interface NavLinkProps {
+  to: string;
+  children: React.ReactNode;
   className?: string;
-  activeClassName?: string;
-  pendingClassName?: string;
+  onClick?: () => void;
 }
 
-const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
-  ({ className, activeClassName, pendingClassName, to, ...props }, ref) => {
-    return (
-      <RouterNavLink
-        ref={ref}
-        to={to}
-        className={({ isActive, isPending }) =>
-          cn(className, isActive && activeClassName, isPending && pendingClassName)
-        }
-        {...props}
+export const NavLink = ({ to, children, className, onClick }: NavLinkProps) => {
+  const location = useLocation();
+  const isActive = location.pathname === to;
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={cn(
+        'relative text-sm uppercase tracking-wider font-medium transition-all duration-300',
+        'text-foreground/80 hover:text-primary',
+        'group py-1 px-1',
+        isActive && 'text-primary font-semibold',
+        className
+      )}
+    >
+      <span className="relative z-10">{children}</span>
+      
+      {/* Animated underline */}
+      <span
+        className={cn(
+          'absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ease-out',
+          isActive ? 'w-full' : 'w-0 group-hover:w-full'
+        )}
       />
-    );
-  },
-);
-
-NavLink.displayName = "NavLink";
-
-export { NavLink };
+      
+      {/* Subtle glow effect on hover */}
+      <span
+        className={cn(
+          'absolute inset-0 -z-10 rounded-md transition-all duration-300',
+          'bg-primary/0 group-hover:bg-primary/5',
+          isActive && 'bg-primary/5'
+        )}
+      />
+    </Link>
+  );
+};
