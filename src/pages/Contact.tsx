@@ -65,7 +65,7 @@ const Contact = () => {
                   <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Bangladesh Office</h3>
+                  <h3 className="font-semibold mb-1">Bangladesh Outlets</h3>
                   <p className="text-muted-foreground text-sm">
                     4th Floor, Polwel Carnation Shopping Center<br />
                     Uttara, Dhaka 1230<br />
@@ -84,7 +84,7 @@ const Contact = () => {
                   <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">USA Office</h3>
+                  <h3 className="font-semibold mb-1">USA Outlets</h3>
                   <p className="text-muted-foreground text-sm">
                     4400 San Benito St Unit B<br />
                     Santa Fe, New Mexico 87507<br />
