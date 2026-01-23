@@ -30,17 +30,6 @@ import {
 import { exportToCSV, exportToPDF } from '@/utils/exportAnalytics';
 import { subDays } from 'date-fns';
 import { DateRange } from 'react-day-picker';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from 'recharts';
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -256,101 +245,6 @@ const AdminDashboard = () => {
             ))}
           </div>
 
-          {/* Sales Chart */}
-          <div className="bg-card border border-border rounded-xl p-6">
-            <h2 className="text-lg font-display font-semibold mb-6">Sales Overview</h2>
-            <div className="h-64">
-              {dailySales.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={dailySales}>
-                    <defs>
-                      <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis 
-                      dataKey="date" 
-                      stroke="hsl(var(--muted-foreground))" 
-                      fontSize={12}
-                    />
-                    <YAxis 
-                      stroke="hsl(var(--muted-foreground))" 
-                      fontSize={12}
-                      tickFormatter={(value) => `$${value}`}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                      }}
-                      formatter={(value: number) => [formatCurrency(value), 'Sales']}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="sales"
-                      stroke="hsl(var(--primary))"
-                      strokeWidth={2}
-                      fill="url(#salesGradient)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-full bg-muted/50 rounded-lg flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <TrendingUp className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>No sales data yet</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Orders Chart */}
-          <div className="bg-card border border-border rounded-xl p-6">
-            <h2 className="text-lg font-display font-semibold mb-6">Daily Orders</h2>
-            <div className="h-48">
-              {dailySales.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dailySales}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis 
-                      dataKey="date" 
-                      stroke="hsl(var(--muted-foreground))" 
-                      fontSize={12}
-                    />
-                    <YAxis 
-                      stroke="hsl(var(--muted-foreground))" 
-                      fontSize={12}
-                      allowDecimals={false}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                      }}
-                      formatter={(value: number) => [value, 'Orders']}
-                    />
-                    <Bar 
-                      dataKey="orders" 
-                      fill="hsl(var(--primary))" 
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-full bg-muted/50 rounded-lg flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <ShoppingCart className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>No orders yet</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
 
           {/* Charts & Tables Row */}
           <div className="grid lg:grid-cols-2 gap-6">
