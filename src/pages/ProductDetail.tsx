@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { products } from '@/data/products';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { ProductColor } from '@/types';
 import { ShoppingBag, Heart, Share2, ChevronRight, Minus, Plus, Check, Truck, RotateCcw, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const product = products.find(p => p.id === id);
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<ProductColor | null>(null);
@@ -229,8 +231,14 @@ const ProductDetail = () => {
                   </>
                 )}
               </Button>
-              <Button variant="outline" size="icon" className="h-14 w-14">
-                <Heart className="w-5 h-5" />
+              <Button
+                variant={isInWishlist(product.id) ? "default" : "outline"}
+                size="icon"
+                className="h-14 w-14"
+                onClick={() => toggleWishlist(product)}
+                aria-label={isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+              >
+                <Heart className={cn('w-5 h-5', isInWishlist(product.id) && 'fill-current')} />
               </Button>
               <Button variant="outline" size="icon" className="h-14 w-14">
                 <Share2 className="w-5 h-5" />

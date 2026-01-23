@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Check, Eye } from 'lucide-react';
+import { ShoppingBag, Check, Eye, Heart } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { cn } from '@/lib/utils';
 import { ProductQuickView } from './ProductQuickView';
 
@@ -12,10 +13,12 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0]);
   const [selectedColor, setSelectedColor] = useState<ProductColor>(product.colors[0]);
   const [isAdded, setIsAdded] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
+  const inWishlist = isInWishlist(product.id);
 
   const handleAddToCart = () => {
     addToCart(product, selectedSize, selectedColor);
@@ -45,9 +48,26 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </span>
           )}
 
+          {/* Wishlist Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleWishlist(product);
+            }}
+            className={cn(
+              'absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all z-10',
+              inWishlist
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-background/90 text-foreground hover:bg-background'
+            )}
+            aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+          >
+            <Heart className={cn('w-4 h-4', inWishlist && 'fill-current')} />
+          </button>
+
           {/* Stock Indicator */}
           {product.stock <= 5 && product.stock > 0 && (
-            <span className="absolute top-3 right-3 bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded animate-pulse-stock">
+            <span className="absolute bottom-3 left-3 bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded animate-pulse-stock">
               Only {product.stock} left
             </span>
           )}
