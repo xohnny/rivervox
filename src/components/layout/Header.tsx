@@ -34,7 +34,7 @@ export const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -52,7 +52,7 @@ export const Header = () => {
           {/* Right Icons - Desktop */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Desktop only icons */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-4">
               <CurrencySelector />
               <Link
                 to="/wishlist"
@@ -89,10 +89,10 @@ export const Header = () => {
               </Link>
             </div>
 
-            {/* Mobile: Only cart icon visible + hamburger */}
+            {/* Mobile/Tablet: Only cart icon visible + hamburger */}
             <button
               onClick={openCart}
-              className="md:hidden relative p-2 hover:bg-secondary rounded-full transition-colors"
+              className="lg:hidden relative p-2 hover:bg-secondary rounded-full transition-colors"
               aria-label="Open cart"
             >
               <ShoppingBag className="w-5 h-5 text-foreground" />
@@ -103,10 +103,10 @@ export const Header = () => {
               )}
             </button>
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile/Tablet Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 hover:bg-secondary rounded-full transition-colors"
+              className="lg:hidden p-2 hover:bg-secondary rounded-full transition-colors"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? (
@@ -118,9 +118,9 @@ export const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile/Tablet Navigation */}
         {mobileMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-border animate-fade-in">
+          <nav className="lg:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-1">
               {navLinks.map((link, index) => (
                 <Link
