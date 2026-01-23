@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { ShoppingBag, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Check, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -26,6 +26,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAdded, setIsAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
@@ -64,14 +65,20 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
         <div className="grid md:grid-cols-2 max-h-[90vh] md:max-h-none overflow-y-auto md:overflow-visible">
           {/* Image Gallery with swipe support */}
           <div 
-            className="relative bg-muted aspect-[4/5] md:aspect-auto md:h-[500px] flex-shrink-0 touch-pan-y"
+            className="relative bg-muted aspect-[4/5] md:aspect-auto md:h-[500px] flex-shrink-0 touch-pan-y group cursor-zoom-in"
             {...swipeHandlers}
+            onClick={() => setIsFullscreen(true)}
           >
             <img
               src={product.images[currentImageIndex]}
               alt={product.name}
-              className="w-full h-full object-cover select-none pointer-events-none"
+              className="w-full h-full object-cover select-none"
             />
+            
+            {/* Zoom indicator */}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
+              <ZoomIn className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
             
             {/* Discount Badge */}
             {discount > 0 && (
@@ -84,14 +91,14 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
             {product.images.length > 1 && (
               <>
                 <button
-                  onClick={prevImage}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-background/90 flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-background/90 flex items-center justify-center hover:bg-background transition-colors shadow-lg z-10"
                 >
                   <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
                 <button
-                  onClick={nextImage}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-background/90 flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-background/90 flex items-center justify-center hover:bg-background transition-colors shadow-lg z-10"
                 >
                   <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
@@ -100,11 +107,11 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
 
             {/* Image Dots */}
             {product.images.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                 {product.images.map((_, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setCurrentImageIndex(idx)}
+                    onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
                     className={cn(
                       'w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-all',
                       currentImageIndex === idx
@@ -249,6 +256,53 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
           </div>
         </div>
       </DialogContent>
+
+      {/* Fullscreen Image Lightbox */}
+      {isFullscreen && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center animate-fade-in"
+          onClick={() => setIsFullscreen(false)}
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => setIsFullscreen(false)}
+            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors z-10"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+
+          {/* Image */}
+          <img
+            src={product.images[currentImageIndex]}
+            alt={product.name}
+            className="max-w-[95vw] max-h-[95vh] object-contain select-none"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {/* Navigation for multiple images */}
+          {product.images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+
+              {/* Image counter */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm">
+                {currentImageIndex + 1} / {product.images.length}
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </Dialog>
   );
 };
