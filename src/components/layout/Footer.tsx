@@ -51,7 +51,8 @@ export const Footer = () => {
 
             {/* Customer Service */}
             <div className="space-y-4 text-right md:text-left">
-              <h4 className="font-semibold uppercase tracking-wider text-sm">Customer Service</h4>
+              <h4 className="font-semibold uppercase tracking-wider text-xs md:text-sm whitespace-nowrap">Customer Service</h4>
+              
               <nav className="flex flex-col gap-2 items-end md:items-start">
                 <Link to="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
                   Contact Us
