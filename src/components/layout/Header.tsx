@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, User, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
-import { CurrencySelector } from './CurrencySelector';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -53,7 +52,6 @@ export const Header = () => {
           <div className="flex items-center gap-2 md:gap-4">
             {/* Desktop only icons */}
             <div className="hidden lg:flex items-center gap-4">
-              <CurrencySelector />
               <Link
                 to="/wishlist"
                 className="relative p-2 hover:bg-secondary rounded-full transition-colors"
@@ -178,12 +176,6 @@ export const Header = () => {
                 <User className="w-5 h-5" />
                 <span>Account</span>
               </Link>
-
-              {/* Currency selector in mobile menu */}
-              <div className="flex items-center gap-3 py-3 px-4 text-sm uppercase tracking-wider">
-                <span className="text-muted-foreground">Currency:</span>
-                <CurrencySelector />
-              </div>
             </div>
           </nav>
         )}
