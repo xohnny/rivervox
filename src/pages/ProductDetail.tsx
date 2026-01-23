@@ -8,6 +8,9 @@ import { ShoppingBag, Heart, Share2, ChevronRight, Minus, Plus, Check, Truck, Ro
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ImageZoom } from '@/components/products/ImageZoom';
+import { ProductReviews } from '@/components/products/ProductReviews';
+import { StarRating } from '@/components/products/StarRating';
+import { getAverageRating, getProductReviews } from '@/data/reviews';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -97,9 +100,20 @@ const ProductDetail = () => {
               <p className="text-sm text-primary font-medium uppercase tracking-wider mb-2">
                 {product.category}
               </p>
-              <h1 className="text-3xl md:text-4xl font-display font-bold mb-4">
+              <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">
                 {product.name}
               </h1>
+              
+              {/* Rating Preview */}
+              {getProductReviews(product.id).length > 0 && (
+                <div className="flex items-center gap-2 mb-4">
+                  <StarRating rating={getAverageRating(product.id)} size="sm" showValue />
+                  <span className="text-sm text-muted-foreground">
+                    ({getProductReviews(product.id).length} reviews)
+                  </span>
+                </div>
+              )}
+              
               <div className="flex items-center gap-4">
                 {product.originalPrice ? (
                   <>
@@ -271,6 +285,9 @@ const ProductDetail = () => {
             </div>
           </div>
         )}
+
+        {/* Product Reviews Section */}
+        <ProductReviews productId={product.id} productName={product.name} />
       </div>
     </Layout>
   );
