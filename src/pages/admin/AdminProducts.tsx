@@ -37,6 +37,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import ProductImageUpload from '@/components/admin/ProductImageUpload';
+import ProductColorPicker from '@/components/admin/ProductColorPicker';
 
 const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
 
@@ -59,12 +60,12 @@ const AdminProducts = () => {
     originalPrice: '',
     stock: '',
     sizes: '',
-    colors: '',
     lowStockThreshold: '10',
     featured: false,
     isActive: true,
   });
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<{ name: string; hex: string }[]>([]);
 
   const resetForm = () => {
     setFormData({
@@ -75,12 +76,12 @@ const AdminProducts = () => {
       originalPrice: '',
       stock: '',
       sizes: '',
-      colors: '',
       lowStockThreshold: '10',
       featured: false,
       isActive: true,
     });
     setUploadedImages([]);
+    setSelectedColors([]);
   };
 
   const filteredProducts = products.filter((p) => {
@@ -94,10 +95,6 @@ const AdminProducts = () => {
     setSaving(true);
 
     const sizesArray = formData.sizes.split(',').map(s => s.trim()).filter(Boolean);
-    const colorsArray = formData.colors.split(',').map(c => {
-      const trimmed = c.trim();
-      return { name: trimmed, hex: '#000000' };
-    }).filter(c => c.name);
 
     const success = await addProduct({
       name: formData.name,
@@ -106,7 +103,7 @@ const AdminProducts = () => {
       original_price: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
       category: formData.category,
       sizes: sizesArray,
-      colors: colorsArray,
+      colors: selectedColors,
       images: uploadedImages.length > 0 ? uploadedImages : ['/placeholder.svg'],
       stock: parseInt(formData.stock) || 0,
       low_stock_threshold: parseInt(formData.lowStockThreshold) || 10,
@@ -131,12 +128,12 @@ const AdminProducts = () => {
       originalPrice: product.original_price?.toString() || '',
       stock: product.stock.toString(),
       sizes: product.sizes.join(', '),
-      colors: product.colors.map(c => c.name).join(', '),
       lowStockThreshold: product.low_stock_threshold.toString(),
       featured: product.featured,
       isActive: product.is_active,
     });
     setUploadedImages(product.images || []);
+    setSelectedColors(product.colors || []);
     setIsEditDialogOpen(true);
   };
 
@@ -146,11 +143,6 @@ const AdminProducts = () => {
     setSaving(true);
 
     const sizesArray = formData.sizes.split(',').map(s => s.trim()).filter(Boolean);
-    const colorsArray = formData.colors.split(',').map(c => {
-      const trimmed = c.trim();
-      const existingColor = selectedProduct.colors.find(ec => ec.name.toLowerCase() === trimmed.toLowerCase());
-      return { name: trimmed, hex: existingColor?.hex || '#000000' };
-    }).filter(c => c.name);
 
     const success = await updateProduct(selectedProduct.id, {
       name: formData.name,
@@ -159,7 +151,7 @@ const AdminProducts = () => {
       original_price: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
       category: formData.category,
       sizes: sizesArray,
-      colors: colorsArray,
+      colors: selectedColors,
       images: uploadedImages.length > 0 ? uploadedImages : ['/placeholder.svg'],
       stock: parseInt(formData.stock) || 0,
       low_stock_threshold: parseInt(formData.lowStockThreshold) || 10,
@@ -301,15 +293,10 @@ const AdminProducts = () => {
           />
         </div>
       </div>
-      <div>
-        <Label>Colors (comma-separated)</Label>
-        <Input 
-          placeholder="Black, White, Green" 
-          className="mt-1" 
-          value={formData.colors}
-          onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
-        />
-      </div>
+      <ProductColorPicker
+        colors={selectedColors}
+        onColorsChange={setSelectedColors}
+      />
       <div>
         <Label>Product Images</Label>
         <div className="mt-1">
