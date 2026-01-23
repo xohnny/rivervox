@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Facebook, Twitter, Youtube, Send } from 'lucide-react';
 
 export const Footer = () => {
   return (
@@ -12,7 +12,7 @@ export const Footer = () => {
             <p className="text-primary-foreground/80 text-sm leading-relaxed">
               Premium Islamic-inspired fashion for the modern family. Elegance meets modesty in every piece.
             </p>
-            <div className="flex gap-4 pt-2">
+            <div className="flex gap-3 pt-2 justify-center md:justify-start">
               <a href="#" className="p-2 bg-primary-foreground/10 rounded-full hover:bg-primary-foreground/20 transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
@@ -21,6 +21,12 @@ export const Footer = () => {
               </a>
               <a href="#" className="p-2 bg-primary-foreground/10 rounded-full hover:bg-primary-foreground/20 transition-colors">
                 <Twitter className="w-5 h-5" />
+              </a>
+              <a href="#" className="p-2 bg-primary-foreground/10 rounded-full hover:bg-primary-foreground/20 transition-colors">
+                <Youtube className="w-5 h-5" />
+              </a>
+              <a href="#" className="p-2 bg-primary-foreground/10 rounded-full hover:bg-primary-foreground/20 transition-colors">
+                <Send className="w-5 h-5" />
               </a>
             </div>
           </div>
