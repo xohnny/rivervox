@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   DollarSign,
   ShoppingCart,
@@ -10,11 +11,25 @@ import {
   Truck,
   XCircle,
   Loader2,
+  Download,
+  FileText,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { useOrderAnalytics } from '@/hooks/useOrderAnalytics';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { DateRangePicker } from '@/components/admin/DateRangePicker';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { exportToCSV, exportToPDF } from '@/utils/exportAnalytics';
+import { subDays } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 import {
   BarChart,
   Bar,
@@ -60,7 +75,38 @@ const formatChange = (change: number) => {
 
 const AdminDashboard = () => {
   const { isAdmin, loading: authLoading } = useAdminAuth();
-  const { salesStats, orderStats, recentOrders, dailySales, topProducts, loading } = useOrderAnalytics();
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 7),
+    to: new Date(),
+  });
+  
+  const analyticsDateRange = dateRange?.from && dateRange?.to 
+    ? { from: dateRange.from, to: dateRange.to }
+    : undefined;
+  
+  const { salesStats, orderStats, recentOrders, dailySales, topProducts, loading } = useOrderAnalytics(analyticsDateRange);
+
+  const handleExportCSV = () => {
+    if (!dateRange?.from || !dateRange?.to) return;
+    exportToCSV({
+      salesStats,
+      orderStats,
+      dailySales,
+      topProducts,
+      dateRange: { from: dateRange.from, to: dateRange.to },
+    });
+  };
+
+  const handleExportPDF = () => {
+    if (!dateRange?.from || !dateRange?.to) return;
+    exportToPDF({
+      salesStats,
+      orderStats,
+      dailySales,
+      topProducts,
+      dateRange: { from: dateRange.from, to: dateRange.to },
+    });
+  };
 
   if (authLoading) {
     return (
@@ -126,9 +172,35 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-display font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Welcome back! Here's your store overview.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-display font-bold">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">Welcome back! Here's your store overview.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <DateRangePicker 
+            dateRange={dateRange} 
+            onDateRangeChange={setDateRange} 
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleExportCSV} className="gap-2 cursor-pointer">
+                <FileSpreadsheet className="h-4 w-4" />
+                Export as CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleExportPDF} className="gap-2 cursor-pointer">
+                <FileText className="h-4 w-4" />
+                Export as PDF
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {loading ? (
@@ -186,7 +258,7 @@ const AdminDashboard = () => {
 
           {/* Sales Chart */}
           <div className="bg-card border border-border rounded-xl p-6">
-            <h2 className="text-lg font-display font-semibold mb-6">Sales Overview (Last 7 Days)</h2>
+            <h2 className="text-lg font-display font-semibold mb-6">Sales Overview</h2>
             <div className="h-64">
               {dailySales.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
@@ -238,7 +310,7 @@ const AdminDashboard = () => {
 
           {/* Orders Chart */}
           <div className="bg-card border border-border rounded-xl p-6">
-            <h2 className="text-lg font-display font-semibold mb-6">Daily Orders (Last 7 Days)</h2>
+            <h2 className="text-lg font-display font-semibold mb-6">Daily Orders</h2>
             <div className="h-48">
               {dailySales.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
