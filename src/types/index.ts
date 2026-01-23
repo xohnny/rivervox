@@ -64,3 +64,14 @@ export interface DashboardStats {
   pendingOrders: number;
   completedOrders: number;
 }
+
+export interface Review {
+  id: string;
+  productId: string;
+  customerName: string;
+  rating: number;
+  title: string;
+  comment: string;
+  createdAt: Date;
+  verified: boolean;
+}
