@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Check, Eye, Heart } from 'lucide-react';
-import { Product, ProductColor } from '@/types';
+import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -16,14 +16,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
-  const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0]);
-  const [selectedColor, setSelectedColor] = useState<ProductColor>(product.colors[0]);
   const [isAdded, setIsAdded] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const inWishlist = isInWishlist(product.id);
 
   const handleAddToCart = () => {
-    addToCart(product, selectedSize, selectedColor);
+    // Add with default size and color - user can customize in quick view
+    addToCart(product, product.sizes[0], product.colors[0]);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 1500);
   };
@@ -105,46 +104,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
 
-        {/* Color Selector - Larger touch targets on mobile */}
-        <div className="flex items-center gap-2 mb-2 md:mb-3">
-          <span className="text-[10px] md:text-xs text-muted-foreground hidden md:inline">Color:</span>
-          <div className="flex gap-2 md:gap-1.5">
-            {product.colors.slice(0, 4).map((color) => (
-              <button
-                key={color.name}
-                onClick={() => setSelectedColor(color)}
-                className={cn(
-                  'w-8 h-8 md:w-7 md:h-7 rounded-full border-2 border-transparent cursor-pointer transition-all duration-200 active:scale-95',
-                  selectedColor.name === color.name && 'ring-2 ring-primary ring-offset-1 md:ring-offset-2'
-                )}
-                style={{ backgroundColor: color.hex }}
-                title={color.name}
-                aria-label={`Select ${color.name}`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Size Selector - Touch-friendly sizing */}
-        <div className="flex flex-wrap gap-1 md:gap-1.5 mb-3 md:mb-4 min-h-[2.5rem] md:min-h-[2.75rem]">
-          {product.sizes.slice(0, 4).map((size) => (
-            <button
-              key={size}
-              onClick={() => setSelectedSize(size)}
-              className={cn(
-                'min-w-[2.25rem] md:min-w-[2.5rem] h-9 md:h-10 px-2 md:px-2.5 border border-border rounded-md flex items-center justify-center text-xs font-medium transition-all duration-200 cursor-pointer active:scale-95',
-                selectedSize === size && 'bg-primary text-primary-foreground border-primary'
-              )}
-            >
-              {size}
-            </button>
-          ))}
-          {product.sizes.length > 4 && (
-            <span className="min-w-[2.25rem] md:min-w-[2.5rem] h-9 md:h-10 px-2 border border-border rounded-md flex items-center justify-center text-xs bg-muted text-muted-foreground cursor-default">
-              +{product.sizes.length - 4}
-            </span>
-          )}
-        </div>
 
         {/* Spacer to push button to bottom */}
         <div className="flex-grow" />
