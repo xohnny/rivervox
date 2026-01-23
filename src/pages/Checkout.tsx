@@ -35,7 +35,7 @@ const Checkout = () => {
     email: user?.email || '',
     phone: '',
     address: '',
-    city: 'Dubai',
+    city: 'Dhaka',
     notes: '',
   });
 
@@ -188,7 +188,7 @@ const Checkout = () => {
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="+971 50 000 0000"
+                    placeholder="+880 1XXX XXX XXX"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="mt-2"
@@ -200,7 +200,7 @@ const Checkout = () => {
                   <Label htmlFor="city">City *</Label>
                   <Input
                     id="city"
-                    placeholder="Dubai"
+                    placeholder="Dhaka"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     className="mt-2"
