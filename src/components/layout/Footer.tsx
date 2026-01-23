@@ -90,7 +90,7 @@ export const Footer = () => {
               </div>
               <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Phone className="w-4 h-4 flex-shrink-0" />
-                <span>+88 09638 579882</span>
+                <a href="tel:+8809638579882" className="hover:underline">+88 09638 579882</a>
               </div>
               {/* USA */}
               <div className="flex items-start gap-3 text-sm text-primary-foreground/80">
@@ -99,7 +99,7 @@ export const Footer = () => {
               </div>
               <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Phone className="w-4 h-4 flex-shrink-0" />
-                <span>+1 (781) 870-4028</span>
+                <a href="tel:+17818704028" className="hover:underline">+1 (781) 870-4028</a>
               </div>
               <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Mail className="w-4 h-4 flex-shrink-0" />
