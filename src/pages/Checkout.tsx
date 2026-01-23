@@ -259,7 +259,7 @@ const Checkout = () => {
                       Processing Order...
                     </>
                   ) : (
-                    <>Place Order - AED {grandTotal.toFixed(2)}</>
+                    <>Place Order - ${grandTotal.toFixed(2)}</>
                   )}
                 </Button>
               </form>
@@ -297,7 +297,7 @@ const Checkout = () => {
                     </div>
                     <div className="text-right">
                       <p className="font-semibold">
-                        AED {(item.product.price * item.quantity).toFixed(2)}
+                        ${(item.product.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -308,7 +308,7 @@ const Checkout = () => {
               <div className="border-t border-border pt-4 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>AED {totalPrice.toFixed(2)}</span>
+                  <span>${totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
@@ -316,20 +316,20 @@ const Checkout = () => {
                     {shippingCost === 0 ? (
                       <span className="text-primary">Free</span>
                     ) : (
-                      `AED ${shippingCost.toFixed(2)}`
+                      `$${shippingCost.toFixed(2)}`
                     )}
                   </span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
                   <span>Total</span>
-                  <span className="text-primary">AED {grandTotal.toFixed(2)}</span>
+                  <span className="text-primary">${grandTotal.toFixed(2)}</span>
                 </div>
               </div>
 
               {/* Free Shipping Notice */}
               {shippingCost > 0 && (
                 <p className="text-xs text-muted-foreground text-center mt-4">
-                  Add AED {(100 - totalPrice).toFixed(2)} more for free shipping!
+                  Add ${(100 - totalPrice).toFixed(2)} more for free shipping!
                 </p>
               )}
             </div>

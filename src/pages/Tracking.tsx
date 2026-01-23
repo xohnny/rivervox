@@ -187,7 +187,7 @@ const Tracking = () => {
                   <Package className="w-4 h-4 text-primary mt-0.5" />
                   <div>
                     <p className="text-muted-foreground">Order Total</p>
-                    <p className="font-medium">AED {Number(order.total).toFixed(2)}</p>
+                    <p className="font-medium">${Number(order.total).toFixed(2)}</p>
                   </div>
                 </div>
               </div>
@@ -271,7 +271,7 @@ const Tracking = () => {
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
                     <p className="font-semibold">
-                      AED {(Number(item.unit_price) * item.quantity).toFixed(2)}
+                      ${(Number(item.unit_price) * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 ))}
@@ -279,17 +279,17 @@ const Tracking = () => {
               <div className="border-t border-border mt-4 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>AED {Number(order.subtotal).toFixed(2)}</span>
+                  <span>${Number(order.subtotal).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
                   <span>
-                    {Number(order.shipping_cost) === 0 ? 'Free' : `AED ${Number(order.shipping_cost).toFixed(2)}`}
+                    {Number(order.shipping_cost) === 0 ? 'Free' : `$${Number(order.shipping_cost).toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between font-bold pt-2 border-t border-border">
                   <span>Total</span>
-                  <span className="text-primary">AED {Number(order.total).toFixed(2)}</span>
+                  <span className="text-primary">${Number(order.total).toFixed(2)}</span>
                 </div>
               </div>
             </div>

@@ -120,10 +120,10 @@ const ProductDetail = () => {
                 {product.originalPrice ? (
                   <>
                     <span className="text-3xl font-bold text-primary">
-                      AED {product.price}
+                      ${product.price}
                     </span>
                     <span className="text-xl text-muted-foreground line-through">
-                      AED {product.originalPrice}
+                      ${product.originalPrice}
                     </span>
                     <span className="px-3 py-1 bg-accent text-accent-foreground text-sm font-medium rounded-full">
                       {discount}% OFF
@@ -131,7 +131,7 @@ const ProductDetail = () => {
                   </>
                 ) : (
                   <span className="text-3xl font-bold text-primary">
-                    AED {product.price}
+                    ${product.price}
                   </span>
                 )}
               </div>
