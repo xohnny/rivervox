@@ -246,8 +246,8 @@ export const Testimonials = () => {
           ))}
         </div>
 
-        {/* Review Form */}
-        <div className="mt-16 max-w-2xl mx-auto">
+        {/* Review Form - same container width as carousel */}
+        <div className="mt-12 max-w-4xl mx-auto px-4">
           <ReviewForm onReviewSubmitted={fetchReviews} />
         </div>
       </div>

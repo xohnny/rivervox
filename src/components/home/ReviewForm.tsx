@@ -180,24 +180,26 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      {/* Compact Trigger Card */}
+      {/* Compact Trigger Card - same width as testimonial cards */}
       <DialogTrigger asChild>
-        <button className="bg-card rounded-xl p-6 border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer group text-left w-full max-w-sm mx-auto">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <MessageSquarePlus className="w-6 h-6 text-primary" />
+        <button className="bg-card rounded-2xl p-8 md:p-10 shadow-premium border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer group text-left w-full">
+          <div className="flex items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <MessageSquarePlus className="w-7 h-7 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                  Share Your Experience
+                </h3>
+                <p className="text-muted-foreground">
+                  Help others by leaving a review
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                Share Your Experience
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Help others by leaving a review
-              </p>
-            </div>
-            <div className="flex gap-0.5">
+            <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="w-4 h-4 text-accent fill-accent" />
+                <Star key={star} className="w-5 h-5 text-accent fill-accent" />
               ))}
             </div>
           </div>
