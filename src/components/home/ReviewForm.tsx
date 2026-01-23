@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Star, Send, Camera, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Link } from 'react-router-dom';
 
 interface ReviewFormProps {
   onReviewSubmitted?: () => void;
@@ -67,12 +66,11 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    if (!user) return null;
-    
     setIsUploadingImage(true);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      const uniqueId = user?.id || `guest-${Date.now()}`;
+      const fileName = `${uniqueId}/${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('review-images')
@@ -100,15 +98,6 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!user) {
-      toast({
-        title: 'Please log in',
-        description: 'You need to be logged in to submit a review.',
-        variant: 'destructive',
-      });
-      return;
-    }
 
     if (!reviewText.trim() || !userName.trim()) {
       toast({
@@ -147,7 +136,7 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
       }
 
       const { error } = await supabase.from('reviews').insert({
-        user_id: user.id,
+        user_id: user?.id || null,
         user_name: userName.trim().substring(0, 100),
         user_location: userLocation.trim().substring(0, 100) || null,
         rating,
@@ -180,20 +169,6 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
       setIsSubmitting(false);
     }
   };
-
-  if (!user) {
-    return (
-      <div className="bg-card rounded-xl p-6 md:p-8 text-center border border-border">
-        <h3 className="text-lg font-semibold mb-2">Share Your Experience</h3>
-        <p className="text-muted-foreground mb-4">
-          Log in to leave a review and help other customers
-        </p>
-        <Link to="/login">
-          <Button>Log In to Review</Button>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-card rounded-xl p-6 md:p-8 border border-border">

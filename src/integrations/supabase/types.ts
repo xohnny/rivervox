@@ -250,7 +250,7 @@ export type Database = {
           rating: number
           review_text: string
           updated_at: string
-          user_id: string
+          user_id: string | null
           user_location: string | null
           user_name: string
         }
@@ -262,7 +262,7 @@ export type Database = {
           rating: number
           review_text: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           user_location?: string | null
           user_name: string
         }
@@ -274,7 +274,7 @@ export type Database = {
           rating?: number
           review_text?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           user_location?: string | null
           user_name?: string
         }
