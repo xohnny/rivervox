@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { ShoppingBag, Check, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
@@ -257,10 +258,10 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
         </div>
       </DialogContent>
 
-      {/* Fullscreen Image Lightbox */}
-      {isFullscreen && (
+      {/* Fullscreen Image Lightbox - using portal to render at body level */}
+      {isFullscreen && createPortal(
         <div 
-          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center animate-fade-in"
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center animate-fade-in"
           onClick={() => setIsFullscreen(false)}
         >
           {/* Close Button */}
@@ -301,7 +302,8 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
               </div>
             </>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </Dialog>
   );
