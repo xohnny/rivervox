@@ -25,48 +25,51 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h4 className="font-semibold uppercase tracking-wider text-sm">Quick Links</h4>
-            <nav className="flex flex-col gap-2">
-              <Link to="/shop" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Shop All
-              </Link>
-              <Link to="/shop?category=men" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Men's Collection
-              </Link>
-              <Link to="/shop?category=women" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Women's Collection
-              </Link>
-              <Link to="/shop?category=children" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Children's Collection
-              </Link>
-              <Link to="/tracking" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Track Order
-              </Link>
-            </nav>
-          </div>
+          {/* Quick Links & Customer Service - Side by side on mobile */}
+          <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-4 md:gap-8">
+            {/* Quick Links */}
+            <div className="space-y-4">
+              <h4 className="font-semibold uppercase tracking-wider text-sm">Quick Links</h4>
+              <nav className="flex flex-col gap-2">
+                <Link to="/shop" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Shop All
+                </Link>
+                <Link to="/shop?category=men" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Men's Collection
+                </Link>
+                <Link to="/shop?category=women" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Women's Collection
+                </Link>
+                <Link to="/shop?category=children" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Children's Collection
+                </Link>
+                <Link to="/tracking" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Track Order
+                </Link>
+              </nav>
+            </div>
 
-          {/* Customer Service */}
-          <div className="space-y-4">
-            <h4 className="font-semibold uppercase tracking-wider text-sm">Customer Service</h4>
-            <nav className="flex flex-col gap-2">
-            <Link to="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Contact Us
-              </Link>
-              <Link to="/shipping-policy" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Shipping Policy
-              </Link>
-              <Link to="/returns-exchanges" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Returns & Exchanges
-              </Link>
-              <Link to="/size-guide" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                Size Guide
-              </Link>
-              <Link to="/faq" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
-                FAQ
-              </Link>
-            </nav>
+            {/* Customer Service */}
+            <div className="space-y-4 text-right md:text-left">
+              <h4 className="font-semibold uppercase tracking-wider text-sm">Customer Service</h4>
+              <nav className="flex flex-col gap-2 items-end md:items-start">
+                <Link to="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Contact Us
+                </Link>
+                <Link to="/shipping-policy" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Shipping Policy
+                </Link>
+                <Link to="/returns-exchanges" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Returns & Exchanges
+                </Link>
+                <Link to="/size-guide" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  Size Guide
+                </Link>
+                <Link to="/faq" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+                  FAQ
+                </Link>
+              </nav>
+            </div>
           </div>
 
           {/* Contact Info */}
