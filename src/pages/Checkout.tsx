@@ -31,7 +31,7 @@ import { cn } from '@/lib/utils';
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
   email: z.string().trim().email('Invalid email address').optional().or(z.literal('')),
-  phone: z.string().trim().min(8, 'Phone must be at least 8 characters').max(20),
+  phone: z.string().trim().regex(/^01[3-9]\d{8}$/, 'Phone must be a valid 11-digit Bangladesh number (e.g., 01XXXXXXXXX)'),
   address: z.string().trim().min(10, 'Address must be at least 10 characters').max(500),
   city: z.string().trim().min(2, 'City is required').max(100),
   notes: z.string().trim().max(500).optional(),
@@ -205,9 +205,14 @@ const Checkout = () => {
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="+880 1XXX XXX XXX"
+                    placeholder="01XXXXXXXXX"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) => {
+                      // Only allow digits and limit to 11 characters
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 11);
+                      setFormData({ ...formData, phone: value });
+                    }}
+                    maxLength={11}
                     className="mt-2"
                   />
                   {errors.phone && <p className="text-sm text-destructive mt-1">{errors.phone}</p>}
