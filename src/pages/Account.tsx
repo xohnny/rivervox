@@ -6,11 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
+import { OrderHistory } from '@/components/account/OrderHistory';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+
+type TabType = 'profile' | 'orders' | 'wishlist' | 'settings';
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<TabType>('orders');
   const [signingOut, setSigningOut] = useState(false);
 
   const handleSignOut = async () => {
@@ -77,31 +82,37 @@ const Account = () => {
     );
   }
 
+  const tabs = [
+    { id: 'orders' as const, label: 'Orders', icon: Package },
+    { id: 'profile' as const, label: 'Profile', icon: User },
+    { id: 'wishlist' as const, label: 'Wishlist', icon: Heart },
+    { id: 'settings' as const, label: 'Settings', icon: Settings },
+  ];
+
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-display font-bold mb-8">My Account</h1>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
             {/* Sidebar */}
             <div className="space-y-2">
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-primary-foreground">
-                <User className="w-5 h-5" />
-                Profile
-              </button>
-              <Link to="/tracking" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors">
-                <Package className="w-5 h-5" />
-                Orders
-              </Link>
-              <Link to="/wishlist" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors">
-                <Heart className="w-5 h-5" />
-                Wishlist
-              </Link>
-              <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors">
-                <Settings className="w-5 h-5" />
-                Settings
-              </button>
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
+                    activeTab === tab.id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'hover:bg-secondary'
+                  )}
+                >
+                  <tab.icon className="w-5 h-5" />
+                  {tab.label}
+                </button>
+              ))}
               <button
                 onClick={handleSignOut}
                 disabled={signingOut}
@@ -117,37 +128,80 @@ const Account = () => {
             </div>
 
             {/* Content */}
-            <div className="md:col-span-2 bg-card border border-border rounded-xl p-6">
-              <h2 className="text-xl font-semibold mb-6">Profile Information</h2>
-              <div className="space-y-4">
-                <div>
-                  <Label>Email</Label>
-                  <Input
-                    type="email"
-                    value={user.email || ''}
-                    disabled
-                    className="mt-2"
-                  />
-                </div>
-                <div>
-                  <Label>Full Name</Label>
-                  <Input
-                    type="text"
-                    defaultValue={user.user_metadata?.full_name || ''}
-                    className="mt-2"
-                  />
-                </div>
-                <div>
-                  <Label>Member Since</Label>
-                  <Input
-                    type="text"
-                    value={new Date(user.created_at).toLocaleDateString()}
-                    disabled
-                    className="mt-2"
-                  />
-                </div>
-                <Button>Save Changes</Button>
-              </div>
+            <div className="md:col-span-3 bg-card border border-border rounded-xl p-6">
+              {activeTab === 'orders' && (
+                <>
+                  <h2 className="text-xl font-semibold mb-6">Order History</h2>
+                  <OrderHistory />
+                </>
+              )}
+
+              {activeTab === 'profile' && (
+                <>
+                  <h2 className="text-xl font-semibold mb-6">Profile Information</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Email</Label>
+                      <Input
+                        type="email"
+                        value={user.email || ''}
+                        disabled
+                        className="mt-2"
+                      />
+                    </div>
+                    <div>
+                      <Label>Full Name</Label>
+                      <Input
+                        type="text"
+                        defaultValue={user.user_metadata?.full_name || ''}
+                        className="mt-2"
+                      />
+                    </div>
+                    <div>
+                      <Label>Member Since</Label>
+                      <Input
+                        type="text"
+                        value={new Date(user.created_at).toLocaleDateString()}
+                        disabled
+                        className="mt-2"
+                      />
+                    </div>
+                    <Button>Save Changes</Button>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'wishlist' && (
+                <>
+                  <h2 className="text-xl font-semibold mb-6">My Wishlist</h2>
+                  <p className="text-muted-foreground mb-4">
+                    View and manage your saved items.
+                  </p>
+                  <Button asChild>
+                    <Link to="/wishlist">View Wishlist</Link>
+                  </Button>
+                </>
+              )}
+
+              {activeTab === 'settings' && (
+                <>
+                  <h2 className="text-xl font-semibold mb-6">Account Settings</h2>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-secondary/50 rounded-lg">
+                      <h3 className="font-medium mb-1">Email Notifications</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Manage your email preferences and notifications.
+                      </p>
+                    </div>
+                    <div className="p-4 bg-secondary/50 rounded-lg">
+                      <h3 className="font-medium mb-1">Password</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Update your account password.
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
