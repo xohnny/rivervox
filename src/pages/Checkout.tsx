@@ -56,7 +56,8 @@ const Checkout = () => {
     notes: '',
   });
 
-  const shippingCost = totalPrice > 100 ? 0 : 10;
+  // Shipping: 60 Taka for Dhaka, 100 Taka for outside Dhaka
+  const shippingCost = formData.city.toLowerCase() === 'dhaka' ? 60 : 100;
   const grandTotal = totalPrice + shippingCost;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -409,13 +410,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>
-                    {shippingCost === 0 ? (
-                      <span className="text-primary">Free</span>
-                    ) : (
-                      formatPrice(shippingCost)
-                    )}
-                  </span>
+                  <span>{formatPrice(shippingCost)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
                   <span>Total</span>
@@ -423,12 +418,12 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* Free Shipping Notice */}
-              {shippingCost > 0 && (
-                <p className="text-xs text-muted-foreground text-center mt-4">
-                  Add {formatPrice(100 - totalPrice)} more for free shipping!
-                </p>
-              )}
+              {/* Shipping Notice */}
+              <p className="text-xs text-muted-foreground text-center mt-4">
+                {formData.city.toLowerCase() === 'dhaka' 
+                  ? 'Dhaka delivery: ৳60' 
+                  : 'Outside Dhaka delivery: ৳100'}
+              </p>
             </div>
 
             {/* Payment Method Card - Desktop only */}
