@@ -4,7 +4,6 @@ import { ShoppingBag, User, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { CurrencySelector } from './CurrencySelector';
-import { NavLink } from '@/components/NavLink';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -37,9 +36,16 @@ export const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <NavLink key={link.path} to={link.path}>
+              <Link
+                key={link.path}
+                to={link.path}
+                className={cn(
+                  'nav-link text-sm uppercase tracking-wider',
+                  location.pathname === link.path && 'text-primary font-semibold'
+                )}
+              >
                 {link.name}
-              </NavLink>
+              </Link>
             ))}
           </nav>
 
