@@ -48,14 +48,14 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl p-0 gap-0 overflow-hidden">
+      <DialogContent className="max-w-4xl p-0 gap-0 overflow-hidden max-h-[90vh] md:max-h-[85vh]">
         <DialogHeader className="sr-only">
           <DialogTitle>{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid md:grid-cols-2">
+        <div className="grid md:grid-cols-2 max-h-[90vh] md:max-h-[85vh] overflow-y-auto md:overflow-hidden">
           {/* Image Gallery */}
-          <div className="relative bg-muted aspect-square md:aspect-auto md:h-[500px]">
+          <div className="relative bg-muted aspect-[4/5] md:aspect-auto md:h-[500px] flex-shrink-0">
             <img
               src={product.images[currentImageIndex]}
               alt={product.name}
@@ -74,15 +74,15 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
               <>
                 <button
                   onClick={prevImage}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/90 flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-background/90 flex items-center justify-center hover:bg-background transition-colors shadow-lg"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
                 <button
                   onClick={nextImage}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/90 flex items-center justify-center hover:bg-background transition-colors shadow-lg"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-background/90 flex items-center justify-center hover:bg-background transition-colors shadow-lg"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
               </>
             )}
@@ -95,7 +95,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
                     className={cn(
-                      'w-2.5 h-2.5 rounded-full transition-all',
+                      'w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-all',
                       currentImageIndex === idx
                         ? 'bg-primary scale-110'
                         : 'bg-background/70 hover:bg-background'
@@ -107,34 +107,34 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
           </div>
 
           {/* Product Details */}
-          <div className="p-6 md:p-8 flex flex-col">
+          <div className="p-4 md:p-8 flex flex-col md:overflow-y-auto md:max-h-[500px]">
             {/* Category */}
-            <span className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+            <span className="text-xs uppercase tracking-wider text-muted-foreground mb-1 md:mb-2">
               {product.category}
             </span>
 
             {/* Title */}
-            <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">
+            <h2 className="font-display text-xl md:text-3xl font-bold mb-2 md:mb-3">
               {product.name}
             </h2>
 
             {/* Price */}
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-2xl font-bold text-primary">{formatPrice(product.price)}</span>
+            <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+              <span className="text-xl md:text-2xl font-bold text-primary">{formatPrice(product.price)}</span>
               {product.originalPrice && (
-                <span className="text-lg text-muted-foreground line-through">
+                <span className="text-base md:text-lg text-muted-foreground line-through">
                   {formatPrice(product.originalPrice)}
                 </span>
               )}
             </div>
 
             {/* Description */}
-            <p className="text-muted-foreground mb-6 leading-relaxed">
+            <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6 leading-relaxed line-clamp-3 md:line-clamp-none">
               {product.description}
             </p>
 
             {/* Stock Status */}
-            <div className="mb-4">
+            <div className="mb-3 md:mb-4">
               {product.stock > 10 ? (
                 <span className="text-sm text-primary font-medium">✓ In Stock</span>
               ) : product.stock > 0 ? (
@@ -145,7 +145,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
             </div>
 
             {/* Color Selector */}
-            <div className="mb-5">
+            <div className="mb-4 md:mb-5">
               <label className="text-sm font-medium mb-2 block">
                 Color: <span className="text-muted-foreground">{selectedColor.name}</span>
               </label>
@@ -155,7 +155,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
                     key={color.name}
                     onClick={() => setSelectedColor(color)}
                     className={cn(
-                      'w-9 h-9 rounded-full border-2 transition-all',
+                      'w-8 h-8 md:w-9 md:h-9 rounded-full border-2 transition-all',
                       selectedColor.name === color.name
                         ? 'border-primary scale-110'
                         : 'border-transparent hover:scale-105'
@@ -169,7 +169,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
             </div>
 
             {/* Size Selector */}
-            <div className="mb-5">
+            <div className="mb-4 md:mb-5">
               <label className="text-sm font-medium mb-2 block">Size</label>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((size) => (
@@ -177,7 +177,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
                     key={size}
                     onClick={() => setSelectedSize(size)}
                     className={cn(
-                      'min-w-[3rem] px-4 py-2 rounded-md border text-sm font-medium transition-all',
+                      'min-w-[2.5rem] md:min-w-[3rem] px-3 md:px-4 py-1.5 md:py-2 rounded-md border text-sm font-medium transition-all',
                       selectedSize === size
                         ? 'bg-primary text-primary-foreground border-primary'
                         : 'bg-background border-border hover:border-primary'
@@ -190,34 +190,31 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
             </div>
 
             {/* Quantity Selector */}
-            <div className="mb-6">
+            <div className="mb-4 md:mb-6">
               <label className="text-sm font-medium mb-2 block">Quantity</label>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 rounded-md border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+                  className="w-9 h-9 md:w-10 md:h-10 rounded-md border border-border flex items-center justify-center hover:bg-secondary transition-colors"
                 >
                   -
                 </button>
-                <span className="w-12 text-center font-semibold">{quantity}</span>
+                <span className="w-10 md:w-12 text-center font-semibold">{quantity}</span>
                 <button
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="w-10 h-10 rounded-md border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+                  className="w-9 h-9 md:w-10 md:h-10 rounded-md border border-border flex items-center justify-center hover:bg-secondary transition-colors"
                 >
                   +
                 </button>
               </div>
             </div>
 
-            {/* Spacer */}
-            <div className="flex-grow" />
-
             {/* Add to Cart Button */}
             <button
               onClick={handleAddToCart}
               disabled={product.stock === 0}
               className={cn(
-                'w-full py-4 rounded-md font-semibold text-base flex items-center justify-center gap-2 transition-all duration-300',
+                'w-full py-3 md:py-4 rounded-md font-semibold text-sm md:text-base flex items-center justify-center gap-2 transition-all duration-300 mt-auto',
                 isAdded
                   ? 'bg-emerald-medium text-primary-foreground'
                   : 'bg-primary text-primary-foreground hover:opacity-90',
@@ -226,14 +223,14 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
             >
               {isAdded ? (
                 <>
-                  <Check className="w-5 h-5" />
+                  <Check className="w-4 h-4 md:w-5 md:h-5" />
                   Added to Cart
                 </>
               ) : product.stock === 0 ? (
                 'Out of Stock'
               ) : (
                 <>
-                  <ShoppingBag className="w-5 h-5" />
+                  <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
                   Add to Cart - {formatPrice(product.price * quantity)}
                 </>
               )}
