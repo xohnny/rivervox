@@ -29,7 +29,7 @@ export const Footer = () => {
           <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-4 md:gap-8">
             {/* Quick Links */}
             <div className="space-y-4">
-              <h4 className="font-semibold uppercase tracking-wider text-sm">Quick Links</h4>
+              <h4 className="font-semibold uppercase tracking-wider text-xs md:text-sm whitespace-nowrap">Quick Links</h4>
               <nav className="flex flex-col gap-2">
                 <Link to="/shop" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
                   Shop All
