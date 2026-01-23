@@ -2,76 +2,103 @@ import { useState, useEffect, useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { ReviewForm } from './ReviewForm';
 
-// Import testimonial avatars
+// Import fallback avatar images
 import fatimaAhmed from '@/assets/testimonials/fatima-ahmed.jpg';
 import aishaRahman from '@/assets/testimonials/aisha-rahman.jpg';
 import omarHassan from '@/assets/testimonials/omar-hassan.jpg';
 import mariamKhan from '@/assets/testimonials/mariam-khan.jpg';
 import yusufIbrahim from '@/assets/testimonials/yusuf-ibrahim.jpg';
 
-const testimonials = [
+const defaultAvatars = [fatimaAhmed, aishaRahman, omarHassan, mariamKhan, yusufIbrahim];
+
+interface Review {
+  id: string;
+  user_name: string;
+  user_location: string | null;
+  rating: number;
+  review_text: string;
+  created_at: string;
+}
+
+// Fallback testimonials if no reviews in database
+const fallbackTestimonials: Review[] = [
   {
-    id: 1,
-    name: 'Fatima Ahmed',
-    location: 'Dubai, UAE',
+    id: 'fallback-1',
+    user_name: 'Fatima Ahmed',
+    user_location: 'Dubai, UAE',
     rating: 5,
-    text: 'The quality of the thobes is exceptional. My husband was so impressed with the fabric and stitching. Will definitely be ordering again!',
-    avatar: fatimaAhmed,
+    review_text: 'The quality of the thobes is exceptional. My husband was so impressed with the fabric and stitching. Will definitely be ordering again!',
+    created_at: new Date().toISOString(),
   },
   {
-    id: 2,
-    name: 'Aisha Rahman',
-    location: 'London, UK',
+    id: 'fallback-2',
+    user_name: 'Aisha Rahman',
+    user_location: 'London, UK',
     rating: 5,
-    text: 'Finally found a store that understands modest fashion without compromising on style. The abayas are absolutely stunning and perfect for any occasion.',
-    avatar: aishaRahman,
+    review_text: 'Finally found a store that understands modest fashion without compromising on style. The abayas are absolutely stunning and perfect for any occasion.',
+    created_at: new Date().toISOString(),
   },
   {
-    id: 3,
-    name: 'Omar Hassan',
-    location: 'New York, USA',
+    id: 'fallback-3',
+    user_name: 'Omar Hassan',
+    user_location: 'New York, USA',
     rating: 5,
-    text: 'Fast shipping and excellent customer service. The kurta I ordered fits perfectly and the material is breathable even in summer.',
-    avatar: omarHassan,
+    review_text: 'Fast shipping and excellent customer service. The kurta I ordered fits perfectly and the material is breathable even in summer.',
+    created_at: new Date().toISOString(),
   },
   {
-    id: 4,
-    name: 'Mariam Khan',
-    location: 'Toronto, Canada',
+    id: 'fallback-4',
+    user_name: 'Mariam Khan',
+    user_location: 'Toronto, Canada',
     rating: 5,
-    text: 'I ordered matching outfits for my kids and they love them! The colors are vibrant and the fabric is comfortable for all-day wear.',
-    avatar: mariamKhan,
+    review_text: 'I ordered matching outfits for my kids and they love them! The colors are vibrant and the fabric is comfortable for all-day wear.',
+    created_at: new Date().toISOString(),
   },
   {
-    id: 5,
-    name: 'Yusuf Ibrahim',
-    location: 'Dhaka, Bangladesh',
+    id: 'fallback-5',
+    user_name: 'Yusuf Ibrahim',
+    user_location: 'Dhaka, Bangladesh',
     rating: 5,
-    text: 'Best quality Islamic wear I have found online. The attention to detail and craftsmanship is remarkable. Highly recommend!',
-    avatar: yusufIbrahim,
+    review_text: 'Best quality Islamic wear I have found online. The attention to detail and craftsmanship is remarkable. Highly recommend!',
+    created_at: new Date().toISOString(),
   },
 ];
 
 export const Testimonials = () => {
+  const [reviews, setReviews] = useState<Review[]>(fallbackTestimonials);
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
     align: 'center',
     skipSnaps: false,
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
+  const fetchReviews = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (!error && data && data.length > 0) {
+      setReviews(data);
+    }
+  }, []);
+
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setSelectedIndex(emblaApi.selectedScrollSnap());
-    setCanScrollPrev(emblaApi.canScrollPrev());
-    setCanScrollNext(emblaApi.canScrollNext());
   }, [emblaApi]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -90,6 +117,11 @@ export const Testimonials = () => {
       emblaApi.off('reInit', onSelect);
     };
   }, [emblaApi, onSelect]);
+
+  // Get avatar for review (use default avatars in rotation)
+  const getAvatar = (index: number) => {
+    return defaultAvatars[index % defaultAvatars.length];
+  };
 
   return (
     <section className="py-16 md:py-24 bg-primary/5 overflow-hidden">
@@ -111,9 +143,9 @@ export const Testimonials = () => {
         <div className="relative max-w-4xl mx-auto">
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex">
-              {testimonials.map((testimonial) => (
+              {reviews.map((review, index) => (
                 <div
-                  key={testimonial.id}
+                  key={review.id}
                   className="flex-[0_0_100%] min-w-0 px-4"
                 >
                   <div className="bg-card rounded-2xl p-8 md:p-10 shadow-premium relative">
@@ -124,7 +156,7 @@ export const Testimonials = () => {
 
                     {/* Stars */}
                     <div className="flex gap-1 mb-6">
-                      {[...Array(testimonial.rating)].map((_, i) => (
+                      {[...Array(review.rating)].map((_, i) => (
                         <svg
                           key={i}
                           className="w-5 h-5 text-accent fill-accent"
@@ -137,23 +169,25 @@ export const Testimonials = () => {
 
                     {/* Testimonial Text */}
                     <p className="text-lg md:text-xl text-foreground leading-relaxed mb-8">
-                      "{testimonial.text}"
+                      "{review.review_text}"
                     </p>
 
                     {/* Author */}
                     <div className="flex items-center gap-4">
                       <img 
-                        src={testimonial.avatar} 
-                        alt={testimonial.name}
+                        src={getAvatar(index)} 
+                        alt={review.user_name}
                         className="w-12 h-12 rounded-full object-cover"
                       />
                       <div>
                         <p className="font-semibold text-foreground">
-                          {testimonial.name}
+                          {review.user_name}
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          {testimonial.location}
-                        </p>
+                        {review.user_location && (
+                          <p className="text-sm text-muted-foreground">
+                            {review.user_location}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -191,7 +225,7 @@ export const Testimonials = () => {
 
         {/* Dots Indicator */}
         <div className="flex justify-center gap-2 mt-8">
-          {testimonials.map((_, index) => (
+          {reviews.map((_, index) => (
             <button
               key={index}
               onClick={() => emblaApi?.scrollTo(index)}
@@ -204,6 +238,11 @@ export const Testimonials = () => {
               aria-label={`Go to testimonial ${index + 1}`}
             />
           ))}
+        </div>
+
+        {/* Review Form */}
+        <div className="mt-16 max-w-2xl mx-auto">
+          <ReviewForm onReviewSubmitted={fetchReviews} />
         </div>
       </div>
     </section>
