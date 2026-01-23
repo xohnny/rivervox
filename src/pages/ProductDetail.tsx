@@ -7,6 +7,7 @@ import { ProductColor } from '@/types';
 import { ShoppingBag, Heart, Share2, ChevronRight, Minus, Plus, Check, Truck, RotateCcw, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ImageZoom } from '@/components/products/ImageZoom';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -79,13 +80,13 @@ const ProductDetail = () => {
 
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Product Image */}
+          {/* Product Image with Zoom */}
           <div className="space-y-4">
             <div className="aspect-square rounded-xl overflow-hidden bg-secondary">
-              <img
+              <ImageZoom
                 src={product.images[0]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full"
               />
             </div>
           </div>
