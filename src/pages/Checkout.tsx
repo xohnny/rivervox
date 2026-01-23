@@ -157,7 +157,7 @@ const Checkout = () => {
                 Shipping Details
               </h2>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form id="checkout-form" onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <Label htmlFor="name">Full Name *</Label>
                   <Input
@@ -233,21 +233,6 @@ const Checkout = () => {
                   />
                 </div>
 
-
-                <Button
-                  type="submit"
-                  className="w-full h-14 btn-hero text-lg mt-6"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Processing Order...
-                    </>
-                  ) : (
-                    <>Place Order - {formatPrice(grandTotal)}</>
-                  )}
-                </Button>
               </form>
             </div>
           </div>
@@ -327,7 +312,7 @@ const Checkout = () => {
                 <CreditCard className="w-5 h-5 text-primary" />
                 Payment Method
               </h2>
-              <div className="p-4 bg-secondary/50 rounded-lg border-2 border-primary flex items-center gap-3">
+              <div className="p-4 bg-secondary/50 rounded-lg border-2 border-primary flex items-center gap-3 mb-6">
                 <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                   <Check className="w-4 h-4 text-primary-foreground" />
                 </div>
@@ -336,6 +321,21 @@ const Checkout = () => {
                   <p className="text-sm text-muted-foreground">Pay when you receive</p>
                 </div>
               </div>
+              <Button
+                type="submit"
+                form="checkout-form"
+                className="w-full h-14 btn-hero text-lg"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Processing Order...
+                  </>
+                ) : (
+                  <>Place Order - {formatPrice(grandTotal)}</>
+                )}
+              </Button>
             </div>
           </div>
         </div>
