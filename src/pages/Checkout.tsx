@@ -166,8 +166,9 @@ const Checkout = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Checkout Form */}
-          <div className="order-2 lg:order-1">
+          {/* Left Column - Shipping Details + Payment Method (mobile) */}
+          <div className="order-2 lg:order-1 space-y-6">
+            {/* Shipping Details Card */}
             <div className="bg-card border border-border rounded-xl p-6 md:p-8 shadow-premium">
               <h2 className="text-xl font-display font-bold mb-6 flex items-center gap-2">
                 <Truck className="w-5 h-5 text-primary" />
@@ -291,9 +292,77 @@ const Checkout = () => {
 
               </form>
             </div>
+
+            {/* Payment Method Card - Shows after Shipping on mobile */}
+            <div className="bg-card border border-border rounded-xl p-6 shadow-premium lg:hidden">
+              <h2 className="text-xl font-display font-bold mb-4 flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-primary" />
+                Payment Method
+              </h2>
+              <div className="space-y-3 mb-6">
+                {/* Cash on Delivery */}
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('cod')}
+                  className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all ${
+                    paymentMethod === 'cod'
+                      ? 'bg-secondary/50 border-primary'
+                      : 'bg-card border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    paymentMethod === 'cod' ? 'bg-primary' : 'border-2 border-muted-foreground/30'
+                  }`}>
+                    {paymentMethod === 'cod' && <Check className="w-4 h-4 text-primary-foreground" />}
+                  </div>
+                  <Banknote className="w-5 h-5 text-primary" />
+                  <div className="text-left">
+                    <p className="font-medium">Cash on Delivery</p>
+                    <p className="text-sm text-muted-foreground">Pay when you receive</p>
+                  </div>
+                </button>
+
+                {/* Online Payment */}
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('online')}
+                  className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all ${
+                    paymentMethod === 'online'
+                      ? 'bg-secondary/50 border-primary'
+                      : 'bg-card border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    paymentMethod === 'online' ? 'bg-primary' : 'border-2 border-muted-foreground/30'
+                  }`}>
+                    {paymentMethod === 'online' && <Check className="w-4 h-4 text-primary-foreground" />}
+                  </div>
+                  <Globe className="w-5 h-5 text-primary" />
+                  <div className="text-left">
+                    <p className="font-medium">Online Payment</p>
+                    <p className="text-sm text-muted-foreground">Pay securely online</p>
+                  </div>
+                </button>
+              </div>
+              <Button
+                type="submit"
+                form="checkout-form"
+                className="w-full h-14 btn-hero text-lg"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Processing Order...
+                  </>
+                ) : (
+                  <>Place Order - {formatPrice(grandTotal)}</>
+                )}
+              </Button>
+            </div>
           </div>
 
-          {/* Order Summary & Payment Method */}
+          {/* Right Column - Order Summary + Payment Method (desktop) */}
           <div className="order-1 lg:order-2 space-y-6">
             {/* Order Summary Card */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-premium">
@@ -362,8 +431,8 @@ const Checkout = () => {
               )}
             </div>
 
-            {/* Payment Method Card */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-premium">
+            {/* Payment Method Card - Desktop only */}
+            <div className="bg-card border border-border rounded-xl p-6 shadow-premium hidden lg:block">
               <h2 className="text-xl font-display font-bold mb-4 flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-primary" />
                 Payment Method
