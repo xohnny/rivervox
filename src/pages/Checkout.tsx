@@ -10,8 +10,23 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ShoppingBag, CreditCard, Truck, Check, Loader2, Banknote, Globe } from 'lucide-react';
+import { ShoppingBag, CreditCard, Truck, Check, Loader2, Banknote, Globe, ChevronsUpDown } from 'lucide-react';
 import { z } from 'zod';
+import { bangladeshDistricts } from '@/data/bangladeshDistricts';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 
 const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
@@ -30,6 +45,7 @@ const Checkout = () => {
   const { formatPrice } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
+  const [cityOpen, setCityOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: '',
@@ -198,14 +214,48 @@ const Checkout = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="city">City *</Label>
-                  <Input
-                    id="city"
-                    placeholder="Dhaka"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="mt-2"
-                  />
+                  <Label htmlFor="city">District *</Label>
+                  <Popover open={cityOpen} onOpenChange={setCityOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={cityOpen}
+                        className="w-full justify-between mt-2 font-normal"
+                      >
+                        {formData.city || "Select district..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0 bg-card z-50" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search district..." />
+                        <CommandList>
+                          <CommandEmpty>No district found.</CommandEmpty>
+                          <CommandGroup className="max-h-60 overflow-y-auto">
+                            {bangladeshDistricts.map((district) => (
+                              <CommandItem
+                                key={district}
+                                value={district}
+                                onSelect={(currentValue) => {
+                                  setFormData({ ...formData, city: currentValue });
+                                  setCityOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    formData.city === district ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {district}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   {errors.city && <p className="text-sm text-destructive mt-1">{errors.city}</p>}
                 </div>
 
