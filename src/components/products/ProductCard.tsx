@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ShoppingBag, Check } from 'lucide-react';
+import { ShoppingBag, Check, Eye } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
+import { ProductQuickView } from './ProductQuickView';
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +14,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0]);
   const [selectedColor, setSelectedColor] = useState<ProductColor>(product.colors[0]);
   const [isAdded, setIsAdded] = useState(false);
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
 
   const handleAddToCart = () => {
     addToCart(product, selectedSize, selectedColor);
@@ -25,31 +27,37 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     : 0;
 
   return (
-    <div className="card-premium group h-full flex flex-col">
-      {/* Image Container - Fixed aspect ratio for consistency */}
-      <div className="relative aspect-[3/4] bg-muted overflow-hidden flex-shrink-0">
-        <img
-          src={product.images[0]}
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+    <>
+      <div className="card-premium group h-full flex flex-col">
+        {/* Image Container - Fixed aspect ratio for consistency */}
+        <div className="relative aspect-[3/4] bg-muted overflow-hidden flex-shrink-0 cursor-pointer" onClick={() => setQuickViewOpen(true)}>
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
 
-        {/* Discount Badge */}
-        {discount > 0 && (
-          <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-xs font-bold px-2 py-1 rounded">
-            -{discount}%
-          </span>
-        )}
+          {/* Discount Badge */}
+          {discount > 0 && (
+            <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-xs font-bold px-2 py-1 rounded">
+              -{discount}%
+            </span>
+          )}
 
-        {/* Stock Indicator */}
-        {product.stock <= 5 && product.stock > 0 && (
-          <span className="absolute top-3 right-3 bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded animate-pulse-stock">
-            Only {product.stock} left
-          </span>
-        )}
+          {/* Stock Indicator */}
+          {product.stock <= 5 && product.stock > 0 && (
+            <span className="absolute top-3 right-3 bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded animate-pulse-stock">
+              Only {product.stock} left
+            </span>
+          )}
 
-        {/* Quick Add Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          {/* Quick View Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white text-sm font-medium bg-primary/80 px-4 py-2 rounded-full backdrop-blur-sm">
+              <Eye className="w-4 h-4" />
+              Quick View
+            </span>
+          </div>
       </div>
 
       {/* Content - Flex grow to fill remaining space */}
@@ -135,5 +143,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </button>
       </div>
     </div>
+
+    <ProductQuickView
+      product={product}
+      open={quickViewOpen}
+      onOpenChange={setQuickViewOpen}
+    />
+  </>
   );
 };
