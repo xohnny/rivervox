@@ -332,10 +332,10 @@ const Shop = () => {
           </span>
         </div>
 
-        {/* Products Grid */}
+        {/* Products Grid - Optimized mobile spacing */}
         <div
           className={cn(
-            'grid gap-4 md:gap-6',
+            'grid gap-3 md:gap-6',
             gridCols === 3
               ? 'grid-cols-2 md:grid-cols-3'
               : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'

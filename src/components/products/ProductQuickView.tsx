@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ShoppingBag, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useSwipe } from '@/hooks/useSwipe';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -38,13 +39,20 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
-  };
+  }, [product.images.length]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
-  };
+  }, [product.images.length]);
+
+  // Swipe gesture support for mobile
+  const swipeHandlers = useSwipe({
+    onSwipeLeft: nextImage,
+    onSwipeRight: prevImage,
+    threshold: 50,
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -54,12 +62,15 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
         </DialogHeader>
         
         <div className="grid md:grid-cols-2 max-h-[90vh] md:max-h-[85vh] overflow-y-auto md:overflow-hidden">
-          {/* Image Gallery */}
-          <div className="relative bg-muted aspect-[4/5] md:aspect-auto md:h-[500px] flex-shrink-0">
+          {/* Image Gallery with swipe support */}
+          <div 
+            className="relative bg-muted aspect-[4/5] md:aspect-auto md:h-[500px] flex-shrink-0 touch-pan-y"
+            {...swipeHandlers}
+          >
             <img
               src={product.images[currentImageIndex]}
               alt={product.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover select-none pointer-events-none"
             />
             
             {/* Discount Badge */}

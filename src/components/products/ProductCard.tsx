@@ -34,9 +34,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <>
-      <div className="card-premium group h-full flex flex-col">
+      <div className="card-premium group h-full flex flex-col touch-manipulation">
         {/* Image Container - Fixed aspect ratio for consistency */}
-        <div className="relative aspect-[3/4] bg-muted overflow-hidden flex-shrink-0 cursor-pointer" onClick={() => setQuickViewOpen(true)}>
+        <div 
+          className="relative aspect-[3/4] bg-muted overflow-hidden flex-shrink-0 cursor-pointer active:scale-[0.98] transition-transform"
+          onClick={() => setQuickViewOpen(true)}
+        >
           <img
             src={product.images[0]}
             alt={product.name}
@@ -45,37 +48,37 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
           {/* Discount Badge */}
           {discount > 0 && (
-            <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-xs font-bold px-2 py-1 rounded">
+            <span className="absolute top-2 left-2 md:top-3 md:left-3 bg-accent text-accent-foreground text-[10px] md:text-xs font-bold px-1.5 py-0.5 md:px-2 md:py-1 rounded">
               -{discount}%
             </span>
           )}
 
-          {/* Wishlist Button */}
+          {/* Wishlist Button - Larger touch target on mobile */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               toggleWishlist(product);
             }}
             className={cn(
-              'absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all z-10',
+              'absolute top-2 right-2 md:top-3 md:right-3 w-10 h-10 md:w-9 md:h-9 rounded-full flex items-center justify-center transition-all z-10 active:scale-95',
               inWishlist
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-background/90 text-foreground hover:bg-background'
             )}
             aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
           >
-            <Heart className={cn('w-4 h-4', inWishlist && 'fill-current')} />
+            <Heart className={cn('w-5 h-5 md:w-4 md:h-4', inWishlist && 'fill-current')} />
           </button>
 
           {/* Stock Indicator */}
           {product.stock <= 5 && product.stock > 0 && (
-            <span className="absolute bottom-3 left-3 bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded animate-pulse-stock">
+            <span className="absolute bottom-2 left-2 md:bottom-3 md:left-3 bg-destructive text-destructive-foreground text-[10px] md:text-xs font-medium px-1.5 py-0.5 md:px-2 md:py-1 rounded animate-pulse-stock">
               Only {product.stock} left
             </span>
           )}
 
-          {/* Quick View Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+          {/* Quick View Overlay - Hidden on mobile, tap triggers directly */}
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex items-center justify-center">
             <span className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white text-sm font-medium bg-primary/80 px-4 py-2 rounded-full backdrop-blur-sm">
               <Eye className="w-4 h-4" />
               Quick View
@@ -84,33 +87,36 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       </div>
 
       {/* Content - Flex grow to fill remaining space */}
-      <div className="p-4 flex flex-col flex-grow">
+      <div className="p-3 md:p-4 flex flex-col flex-grow">
         {/* Title & Price - Fixed height */}
-        <div className="mb-3">
+        <div className="mb-2 md:mb-3">
           <Link to={`/product/${product.id}`} className="hover:text-primary transition-colors">
-            <h3 className="font-display font-semibold text-base leading-tight line-clamp-2 min-h-[2.5rem]">
+            <h3 className="font-display font-semibold text-sm md:text-base leading-tight line-clamp-2 min-h-[2.25rem] md:min-h-[2.5rem]">
               {product.name}
             </h3>
           </Link>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-lg font-bold text-primary">{formatPrice(product.price)}</span>
+          <div className="flex items-center gap-1.5 md:gap-2 mt-1">
+            <span className="text-base md:text-lg font-bold text-primary">{formatPrice(product.price)}</span>
             {product.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">
+              <span className="text-xs md:text-sm text-muted-foreground line-through">
                 {formatPrice(product.originalPrice)}
               </span>
             )}
           </div>
         </div>
 
-        {/* Color Selector */}
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs text-muted-foreground">Color:</span>
-          <div className="flex gap-1.5">
+        {/* Color Selector - Larger touch targets on mobile */}
+        <div className="flex items-center gap-2 mb-2 md:mb-3">
+          <span className="text-[10px] md:text-xs text-muted-foreground hidden md:inline">Color:</span>
+          <div className="flex gap-2 md:gap-1.5">
             {product.colors.slice(0, 4).map((color) => (
               <button
                 key={color.name}
                 onClick={() => setSelectedColor(color)}
-                className={cn('color-swatch', selectedColor.name === color.name && 'selected')}
+                className={cn(
+                  'w-8 h-8 md:w-7 md:h-7 rounded-full border-2 border-transparent cursor-pointer transition-all duration-200 active:scale-95',
+                  selectedColor.name === color.name && 'ring-2 ring-primary ring-offset-1 md:ring-offset-2'
+                )}
                 style={{ backgroundColor: color.hex }}
                 title={color.name}
                 aria-label={`Select ${color.name}`}
@@ -119,20 +125,23 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
 
-        {/* Size Selector - Fixed height container */}
-        <div className="flex flex-wrap gap-1.5 mb-4 min-h-[2.75rem]">
-          {product.sizes.slice(0, 5).map((size) => (
+        {/* Size Selector - Touch-friendly sizing */}
+        <div className="flex flex-wrap gap-1 md:gap-1.5 mb-3 md:mb-4 min-h-[2.5rem] md:min-h-[2.75rem]">
+          {product.sizes.slice(0, 4).map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
-              className={cn('size-btn text-xs', selectedSize === size && 'selected')}
+              className={cn(
+                'min-w-[2.25rem] md:min-w-[2.5rem] h-9 md:h-10 px-2 md:px-2.5 border border-border rounded-md flex items-center justify-center text-xs font-medium transition-all duration-200 cursor-pointer active:scale-95',
+                selectedSize === size && 'bg-primary text-primary-foreground border-primary'
+              )}
             >
               {size}
             </button>
           ))}
-          {product.sizes.length > 5 && (
-            <span className="size-btn text-xs bg-muted text-muted-foreground cursor-default">
-              +{product.sizes.length - 5}
+          {product.sizes.length > 4 && (
+            <span className="min-w-[2.25rem] md:min-w-[2.5rem] h-9 md:h-10 px-2 border border-border rounded-md flex items-center justify-center text-xs bg-muted text-muted-foreground cursor-default">
+              +{product.sizes.length - 4}
             </span>
           )}
         </div>
@@ -140,12 +149,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         {/* Spacer to push button to bottom */}
         <div className="flex-grow" />
 
-        {/* Add to Cart Button - Always at bottom */}
+        {/* Add to Cart Button - Touch-friendly with larger tap area */}
         <button
           onClick={handleAddToCart}
           disabled={product.stock === 0}
           className={cn(
-            'w-full py-3 rounded-md font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300 mt-auto',
+            'w-full py-2.5 md:py-3 rounded-md font-semibold text-xs md:text-sm flex items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 mt-auto active:scale-[0.98]',
             isAdded
               ? 'bg-emerald-medium text-primary-foreground'
               : 'bg-primary text-primary-foreground hover:opacity-90',
@@ -154,15 +163,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         >
           {isAdded ? (
             <>
-              <Check className="w-4 h-4" />
-              Added to Cart
+              <Check className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              <span className="hidden xs:inline">Added</span>
+              <span className="xs:hidden">✓</span>
             </>
           ) : product.stock === 0 ? (
             'Out of Stock'
           ) : (
             <>
-              <ShoppingBag className="w-4 h-4" />
-              Add to Cart
+              <ShoppingBag className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              <span>Add to Cart</span>
             </>
           )}
         </button>
