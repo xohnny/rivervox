@@ -49,25 +49,50 @@ export const Header = () => {
             ))}
           </nav>
 
-          {/* Right Icons */}
+          {/* Right Icons - Desktop */}
           <div className="flex items-center gap-2 md:gap-4">
-            <CurrencySelector />
-            <Link
-              to="/wishlist"
-              className="relative p-2 hover:bg-secondary rounded-full transition-colors"
-              aria-label="Wishlist"
-            >
-              <Heart className="w-5 h-5 text-foreground" />
-              {wishlistItems > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
-                  {wishlistItems}
-                </span>
-              )}
-            </Link>
+            {/* Desktop only icons */}
+            <div className="hidden md:flex items-center gap-4">
+              <CurrencySelector />
+              <Link
+                to="/wishlist"
+                className="relative p-2 hover:bg-secondary rounded-full transition-colors"
+                aria-label="Wishlist"
+              >
+                <Heart className="w-5 h-5 text-foreground" />
+                {wishlistItems > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
+                    {wishlistItems}
+                  </span>
+                )}
+              </Link>
 
+              <button
+                onClick={openCart}
+                className="relative p-2 hover:bg-secondary rounded-full transition-colors"
+                aria-label="Open cart"
+              >
+                <ShoppingBag className="w-5 h-5 text-foreground" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
+
+              <Link
+                to="/account"
+                className="p-2 hover:bg-secondary rounded-full transition-colors"
+                aria-label="Account"
+              >
+                <User className="w-5 h-5 text-foreground" />
+              </Link>
+            </div>
+
+            {/* Mobile: Only cart icon visible + hamburger */}
             <button
               onClick={openCart}
-              className="relative p-2 hover:bg-secondary rounded-full transition-colors"
+              className="md:hidden relative p-2 hover:bg-secondary rounded-full transition-colors"
               aria-label="Open cart"
             >
               <ShoppingBag className="w-5 h-5 text-foreground" />
@@ -77,14 +102,6 @@ export const Header = () => {
                 </span>
               )}
             </button>
-
-            <Link
-              to="/account"
-              className="p-2 hover:bg-secondary rounded-full transition-colors"
-              aria-label="Account"
-            >
-              <User className="w-5 h-5 text-foreground" />
-            </Link>
 
             {/* Mobile Menu Toggle */}
             <button
@@ -122,6 +139,51 @@ export const Header = () => {
                   {link.name}
                 </Link>
               ))}
+
+              {/* Divider */}
+              <div className="my-3 border-t border-border" />
+
+              {/* Mobile utility links */}
+              <Link
+                to="/wishlist"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  'flex items-center gap-3 py-3 px-4 text-sm uppercase tracking-wider rounded-lg transition-all duration-300',
+                  'transform hover:translate-x-2',
+                  location.pathname === '/wishlist'
+                    ? 'bg-primary text-primary-foreground font-semibold'
+                    : 'hover:bg-secondary/80'
+                )}
+              >
+                <Heart className="w-5 h-5" />
+                <span>Wishlist</span>
+                {wishlistItems > 0 && (
+                  <span className="ml-auto w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center">
+                    {wishlistItems}
+                  </span>
+                )}
+              </Link>
+
+              <Link
+                to="/account"
+                onClick={() => setMobileMenuOpen(false)}
+                className={cn(
+                  'flex items-center gap-3 py-3 px-4 text-sm uppercase tracking-wider rounded-lg transition-all duration-300',
+                  'transform hover:translate-x-2',
+                  location.pathname === '/account'
+                    ? 'bg-primary text-primary-foreground font-semibold'
+                    : 'hover:bg-secondary/80'
+                )}
+              >
+                <User className="w-5 h-5" />
+                <span>Account</span>
+              </Link>
+
+              {/* Currency selector in mobile menu */}
+              <div className="flex items-center gap-3 py-3 px-4 text-sm uppercase tracking-wider">
+                <span className="text-muted-foreground">Currency:</span>
+                <CurrencySelector />
+              </div>
             </div>
           </nav>
         )}
