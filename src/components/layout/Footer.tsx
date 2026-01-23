@@ -109,8 +109,8 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-primary-foreground/20 mt-12 pt-6">
+        {/* Bottom Bar - extra padding on mobile for bottom nav */}
+        <div className="border-t border-primary-foreground/20 mt-12 pt-6 pb-20 md:pb-0">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-primary-foreground/60">
               © {new Date().getFullYear()} Rivervox. All rights reserved.
