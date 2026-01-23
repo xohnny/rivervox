@@ -1,66 +1,70 @@
-import { useState } from 'react';
-import { Search, Package, Truck, CheckCircle, Clock, MapPin } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Search, Package, Truck, CheckCircle, Clock, MapPin, Loader2, XCircle } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { Tables } from '@/integrations/supabase/types';
 
-interface TrackingResult {
-  orderId: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered';
-  items: { name: string; quantity: number }[];
-  estimatedDelivery: string;
-  shippingAddress: string;
-  timeline: {
-    status: string;
-    date: string;
-    completed: boolean;
-  }[];
+type Order = Tables<'orders'>;
+type OrderItem = Tables<'order_items'>;
+
+interface OrderWithItems extends Order {
+  order_items: OrderItem[];
 }
 
-// Mock tracking data
-const mockOrders: Record<string, TrackingResult> = {
-  'RV-001234': {
-    orderId: 'RV-001234',
-    status: 'shipped',
-    items: [
-      { name: 'Emerald Silk Thobe', quantity: 1 },
-      { name: 'Modest Hijab Premium', quantity: 2 },
-    ],
-    estimatedDelivery: 'January 25, 2024',
-    shippingAddress: 'Dubai, UAE',
-    timeline: [
-      { status: 'Order Placed', date: 'Jan 20, 2024', completed: true },
-      { status: 'Processing', date: 'Jan 21, 2024', completed: true },
-      { status: 'Shipped', date: 'Jan 22, 2024', completed: true },
-      { status: 'Delivered', date: 'Pending', completed: false },
-    ],
-  },
-};
+const statusSteps = ['pending', 'processing', 'shipped', 'delivered'];
 
 const Tracking = () => {
-  const [orderId, setOrderId] = useState('');
+  const [searchParams] = useSearchParams();
+  const [orderId, setOrderId] = useState(searchParams.get('orderId') || '');
   const [phone, setPhone] = useState('');
-  const [result, setResult] = useState<TrackingResult | null>(null);
+  const [order, setOrder] = useState<OrderWithItems | null>(null);
   const [error, setError] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Auto-search if orderId is in URL
+  useEffect(() => {
+    const orderIdFromUrl = searchParams.get('orderId');
+    if (orderIdFromUrl) {
+      setOrderId(orderIdFromUrl);
+      handleSearch(undefined, orderIdFromUrl);
+    }
+  }, [searchParams]);
+
+  const handleSearch = async (e?: React.FormEvent, searchOrderId?: string) => {
+    if (e) e.preventDefault();
+    const searchId = searchOrderId || orderId;
+    
+    if (!searchId) return;
+    
     setError('');
     setIsSearching(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      const order = mockOrders[orderId.toUpperCase()];
-      if (order) {
-        setResult(order);
+    try {
+      const { data, error: searchError } = await supabase
+        .from('orders')
+        .select('*, order_items(*)')
+        .eq('order_number', searchId.toUpperCase())
+        .maybeSingle();
+
+      if (searchError) throw searchError;
+
+      if (data) {
+        setOrder(data as OrderWithItems);
       } else {
         setError('Order not found. Please check your order ID and try again.');
-        setResult(null);
+        setOrder(null);
       }
+    } catch (err) {
+      console.error('Search error:', err);
+      setError('An error occurred. Please try again.');
+      setOrder(null);
+    } finally {
       setIsSearching(false);
-    }, 1000);
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -73,12 +77,16 @@ const Tracking = () => {
         return Truck;
       case 'delivered':
         return CheckCircle;
+      case 'cancelled':
+        return XCircle;
       default:
         return Package;
     }
   };
 
-  const StatusIcon = result ? getStatusIcon(result.status) : Package;
+  const getStatusIndex = (status: string) => statusSteps.indexOf(status);
+
+  const StatusIcon = order ? getStatusIcon(order.status) : Package;
 
   return (
     <Layout>
@@ -104,20 +112,19 @@ const Tracking = () => {
             <div>
               <label className="block text-sm font-medium mb-2">Order ID</label>
               <Input
-                placeholder="e.g., RV-001234"
+                placeholder="e.g., RV-20260123-0001"
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Phone Number</label>
+              <label className="block text-sm font-medium mb-2">Phone Number (Optional)</label>
               <Input
                 type="tel"
                 placeholder="Your phone number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                required
               />
             </div>
           </div>
@@ -127,7 +134,10 @@ const Tracking = () => {
             disabled={isSearching}
           >
             {isSearching ? (
-              <span className="animate-pulse">Searching...</span>
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Searching...
+              </>
             ) : (
               <>
                 <Search className="w-4 h-4 mr-2" />
@@ -139,25 +149,27 @@ const Tracking = () => {
           {error && (
             <p className="text-destructive text-sm text-center mt-4">{error}</p>
           )}
-
-          <p className="text-xs text-muted-foreground text-center mt-4">
-            Try: RV-001234 for demo
-          </p>
         </form>
 
         {/* Results */}
-        {result && (
-          <div className="animate-fade-up space-y-6">
+        {order && (
+          <div className="animate-fade-in space-y-6">
             {/* Status Card */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-premium">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                  <StatusIcon className="w-8 h-8 text-primary" />
+                <div className={cn(
+                  'w-16 h-16 rounded-full flex items-center justify-center',
+                  order.status === 'cancelled' ? 'bg-destructive/10' : 'bg-primary/10'
+                )}>
+                  <StatusIcon className={cn(
+                    'w-8 h-8',
+                    order.status === 'cancelled' ? 'text-destructive' : 'text-primary'
+                  )} />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Order #{result.orderId}</p>
+                  <p className="text-sm text-muted-foreground">Order #{order.order_number}</p>
                   <p className="text-2xl font-display font-bold capitalize">
-                    {result.status}
+                    {order.status}
                   </p>
                 </div>
               </div>
@@ -167,73 +179,118 @@ const Tracking = () => {
                   <MapPin className="w-4 h-4 text-primary mt-0.5" />
                   <div>
                     <p className="text-muted-foreground">Shipping to</p>
-                    <p className="font-medium">{result.shippingAddress}</p>
+                    <p className="font-medium">{order.shipping_city}, {order.shipping_country}</p>
+                    <p className="text-xs text-muted-foreground">{order.shipping_address}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 p-3 bg-secondary/50 rounded-lg">
-                  <Truck className="w-4 h-4 text-primary mt-0.5" />
+                  <Package className="w-4 h-4 text-primary mt-0.5" />
                   <div>
-                    <p className="text-muted-foreground">Estimated Delivery</p>
-                    <p className="font-medium">{result.estimatedDelivery}</p>
+                    <p className="text-muted-foreground">Order Total</p>
+                    <p className="font-medium">AED {Number(order.total).toFixed(2)}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Timeline */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-premium">
-              <h3 className="font-display font-semibold text-lg mb-6">Order Timeline</h3>
-              <div className="space-y-4">
-                {result.timeline.map((item, index) => (
-                  <div key={item.status} className="flex items-start gap-4">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={cn(
-                          'w-8 h-8 rounded-full flex items-center justify-center',
-                          item.completed
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground'
-                        )}
-                      >
-                        {item.completed ? (
-                          <CheckCircle className="w-4 h-4" />
-                        ) : (
-                          <Clock className="w-4 h-4" />
-                        )}
-                      </div>
-                      {index < result.timeline.length - 1 && (
-                        <div
-                          className={cn(
-                            'w-0.5 h-8 mt-1',
-                            item.completed ? 'bg-primary' : 'bg-muted'
+            {order.status !== 'cancelled' && (
+              <div className="bg-card border border-border rounded-xl p-6 shadow-premium">
+                <h3 className="font-display font-semibold text-lg mb-6">Order Progress</h3>
+                <div className="space-y-4">
+                  {statusSteps.map((step, index) => {
+                    const isCompleted = getStatusIndex(order.status) >= index;
+                    const isCurrent = order.status === step;
+                    return (
+                      <div key={step} className="flex items-start gap-4">
+                        <div className="flex flex-col items-center">
+                          <div
+                            className={cn(
+                              'w-8 h-8 rounded-full flex items-center justify-center',
+                              isCompleted
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted text-muted-foreground'
+                            )}
+                          >
+                            {isCompleted ? (
+                              <CheckCircle className="w-4 h-4" />
+                            ) : (
+                              <Clock className="w-4 h-4" />
+                            )}
+                          </div>
+                          {index < statusSteps.length - 1 && (
+                            <div
+                              className={cn(
+                                'w-0.5 h-8 mt-1',
+                                isCompleted ? 'bg-primary' : 'bg-muted'
+                              )}
+                            />
                           )}
-                        />
-                      )}
-                    </div>
-                    <div className="pt-1">
-                      <p className={cn('font-medium', !item.completed && 'text-muted-foreground')}>
-                        {item.status}
-                      </p>
-                      <p className="text-sm text-muted-foreground">{item.date}</p>
-                    </div>
-                  </div>
-                ))}
+                        </div>
+                        <div className="pt-1">
+                          <p className={cn(
+                            'font-medium capitalize',
+                            !isCompleted && 'text-muted-foreground'
+                          )}>
+                            {step}
+                          </p>
+                          {isCurrent && (
+                            <p className="text-sm text-muted-foreground">Current status</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Order Items */}
             <div className="bg-card border border-border rounded-xl p-6 shadow-premium">
               <h3 className="font-display font-semibold text-lg mb-4">Order Items</h3>
-              <div className="space-y-3">
-                {result.items.map((item) => (
+              <div className="space-y-4">
+                {order.order_items.map((item) => (
                   <div
-                    key={item.name}
-                    className="flex items-center justify-between py-2 border-b border-border last:border-0"
+                    key={item.id}
+                    className="flex items-center gap-4 py-3 border-b border-border last:border-0"
                   >
-                    <span>{item.name}</span>
-                    <span className="text-muted-foreground">x{item.quantity}</span>
+                    {item.product_image && (
+                      <div className="w-16 h-20 bg-muted rounded-md overflow-hidden flex-shrink-0">
+                        <img
+                          src={item.product_image}
+                          alt={item.product_name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <p className="font-medium">{item.product_name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {item.selected_size} / {item.selected_color_name}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                    </div>
+                    <p className="font-semibold">
+                      AED {(Number(item.unit_price) * item.quantity).toFixed(2)}
+                    </p>
                   </div>
                 ))}
+              </div>
+              <div className="border-t border-border mt-4 pt-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>AED {Number(order.subtotal).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Shipping</span>
+                  <span>
+                    {Number(order.shipping_cost) === 0 ? 'Free' : `AED ${Number(order.shipping_cost).toFixed(2)}`}
+                  </span>
+                </div>
+                <div className="flex justify-between font-bold pt-2 border-t border-border">
+                  <span>Total</span>
+                  <span className="text-primary">AED {Number(order.total).toFixed(2)}</span>
+                </div>
               </div>
             </div>
           </div>
