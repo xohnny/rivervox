@@ -3,6 +3,13 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Import testimonial avatars
+import fatimaAhmed from '@/assets/testimonials/fatima-ahmed.jpg';
+import aishaRahman from '@/assets/testimonials/aisha-rahman.jpg';
+import omarHassan from '@/assets/testimonials/omar-hassan.jpg';
+import mariamKhan from '@/assets/testimonials/mariam-khan.jpg';
+import yusufIbrahim from '@/assets/testimonials/yusuf-ibrahim.jpg';
+
 const testimonials = [
   {
     id: 1,
@@ -10,7 +17,7 @@ const testimonials = [
     location: 'Dubai, UAE',
     rating: 5,
     text: 'The quality of the thobes is exceptional. My husband was so impressed with the fabric and stitching. Will definitely be ordering again!',
-    avatar: 'FA',
+    avatar: fatimaAhmed,
   },
   {
     id: 2,
@@ -18,7 +25,7 @@ const testimonials = [
     location: 'London, UK',
     rating: 5,
     text: 'Finally found a store that understands modest fashion without compromising on style. The abayas are absolutely stunning and perfect for any occasion.',
-    avatar: 'AR',
+    avatar: aishaRahman,
   },
   {
     id: 3,
@@ -26,7 +33,7 @@ const testimonials = [
     location: 'New York, USA',
     rating: 5,
     text: 'Fast shipping and excellent customer service. The kurta I ordered fits perfectly and the material is breathable even in summer.',
-    avatar: 'OH',
+    avatar: omarHassan,
   },
   {
     id: 4,
@@ -34,7 +41,7 @@ const testimonials = [
     location: 'Toronto, Canada',
     rating: 5,
     text: 'I ordered matching outfits for my kids and they love them! The colors are vibrant and the fabric is comfortable for all-day wear.',
-    avatar: 'MK',
+    avatar: mariamKhan,
   },
   {
     id: 5,
@@ -42,7 +49,7 @@ const testimonials = [
     location: 'Dhaka, Bangladesh',
     rating: 5,
     text: 'Best quality Islamic wear I have found online. The attention to detail and craftsmanship is remarkable. Highly recommend!',
-    avatar: 'YI',
+    avatar: yusufIbrahim,
   },
 ];
 
@@ -135,9 +142,11 @@ export const Testimonials = () => {
 
                     {/* Author */}
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
-                        {testimonial.avatar}
-                      </div>
+                      <img 
+                        src={testimonial.avatar} 
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
                       <div>
                         <p className="font-semibold text-foreground">
                           {testimonial.name}
