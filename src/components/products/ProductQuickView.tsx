@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ShoppingBag, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -18,6 +19,7 @@ interface ProductQuickViewProps {
 
 export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickViewProps) => {
   const { addToCart } = useCart();
+  const { formatPrice } = useCurrency();
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0]);
   const [selectedColor, setSelectedColor] = useState<ProductColor>(product.colors[0]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -118,10 +120,10 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
 
             {/* Price */}
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-2xl font-bold text-primary">${product.price}</span>
+              <span className="text-2xl font-bold text-primary">{formatPrice(product.price)}</span>
               {product.originalPrice && (
                 <span className="text-lg text-muted-foreground line-through">
-                  ${product.originalPrice}
+                  {formatPrice(product.originalPrice)}
                 </span>
               )}
             </div>
@@ -232,7 +234,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
               ) : (
                 <>
                   <ShoppingBag className="w-5 h-5" />
-                  Add to Cart - ${(product.price * quantity).toFixed(2)}
+                  Add to Cart - {formatPrice(product.price * quantity)}
                 </>
               )}
             </button>

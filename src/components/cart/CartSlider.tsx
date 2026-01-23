@@ -1,10 +1,12 @@
 import { X, Plus, Minus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 export const CartSlider = () => {
   const { items, isOpen, closeCart, removeFromCart, updateQuantity, totalPrice } = useCart();
+  const { formatPrice } = useCurrency();
 
   if (!isOpen) return null;
 
@@ -124,7 +126,7 @@ export const CartSlider = () => {
 
                         <div className="flex items-center gap-3">
                           <span className="font-semibold text-primary">
-                            ${(item.product.price * item.quantity).toFixed(2)}
+                            {formatPrice(item.product.price * item.quantity)}
                           </span>
                           <button
                             onClick={() =>
@@ -154,7 +156,7 @@ export const CartSlider = () => {
               {/* Subtotal */}
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-semibold">${totalPrice.toFixed(2)}</span>
+                <span className="font-semibold">{formatPrice(totalPrice)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Shipping</span>
@@ -162,7 +164,7 @@ export const CartSlider = () => {
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-border">
                 <span className="font-semibold">Total</span>
-                <span className="text-xl font-bold text-primary">${totalPrice.toFixed(2)}</span>
+                <span className="text-xl font-bold text-primary">{formatPrice(totalPrice)}</span>
               </div>
 
               {/* Checkout Button */}

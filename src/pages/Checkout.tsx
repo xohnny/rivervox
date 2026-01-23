@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,6 +27,7 @@ const Checkout = () => {
   const { toast } = useToast();
   const { items, totalPrice, clearCart } = useCart();
   const { user } = useAuth();
+  const { formatPrice } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
@@ -259,7 +261,7 @@ const Checkout = () => {
                       Processing Order...
                     </>
                   ) : (
-                    <>Place Order - ${grandTotal.toFixed(2)}</>
+                    <>Place Order - {formatPrice(grandTotal)}</>
                   )}
                 </Button>
               </form>
@@ -297,7 +299,7 @@ const Checkout = () => {
                     </div>
                     <div className="text-right">
                       <p className="font-semibold">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        {formatPrice(item.product.price * item.quantity)}
                       </p>
                     </div>
                   </div>
@@ -308,7 +310,7 @@ const Checkout = () => {
               <div className="border-t border-border pt-4 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>{formatPrice(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
@@ -316,20 +318,20 @@ const Checkout = () => {
                     {shippingCost === 0 ? (
                       <span className="text-primary">Free</span>
                     ) : (
-                      `$${shippingCost.toFixed(2)}`
+                      formatPrice(shippingCost)
                     )}
                   </span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
                   <span>Total</span>
-                  <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                  <span className="text-primary">{formatPrice(grandTotal)}</span>
                 </div>
               </div>
 
               {/* Free Shipping Notice */}
               {shippingCost > 0 && (
                 <p className="text-xs text-muted-foreground text-center mt-4">
-                  Add ${(100 - totalPrice).toFixed(2)} more for free shipping!
+                  Add {formatPrice(100 - totalPrice)} more for free shipping!
                 </p>
               )}
             </div>

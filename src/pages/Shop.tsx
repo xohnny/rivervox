@@ -4,6 +4,7 @@ import { Filter, Grid, LayoutGrid, X, ChevronDown, SlidersHorizontal } from 'luc
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/products/ProductCard';
 import { products } from '@/data/products';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import {
@@ -38,6 +39,7 @@ const maxProductPrice = Math.ceil(Math.max(...allPrices));
 
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { formatPrice } = useCurrency();
   const categoryParam = searchParams.get('category') || 'all';
   const [activeCategory, setActiveCategory] = useState(categoryParam);
   const [gridCols, setGridCols] = useState<3 | 4>(4);
@@ -235,11 +237,11 @@ const Shop = () => {
             </div>
             <div className="flex items-center gap-2 text-sm">
               <span className="px-3 py-1.5 bg-secondary rounded-md font-medium min-w-[80px] text-center">
-                ${priceRange[0]}
+                {formatPrice(priceRange[0])}
               </span>
               <span className="text-muted-foreground">–</span>
               <span className="px-3 py-1.5 bg-secondary rounded-md font-medium min-w-[80px] text-center">
-                ${priceRange[1]}
+                {formatPrice(priceRange[1])}
               </span>
             </div>
             {hasActiveFilters && (
@@ -302,11 +304,11 @@ const Shop = () => {
                 />
                 <div className="flex items-center justify-between text-sm">
                   <span className="px-3 py-1.5 bg-secondary rounded-md font-medium">
-                    ${priceRange[0]}
+                    {formatPrice(priceRange[0])}
                   </span>
                   <span className="text-muted-foreground">–</span>
                   <span className="px-3 py-1.5 bg-secondary rounded-md font-medium">
-                    ${priceRange[1]}
+                    {formatPrice(priceRange[1])}
                   </span>
                 </div>
               </div>
@@ -366,7 +368,7 @@ const Shop = () => {
             )}
             {(priceRange[0] !== minProductPrice || priceRange[1] !== maxProductPrice) && (
               <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                ${priceRange[0]} – ${priceRange[1]}
+                {formatPrice(priceRange[0])} – {formatPrice(priceRange[1])}
                 <button onClick={() => setPriceRange([minProductPrice, maxProductPrice])}>
                   <X className="w-3 h-3" />
                 </button>

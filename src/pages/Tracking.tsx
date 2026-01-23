@@ -5,6 +5,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
+import { useCurrency } from '@/context/CurrencyContext';
 import { cn } from '@/lib/utils';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -23,6 +24,7 @@ const Tracking = () => {
   const [phone, setPhone] = useState('');
   const [order, setOrder] = useState<OrderWithItems | null>(null);
   const [error, setError] = useState('');
+  const { formatPrice } = useCurrency();
   const [isSearching, setIsSearching] = useState(false);
 
   // Auto-search if orderId is in URL
@@ -187,7 +189,7 @@ const Tracking = () => {
                   <Package className="w-4 h-4 text-primary mt-0.5" />
                   <div>
                     <p className="text-muted-foreground">Order Total</p>
-                    <p className="font-medium">${Number(order.total).toFixed(2)}</p>
+                    <p className="font-medium">{formatPrice(Number(order.total))}</p>
                   </div>
                 </div>
               </div>
@@ -271,7 +273,7 @@ const Tracking = () => {
                       <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
                     </div>
                     <p className="font-semibold">
-                      ${(Number(item.unit_price) * item.quantity).toFixed(2)}
+                      {formatPrice(Number(item.unit_price) * item.quantity)}
                     </p>
                   </div>
                 ))}
@@ -279,17 +281,17 @@ const Tracking = () => {
               <div className="border-t border-border mt-4 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>${Number(order.subtotal).toFixed(2)}</span>
+                  <span>{formatPrice(Number(order.subtotal))}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
                   <span>
-                    {Number(order.shipping_cost) === 0 ? 'Free' : `$${Number(order.shipping_cost).toFixed(2)}`}
+                    {Number(order.shipping_cost) === 0 ? 'Free' : formatPrice(Number(order.shipping_cost))}
                   </span>
                 </div>
                 <div className="flex justify-between font-bold pt-2 border-t border-border">
                   <span>Total</span>
-                  <span className="text-primary">${Number(order.total).toFixed(2)}</span>
+                  <span className="text-primary">{formatPrice(Number(order.total))}</span>
                 </div>
               </div>
             </div>
