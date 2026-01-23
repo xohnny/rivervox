@@ -37,6 +37,8 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
   const isPanning = useRef(false);
   const lastTapTime = useRef<number>(0);
   const doubleTapTimeout = useRef<NodeJS.Timeout | null>(null);
+  const isMouseDragging = useRef(false);
+  const lastMousePosition = useRef({ x: 0, y: 0 });
 
   // Reset zoom when closing fullscreen or changing image
   useEffect(() => {
@@ -128,6 +130,46 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
       }
     }
   }, [zoomLevel]);
+
+  // Mouse drag handlers for desktop
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (zoomLevel > 1) {
+      e.preventDefault();
+      isMouseDragging.current = true;
+      lastMousePosition.current = {
+        x: e.clientX - panPosition.x,
+        y: e.clientY - panPosition.y,
+      };
+    }
+  }, [zoomLevel, panPosition]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (isMouseDragging.current && zoomLevel > 1) {
+      e.preventDefault();
+      const newX = e.clientX - lastMousePosition.current.x;
+      const newY = e.clientY - lastMousePosition.current.y;
+      setPanPosition({ x: newX, y: newY });
+    }
+  }, [zoomLevel]);
+
+  const handleMouseUp = useCallback(() => {
+    isMouseDragging.current = false;
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    isMouseDragging.current = false;
+  }, []);
+
+  // Mouse wheel zoom for desktop
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.25 : 0.25;
+    setZoomLevel((prev) => {
+      const newZoom = Math.min(Math.max(prev + delta, 1), 4);
+      if (newZoom === 1) setPanPosition({ x: 0, y: 0 });
+      return newZoom;
+    });
+  }, []);
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
@@ -415,14 +457,25 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
 
           {/* Image Container */}
           <div 
-            className="overflow-hidden flex items-center justify-center w-full h-full"
+            className={cn(
+              "overflow-hidden flex items-center justify-center w-full h-full",
+              zoomLevel > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-default"
+            )}
             onClick={(e) => e.stopPropagation()}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onWheel={handleWheel}
           >
             <img
               ref={imageRef}
               src={product.images[currentImageIndex]}
               alt={product.name}
-              className="max-w-[95vw] max-h-[95vh] object-contain select-none transition-transform duration-100"
+              className={cn(
+                "max-w-[95vw] max-h-[95vh] object-contain select-none",
+                isMouseDragging.current ? "" : "transition-transform duration-100"
+              )}
               style={{
                 transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`,
               }}
