@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface PageTransitionProps {
@@ -7,31 +7,36 @@ interface PageTransitionProps {
 
 export const PageTransition = ({ children }: PageTransitionProps) => {
   const location = useLocation();
-  const [isVisible, setIsVisible] = useState(true);
-  const [displayChildren, setDisplayChildren] = useState(children);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentChildren, setCurrentChildren] = useState(children);
+  const prevPathname = useRef(location.pathname);
 
   useEffect(() => {
-    // Start fade out
-    setIsVisible(false);
-    
-    // After fade out, update content and fade in
-    const timeout = setTimeout(() => {
-      setDisplayChildren(children);
-      setIsVisible(true);
-    }, 150);
+    // Only animate if pathname actually changed
+    if (prevPathname.current !== location.pathname) {
+      setIsAnimating(true);
+      
+      // Short delay, then swap content and fade in
+      const timeout = setTimeout(() => {
+        setCurrentChildren(children);
+        setIsAnimating(false);
+      }, 120);
 
-    return () => clearTimeout(timeout);
+      prevPathname.current = location.pathname;
+      return () => clearTimeout(timeout);
+    } else {
+      // Same page, just update children without animation
+      setCurrentChildren(children);
+    }
   }, [location.pathname, children]);
 
   return (
     <div
-      className={`transition-all duration-300 ease-out ${
-        isVisible 
-          ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 translate-y-2'
+      className={`transition-opacity duration-200 ease-out ${
+        isAnimating ? 'opacity-0' : 'opacity-100'
       }`}
     >
-      {displayChildren}
+      {currentChildren}
     </div>
   );
 };
