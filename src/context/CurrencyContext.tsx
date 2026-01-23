@@ -1,10 +1,6 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-export type Currency = 'USD' | 'BDT';
+import { createContext, useContext, ReactNode } from 'react';
 
 interface CurrencyContextType {
-  currency: Currency;
-  setCurrency: (currency: Currency) => void;
   formatPrice: (priceInUSD: number) => string;
   convertPrice: (priceInUSD: number) => number;
 }
@@ -12,43 +8,20 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 // Exchange rate: 1 USD = ~110 BDT (approximate)
-const EXCHANGE_RATES: Record<Currency, number> = {
-  USD: 1,
-  BDT: 110,
-};
-
-const CURRENCY_SYMBOLS: Record<Currency, string> = {
-  USD: '$',
-  BDT: '৳',
-};
+const EXCHANGE_RATE = 110;
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-  const [currency, setCurrency] = useState<Currency>(() => {
-    const saved = localStorage.getItem('rivervox-currency');
-    return (saved as Currency) || 'USD';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('rivervox-currency', currency);
-  }, [currency]);
-
   const convertPrice = (priceInUSD: number): number => {
-    return priceInUSD * EXCHANGE_RATES[currency];
+    return priceInUSD * EXCHANGE_RATE;
   };
 
   const formatPrice = (priceInUSD: number): string => {
     const converted = convertPrice(priceInUSD);
-    const symbol = CURRENCY_SYMBOLS[currency];
-    
-    if (currency === 'BDT') {
-      return `${symbol}${converted.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
-    }
-    
-    return `${symbol}${converted.toFixed(2)}`;
+    return `৳${converted.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
   };
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency, formatPrice, convertPrice }}>
+    <CurrencyContext.Provider value={{ formatPrice, convertPrice }}>
       {children}
     </CurrencyContext.Provider>
   );
