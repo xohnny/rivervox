@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { User, Package, Heart, Settings, LogOut, Loader2 } from 'lucide-react';
+import { User, Package, Heart, Settings, LogOut, Loader2, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +9,12 @@ import { useAuth } from '@/context/AuthContext';
 import { OrderHistory } from '@/components/account/OrderHistory';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 type TabType = 'profile' | 'orders' | 'wishlist' | 'settings';
 
@@ -96,8 +102,55 @@ const Account = () => {
           <h1 className="text-3xl font-display font-bold mb-8">My Account</h1>
           
           <div className="grid md:grid-cols-4 gap-6">
-            {/* Sidebar */}
-            <div className="space-y-2">
+            {/* Mobile Dropdown */}
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    <span className="flex items-center gap-2">
+                      {tabs.find(t => t.id === activeTab)?.icon && (
+                        <span>{(() => {
+                          const Icon = tabs.find(t => t.id === activeTab)?.icon;
+                          return Icon ? <Icon className="w-4 h-4" /> : null;
+                        })()}</span>
+                      )}
+                      {tabs.find(t => t.id === activeTab)?.label}
+                    </span>
+                    <ChevronDown className="w-4 h-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[calc(100vw-2rem)] bg-card border border-border" align="start">
+                  {tabs.map((tab) => (
+                    <DropdownMenuItem
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={cn(
+                        'flex items-center gap-3 cursor-pointer',
+                        activeTab === tab.id && 'bg-primary text-primary-foreground'
+                      )}
+                    >
+                      <tab.icon className="w-4 h-4" />
+                      {tab.label}
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    disabled={signingOut}
+                    className="flex items-center gap-3 text-destructive cursor-pointer"
+                  >
+                    {signingOut ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <LogOut className="w-4 h-4" />
+                    )}
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Desktop Sidebar */}
+            <div className="hidden md:block space-y-2">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
