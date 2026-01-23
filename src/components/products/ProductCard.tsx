@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Check, Eye, Heart } from 'lucide-react';
+import { ShoppingBag, Eye, Heart } from 'lucide-react';
 import { Product } from '@/types';
-import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { cn } from '@/lib/utils';
@@ -13,18 +12,14 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { formatPrice } = useCurrency();
-  const [isAdded, setIsAdded] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const inWishlist = isInWishlist(product.id);
 
-  const handleAddToCart = () => {
-    // Add with default size and color - user can customize in quick view
-    addToCart(product, product.sizes[0], product.colors[0]);
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 1500);
+  const handleAddToCartClick = () => {
+    // Open quick view to let user select color and size
+    setQuickViewOpen(true);
   };
 
   const discount = product.originalPrice
@@ -108,25 +103,17 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         {/* Spacer to push button to bottom */}
         <div className="flex-grow" />
 
-        {/* Add to Cart Button - Touch-friendly with larger tap area */}
+        {/* Add to Cart Button - Opens Quick View */}
         <button
-          onClick={handleAddToCart}
+          onClick={handleAddToCartClick}
           disabled={product.stock === 0}
           className={cn(
             'w-full py-2.5 md:py-3 rounded-md font-semibold text-xs md:text-sm flex items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 mt-auto active:scale-[0.98]',
-            isAdded
-              ? 'bg-emerald-medium text-primary-foreground'
-              : 'bg-primary text-primary-foreground hover:opacity-90',
+            'bg-primary text-primary-foreground hover:opacity-90',
             product.stock === 0 && 'opacity-50 cursor-not-allowed'
           )}
         >
-          {isAdded ? (
-            <>
-              <Check className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              <span className="hidden xs:inline">Added</span>
-              <span className="xs:hidden">✓</span>
-            </>
-          ) : product.stock === 0 ? (
+          {product.stock === 0 ? (
             'Out of Stock'
           ) : (
             <>

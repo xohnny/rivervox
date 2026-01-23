@@ -22,8 +22,8 @@ interface ProductQuickViewProps {
 export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickViewProps) => {
   const { addToCart } = useCart();
   const { formatPrice } = useCurrency();
-  const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0]);
-  const [selectedColor, setSelectedColor] = useState<ProductColor>(product.colors[0]);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<ProductColor | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAdded, setIsAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -171,12 +171,18 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
     });
   }, []);
 
+  const canAddToCart = selectedSize && selectedColor && product.stock > 0;
+
   const handleAddToCart = () => {
+    if (!selectedSize || !selectedColor) return;
     for (let i = 0; i < quantity; i++) {
       addToCart(product, selectedSize, selectedColor);
     }
     setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 1500);
+    setTimeout(() => {
+      setIsAdded(false);
+      onOpenChange(false); // Close modal after adding
+    }, 1000);
   };
 
   const discount = product.originalPrice
@@ -308,7 +314,8 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
             {/* Color Selector */}
             <div className="mb-4 md:mb-5">
               <label className="text-sm font-medium mb-2 block">
-                Color: <span className="text-muted-foreground">{selectedColor.name}</span>
+                Color: <span className="text-muted-foreground">{selectedColor?.name || 'Select a color'}</span>
+                {!selectedColor && <span className="text-destructive ml-1">*</span>}
               </label>
               <div className="flex gap-2">
                 {product.colors.map((color) => (
@@ -317,7 +324,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
                     onClick={() => setSelectedColor(color)}
                     className={cn(
                       'w-8 h-8 md:w-9 md:h-9 rounded-full border-2 transition-all',
-                      selectedColor.name === color.name
+                      selectedColor?.name === color.name
                         ? 'border-primary scale-110'
                         : 'border-transparent hover:scale-105'
                     )}
@@ -331,7 +338,10 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
 
             {/* Size Selector */}
             <div className="mb-4 md:mb-5">
-              <label className="text-sm font-medium mb-2 block">Size</label>
+              <label className="text-sm font-medium mb-2 block">
+                Size: <span className="text-muted-foreground">{selectedSize || 'Select a size'}</span>
+                {!selectedSize && <span className="text-destructive ml-1">*</span>}
+              </label>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((size) => (
                   <button
@@ -373,13 +383,14 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
             {/* Add to Cart Button */}
             <button
               onClick={handleAddToCart}
-              disabled={product.stock === 0}
+              disabled={!canAddToCart}
               className={cn(
                 'w-full py-3 md:py-4 rounded-md font-semibold text-sm md:text-base flex items-center justify-center gap-2 transition-all duration-300 mt-auto',
                 isAdded
                   ? 'bg-emerald-medium text-primary-foreground'
-                  : 'bg-primary text-primary-foreground hover:opacity-90',
-                product.stock === 0 && 'opacity-50 cursor-not-allowed'
+                  : canAddToCart
+                    ? 'bg-primary text-primary-foreground hover:opacity-90'
+                    : 'bg-muted text-muted-foreground cursor-not-allowed'
               )}
             >
               {isAdded ? (
@@ -389,6 +400,8 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
                 </>
               ) : product.stock === 0 ? (
                 'Out of Stock'
+              ) : !selectedColor || !selectedSize ? (
+                'Select Color & Size'
               ) : (
                 <>
                   <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
