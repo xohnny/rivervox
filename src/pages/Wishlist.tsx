@@ -3,11 +3,13 @@ import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
 
 const Wishlist = () => {
   const { items, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const { formatPrice } = useCurrency();
 
   const handleAddToCart = (product: typeof items[0]) => {
     addToCart(product, product.sizes[0], product.colors[0]);
@@ -73,10 +75,10 @@ const Wishlist = () => {
                   </h3>
                 </Link>
                 <div className="flex items-center gap-2 mt-1 mb-4">
-                  <span className="text-lg font-bold text-primary">${product.price}</span>
+                  <span className="text-lg font-bold text-primary">{formatPrice(product.price)}</span>
                   {product.originalPrice && (
                     <span className="text-sm text-muted-foreground line-through">
-                      ${product.originalPrice}
+                      {formatPrice(product.originalPrice)}
                     </span>
                   )}
                 </div>

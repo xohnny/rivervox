@@ -4,6 +4,7 @@ import { ShoppingBag, Check, Eye, Heart } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { cn } from '@/lib/utils';
 import { ProductQuickView } from './ProductQuickView';
 
@@ -14,6 +15,7 @@ interface ProductCardProps {
 export const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { formatPrice } = useCurrency();
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0]);
   const [selectedColor, setSelectedColor] = useState<ProductColor>(product.colors[0]);
   const [isAdded, setIsAdded] = useState(false);
@@ -91,10 +93,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </h3>
           </Link>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-lg font-bold text-primary">${product.price}</span>
+            <span className="text-lg font-bold text-primary">{formatPrice(product.price)}</span>
             {product.originalPrice && (
               <span className="text-sm text-muted-foreground line-through">
-                ${product.originalPrice}
+                {formatPrice(product.originalPrice)}
               </span>
             )}
           </div>

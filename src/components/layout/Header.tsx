@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, User, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { CurrencySelector } from './CurrencySelector';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -46,7 +47,8 @@ export const Header = () => {
           </nav>
 
           {/* Right Icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
+            <CurrencySelector />
             <Link
               to="/wishlist"
               className="relative p-2 hover:bg-secondary rounded-full transition-colors"
