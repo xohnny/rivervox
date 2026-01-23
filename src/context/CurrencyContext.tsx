@@ -1,27 +1,18 @@
 import { createContext, useContext, ReactNode } from 'react';
 
 interface CurrencyContextType {
-  formatPrice: (priceInUSD: number) => string;
-  convertPrice: (priceInUSD: number) => number;
+  formatPrice: (price: number) => string;
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
-// Exchange rate: 1 USD = ~110 BDT (approximate)
-const EXCHANGE_RATE = 110;
-
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
-  const convertPrice = (priceInUSD: number): number => {
-    return priceInUSD * EXCHANGE_RATE;
-  };
-
-  const formatPrice = (priceInUSD: number): string => {
-    const converted = convertPrice(priceInUSD);
-    return `৳${converted.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
+  const formatPrice = (price: number): string => {
+    return `৳${price.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
   };
 
   return (
-    <CurrencyContext.Provider value={{ formatPrice, convertPrice }}>
+    <CurrencyContext.Provider value={{ formatPrice }}>
       {children}
     </CurrencyContext.Provider>
   );
