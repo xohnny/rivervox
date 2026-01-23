@@ -40,7 +40,7 @@ export const Header = () => {
                 key={link.path}
                 to={link.path}
                 className={cn(
-                  'nav-link text-sm uppercase tracking-wider',
+                  'nav-link text-sm uppercase tracking-wider font-sans',
                   location.pathname === link.path && 'text-primary font-semibold'
                 )}
               >
