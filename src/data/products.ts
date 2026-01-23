@@ -1,4 +1,12 @@
 import { Product } from '@/types';
+import thobeEmerald from '@/assets/products/thobe-emerald.jpg';
+import abayaGreen from '@/assets/products/abaya-green.jpg';
+import kurtaCream from '@/assets/products/kurta-cream.jpg';
+import hijabEmerald from '@/assets/products/hijab-emerald.jpg';
+import thobeKids from '@/assets/products/thobe-kids.jpg';
+import prayerBeads from '@/assets/products/prayer-beads.jpg';
+import dressKids from '@/assets/products/dress-kids.jpg';
+import bishtBlack from '@/assets/products/bisht-black.jpg';
 
 export const sampleProducts: Product[] = [
   {
@@ -14,7 +22,7 @@ export const sampleProducts: Product[] = [
       { name: 'White', hex: '#FAFAFA' },
       { name: 'Black', hex: '#1A1A1A' },
     ],
-    images: ['/placeholder.svg'],
+    images: [thobeEmerald],
     stock: 25,
     featured: true,
     createdAt: new Date(),
@@ -32,7 +40,7 @@ export const sampleProducts: Product[] = [
       { name: 'Navy', hex: '#1E3A5F' },
       { name: 'Burgundy', hex: '#722F37' },
     ],
-    images: ['/placeholder.svg'],
+    images: [abayaGreen],
     stock: 30,
     featured: true,
     createdAt: new Date(),
@@ -49,7 +57,7 @@ export const sampleProducts: Product[] = [
       { name: 'Sky Blue', hex: '#87CEEB' },
       { name: 'Sage', hex: '#9CAF88' },
     ],
-    images: ['/placeholder.svg'],
+    images: [kurtaCream],
     stock: 40,
     featured: true,
     createdAt: new Date(),
@@ -68,7 +76,7 @@ export const sampleProducts: Product[] = [
       { name: 'Pearl', hex: '#F0EAD6' },
       { name: 'Midnight', hex: '#191970' },
     ],
-    images: ['/placeholder.svg'],
+    images: [hijabEmerald],
     stock: 100,
     featured: true,
     createdAt: new Date(),
@@ -85,7 +93,7 @@ export const sampleProducts: Product[] = [
       { name: 'Beige', hex: '#F5F5DC' },
       { name: 'Light Green', hex: '#90EE90' },
     ],
-    images: ['/placeholder.svg'],
+    images: [thobeKids],
     stock: 35,
     featured: true,
     createdAt: new Date(),
@@ -103,7 +111,7 @@ export const sampleProducts: Product[] = [
       { name: 'Pearl', hex: '#F0EAD6' },
       { name: 'Onyx', hex: '#353935' },
     ],
-    images: ['/placeholder.svg'],
+    images: [prayerBeads],
     stock: 50,
     featured: true,
     createdAt: new Date(),
@@ -120,9 +128,9 @@ export const sampleProducts: Product[] = [
       { name: 'Lavender', hex: '#E6E6FA' },
       { name: 'Blush', hex: '#FFB6C1' },
     ],
-    images: ['/placeholder.svg'],
+    images: [dressKids],
     stock: 25,
-    featured: false,
+    featured: true,
     createdAt: new Date(),
   },
   {
@@ -138,7 +146,7 @@ export const sampleProducts: Product[] = [
       { name: 'Brown', hex: '#8B4513' },
       { name: 'Navy', hex: '#1E3A5F' },
     ],
-    images: ['/placeholder.svg'],
+    images: [bishtBlack],
     stock: 15,
     featured: true,
     createdAt: new Date(),

@@ -25,9 +25,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     : 0;
 
   return (
-    <div className="card-premium group">
-      {/* Image Container */}
-      <div className="relative aspect-[3/4] bg-muted overflow-hidden">
+    <div className="card-premium group h-full flex flex-col">
+      {/* Image Container - Fixed aspect ratio for consistency */}
+      <div className="relative aspect-[3/4] bg-muted overflow-hidden flex-shrink-0">
         <img
           src={product.images[0]}
           alt={product.name}
@@ -52,11 +52,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-3">
-        {/* Title & Price */}
-        <div>
-          <h3 className="font-display font-semibold text-lg leading-tight">{product.name}</h3>
+      {/* Content - Flex grow to fill remaining space */}
+      <div className="p-4 flex flex-col flex-grow">
+        {/* Title & Price - Fixed height */}
+        <div className="mb-3">
+          <h3 className="font-display font-semibold text-base leading-tight line-clamp-2 min-h-[2.5rem]">
+            {product.name}
+          </h3>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-lg font-bold text-primary">${product.price}</span>
             {product.originalPrice && (
@@ -68,10 +70,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Color Selector */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mb-3">
           <span className="text-xs text-muted-foreground">Color:</span>
           <div className="flex gap-1.5">
-            {product.colors.map((color) => (
+            {product.colors.slice(0, 4).map((color) => (
               <button
                 key={color.name}
                 onClick={() => setSelectedColor(color)}
@@ -84,9 +86,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
 
-        {/* Size Selector */}
-        <div className="flex flex-wrap gap-1.5">
-          {product.sizes.map((size) => (
+        {/* Size Selector - Fixed height container */}
+        <div className="flex flex-wrap gap-1.5 mb-4 min-h-[2.75rem]">
+          {product.sizes.slice(0, 5).map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
@@ -95,16 +97,24 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               {size}
             </button>
           ))}
+          {product.sizes.length > 5 && (
+            <span className="size-btn text-xs bg-muted text-muted-foreground cursor-default">
+              +{product.sizes.length - 5}
+            </span>
+          )}
         </div>
 
-        {/* Add to Cart Button */}
+        {/* Spacer to push button to bottom */}
+        <div className="flex-grow" />
+
+        {/* Add to Cart Button - Always at bottom */}
         <button
           onClick={handleAddToCart}
           disabled={product.stock === 0}
           className={cn(
-            'w-full py-3 rounded-md font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300',
+            'w-full py-3 rounded-md font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-300 mt-auto',
             isAdded
-              ? 'bg-emerald-medium text-white'
+              ? 'bg-emerald-medium text-primary-foreground'
               : 'bg-primary text-primary-foreground hover:opacity-90',
             product.stock === 0 && 'opacity-50 cursor-not-allowed'
           )}
