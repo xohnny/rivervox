@@ -73,7 +73,7 @@ const Contact = () => {
                   </p>
                   <p className="text-muted-foreground text-sm mt-2">
                     <Phone className="w-4 h-4 inline mr-2" />
-                    +88 09638 579882
+                    <a href="tel:+8809638579882" className="hover:underline">+88 09638 579882</a>
                   </p>
                 </div>
               </div>
@@ -92,7 +92,7 @@ const Contact = () => {
                   </p>
                   <p className="text-muted-foreground text-sm mt-2">
                     <Phone className="w-4 h-4 inline mr-2" />
-                    +1 (781) 870-4028
+                    <a href="tel:+17818704028" className="hover:underline">+1 (781) 870-4028</a>
                   </p>
                 </div>
               </div>
