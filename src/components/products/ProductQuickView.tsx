@@ -56,12 +56,12 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl p-0 gap-0 overflow-hidden max-h-[90vh] md:max-h-[85vh]">
+      <DialogContent className="max-w-4xl p-0 gap-0 overflow-hidden max-h-[90vh] md:max-h-none">
         <DialogHeader className="sr-only">
           <DialogTitle>{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid md:grid-cols-2 max-h-[90vh] md:max-h-[85vh] overflow-y-auto md:overflow-hidden">
+        <div className="grid md:grid-cols-2 max-h-[90vh] md:max-h-none overflow-y-auto md:overflow-visible">
           {/* Image Gallery with swipe support */}
           <div 
             className="relative bg-muted aspect-[4/5] md:aspect-auto md:h-[500px] flex-shrink-0 touch-pan-y"
@@ -118,7 +118,7 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
           </div>
 
           {/* Product Details */}
-          <div className="p-4 md:p-8 flex flex-col md:overflow-y-auto md:max-h-[500px]">
+          <div className="p-4 md:p-8 flex flex-col">
             {/* Category */}
             <span className="text-xs uppercase tracking-wider text-muted-foreground mb-1 md:mb-2">
               {product.category}
