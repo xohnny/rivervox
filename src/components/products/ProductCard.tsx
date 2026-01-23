@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ShoppingBag, Check, Eye } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
@@ -64,9 +65,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       <div className="p-4 flex flex-col flex-grow">
         {/* Title & Price - Fixed height */}
         <div className="mb-3">
-          <h3 className="font-display font-semibold text-base leading-tight line-clamp-2 min-h-[2.5rem]">
-            {product.name}
-          </h3>
+          <Link to={`/product/${product.id}`} className="hover:text-primary transition-colors">
+            <h3 className="font-display font-semibold text-base leading-tight line-clamp-2 min-h-[2.5rem]">
+              {product.name}
+            </h3>
+          </Link>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-lg font-bold text-primary">${product.price}</span>
             {product.originalPrice && (

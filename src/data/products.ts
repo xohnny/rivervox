@@ -8,7 +8,7 @@ import prayerBeads from '@/assets/products/prayer-beads.jpg';
 import dressKids from '@/assets/products/dress-kids.jpg';
 import bishtBlack from '@/assets/products/bisht-black.jpg';
 
-export const sampleProducts: Product[] = [
+export const products: Product[] = [
   {
     id: '1',
     name: 'Emerald Silk Thobe',

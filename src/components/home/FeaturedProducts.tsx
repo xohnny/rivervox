@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { ProductCard } from '@/components/products/ProductCard';
-import { sampleProducts } from '@/data/products';
+import { products } from '@/data/products';
 
 export const FeaturedProducts = () => {
-  const featuredProducts = sampleProducts.filter((p) => p.featured).slice(0, 8);
+  const featuredProducts = products.filter((p) => p.featured).slice(0, 8);
 
   return (
     <section className="py-16 md:py-24">

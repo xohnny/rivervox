@@ -8,10 +8,13 @@ import { CartProvider } from "@/context/CartContext";
 // Pages
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
 import Tracking from "./pages/Tracking";
 import Contact from "./pages/Contact";
 import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import Account from "./pages/Account";
+import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 
 // Admin
@@ -36,10 +39,13 @@ const App = () => (
             {/* Customer Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/shop" element={<Shop />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/tracking" element={<Tracking />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/register" element={<Register />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLayout />}>
