@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ShoppingBag, CreditCard, Truck, Check, Loader2 } from 'lucide-react';
+import { ShoppingBag, CreditCard, Truck, Check, Loader2, Banknote, Globe } from 'lucide-react';
 import { z } from 'zod';
 
 const checkoutSchema = z.object({
@@ -29,6 +29,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const { formatPrice } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
     name: '',
@@ -312,14 +313,50 @@ const Checkout = () => {
                 <CreditCard className="w-5 h-5 text-primary" />
                 Payment Method
               </h2>
-              <div className="p-4 bg-secondary/50 rounded-lg border-2 border-primary flex items-center gap-3 mb-6">
-                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                  <Check className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <div>
-                  <p className="font-medium">Cash on Delivery</p>
-                  <p className="text-sm text-muted-foreground">Pay when you receive</p>
-                </div>
+              <div className="space-y-3 mb-6">
+                {/* Cash on Delivery */}
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('cod')}
+                  className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all ${
+                    paymentMethod === 'cod'
+                      ? 'bg-secondary/50 border-primary'
+                      : 'bg-card border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    paymentMethod === 'cod' ? 'bg-primary' : 'border-2 border-muted-foreground/30'
+                  }`}>
+                    {paymentMethod === 'cod' && <Check className="w-4 h-4 text-primary-foreground" />}
+                  </div>
+                  <Banknote className="w-5 h-5 text-primary" />
+                  <div className="text-left">
+                    <p className="font-medium">Cash on Delivery</p>
+                    <p className="text-sm text-muted-foreground">Pay when you receive</p>
+                  </div>
+                </button>
+
+                {/* Online Payment */}
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('online')}
+                  className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all ${
+                    paymentMethod === 'online'
+                      ? 'bg-secondary/50 border-primary'
+                      : 'bg-card border-border hover:border-primary/50'
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    paymentMethod === 'online' ? 'bg-primary' : 'border-2 border-muted-foreground/30'
+                  }`}>
+                    {paymentMethod === 'online' && <Check className="w-4 h-4 text-primary-foreground" />}
+                  </div>
+                  <Globe className="w-5 h-5 text-primary" />
+                  <div className="text-left">
+                    <p className="font-medium">Online Payment</p>
+                    <p className="text-sm text-muted-foreground">Pay securely online</p>
+                  </div>
+                </button>
               </div>
               <Button
                 type="submit"
