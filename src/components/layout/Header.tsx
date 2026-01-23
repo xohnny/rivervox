@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, User, Menu, X } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -13,6 +14,7 @@ const navLinks = [
 
 export const Header = () => {
   const { totalItems, openCart } = useCart();
+  const { totalItems: wishlistItems } = useWishlist();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -45,6 +47,19 @@ export const Header = () => {
 
           {/* Right Icons */}
           <div className="flex items-center gap-4">
+            <Link
+              to="/wishlist"
+              className="relative p-2 hover:bg-secondary rounded-full transition-colors"
+              aria-label="Wishlist"
+            >
+              <Heart className="w-5 h-5 text-foreground" />
+              {wishlistItems > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
+                  {wishlistItems}
+                </span>
+              )}
+            </Link>
+
             <button
               onClick={openCart}
               className="relative p-2 hover:bg-secondary rounded-full transition-colors"
