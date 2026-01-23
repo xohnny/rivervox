@@ -8,12 +8,14 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
+  Warehouse,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const sidebarLinks = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, end: true },
   { name: 'Products', path: '/admin/products', icon: Package },
+  { name: 'Inventory', path: '/admin/inventory', icon: Warehouse },
   { name: 'Orders', path: '/admin/orders', icon: ShoppingCart },
   { name: 'Customers', path: '/admin/customers', icon: Users },
   { name: 'Messages', path: '/admin/messages', icon: MessageSquare },

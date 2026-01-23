@@ -157,6 +157,60 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          category: string
+          colors: Json
+          created_at: string
+          description: string | null
+          featured: boolean
+          id: string
+          images: string[]
+          is_active: boolean
+          low_stock_threshold: number
+          name: string
+          original_price: number | null
+          price: number
+          sizes: string[]
+          stock: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          colors?: Json
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          images?: string[]
+          is_active?: boolean
+          low_stock_threshold?: number
+          name: string
+          original_price?: number | null
+          price: number
+          sizes?: string[]
+          stock?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          colors?: Json
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          images?: string[]
+          is_active?: boolean
+          low_stock_threshold?: number
+          name?: string
+          original_price?: number | null
+          price?: number
+          sizes?: string[]
+          stock?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -186,6 +240,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      stock_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          created_at: string
+          current_stock: number
+          id: string
+          is_acknowledged: boolean
+          product_id: string
+          threshold: number
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string
+          current_stock: number
+          id?: string
+          is_acknowledged?: boolean
+          product_id: string
+          threshold: number
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string
+          current_stock?: number
+          id?: string
+          is_acknowledged?: boolean
+          product_id?: string
+          threshold?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_alerts_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

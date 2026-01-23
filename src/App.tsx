@@ -29,6 +29,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminInventory from "./pages/admin/AdminInventory";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const App = () => (
                   <Route path="customers" element={<AdminCustomers />} />
                   <Route path="messages" element={<AdminMessages />} />
                   <Route path="settings" element={<AdminSettings />} />
+                  <Route path="inventory" element={<AdminInventory />} />
                 </Route>
 
                 {/* 404 */}
