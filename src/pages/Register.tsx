@@ -1,9 +1,58 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { UserPlus } from 'lucide-react';
+import { UserPlus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 const Register = () => {
+  const navigate = useNavigate();
+  const { signUp } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    agreeTerms: false,
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+
+    if (!formData.agreeTerms) {
+      toast.error('Please agree to the Terms of Service');
+      return;
+    }
+
+    setLoading(true);
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    const { error } = await signUp(formData.email, formData.password, fullName);
+
+    if (error) {
+      toast.error(error.message);
+      setLoading(false);
+    } else {
+      toast.success('Account created successfully!');
+      navigate('/');
+    }
+  };
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-16">
@@ -20,60 +69,89 @@ const Register = () => {
 
           {/* Register Form */}
           <div className="bg-card border border-border rounded-xl p-6 mb-6">
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">First Name</label>
-                  <input
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
                     type="text"
                     placeholder="First name"
-                    className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                    required
+                    className="mt-2"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Last Name</label>
-                  <input
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
                     type="text"
                     placeholder="Last name"
-                    className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                    required
+                    className="mt-2"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <input
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
                   type="email"
                   placeholder="Enter your email"
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                  className="mt-2"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Phone</label>
-                <input
+                <Label htmlFor="phone">Phone (Optional)</Label>
+                <Input
+                  id="phone"
                   type="tel"
                   placeholder="Enter your phone number"
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="mt-2"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Password</label>
-                <input
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
                   type="password"
                   placeholder="Create a password"
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                  className="mt-2"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Confirm Password</label>
-                <input
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
                   type="password"
                   placeholder="Confirm your password"
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  required
+                  className="mt-2"
                 />
               </div>
               <div className="flex items-start gap-2">
-                <input type="checkbox" className="rounded border-border mt-1" />
-                <span className="text-sm text-muted-foreground">
+                <input 
+                  type="checkbox" 
+                  id="agreeTerms"
+                  checked={formData.agreeTerms}
+                  onChange={(e) => setFormData({ ...formData, agreeTerms: e.target.checked })}
+                  className="rounded border-border mt-1" 
+                />
+                <label htmlFor="agreeTerms" className="text-sm text-muted-foreground">
                   I agree to the{' '}
                   <Link to="/terms" className="text-primary hover:underline">
                     Terms of Service
@@ -82,9 +160,18 @@ const Register = () => {
                   <Link to="/privacy" className="text-primary hover:underline">
                     Privacy Policy
                   </Link>
-                </span>
+                </label>
               </div>
-              <Button className="w-full h-12">Create Account</Button>
+              <Button type="submit" className="w-full h-12" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
+              </Button>
             </form>
           </div>
 
@@ -92,7 +179,7 @@ const Register = () => {
           <div className="text-center">
             <p className="text-muted-foreground">
               Already have an account?{' '}
-              <Link to="/account" className="text-primary font-medium hover:underline">
+              <Link to="/login" className="text-primary font-medium hover:underline">
                 Sign In
               </Link>
             </p>
