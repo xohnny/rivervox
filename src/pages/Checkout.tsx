@@ -233,22 +233,6 @@ const Checkout = () => {
                   />
                 </div>
 
-                {/* Payment Method */}
-                <div className="pt-4 border-t border-border">
-                  <h3 className="font-semibold mb-4 flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-primary" />
-                    Payment Method
-                  </h3>
-                  <div className="p-4 bg-secondary/50 rounded-lg border-2 border-primary flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="w-3 h-3 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Cash on Delivery</p>
-                      <p className="text-xs text-muted-foreground">Pay when you receive</p>
-                    </div>
-                  </div>
-                </div>
 
                 <Button
                   type="submit"
@@ -268,9 +252,10 @@ const Checkout = () => {
             </div>
           </div>
 
-          {/* Order Summary */}
-          <div className="order-1 lg:order-2">
-            <div className="bg-card border border-border rounded-xl p-6 shadow-premium sticky top-24">
+          {/* Order Summary & Payment Method */}
+          <div className="order-1 lg:order-2 space-y-6">
+            {/* Order Summary Card */}
+            <div className="bg-card border border-border rounded-xl p-6 shadow-premium">
               <h2 className="text-xl font-display font-bold mb-6 flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-primary" />
                 Order Summary
@@ -334,6 +319,23 @@ const Checkout = () => {
                   Add {formatPrice(100 - totalPrice)} more for free shipping!
                 </p>
               )}
+            </div>
+
+            {/* Payment Method Card */}
+            <div className="bg-card border border-border rounded-xl p-6 shadow-premium">
+              <h2 className="text-xl font-display font-bold mb-4 flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-primary" />
+                Payment Method
+              </h2>
+              <div className="p-4 bg-secondary/50 rounded-lg border-2 border-primary flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                  <Check className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <div>
+                  <p className="font-medium">Cash on Delivery</p>
+                  <p className="text-sm text-muted-foreground">Pay when you receive</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
