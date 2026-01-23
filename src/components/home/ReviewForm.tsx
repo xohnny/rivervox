@@ -5,8 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Star, Send, Camera, X, Loader2 } from 'lucide-react';
+import { Star, Send, Camera, X, Loader2, MessageSquarePlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface ReviewFormProps {
   onReviewSubmitted?: () => void;
@@ -15,6 +22,7 @@ interface ReviewFormProps {
 export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(5);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
@@ -30,7 +38,6 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
         title: 'Invalid file type',
@@ -40,7 +47,6 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
         title: 'File too large',
@@ -63,6 +69,14 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const resetForm = () => {
+    setRating(5);
+    setReviewText('');
+    setUserName('');
+    setUserLocation('');
+    removeImage();
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
@@ -129,7 +143,6 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
     setIsSubmitting(true);
 
     try {
-      // Upload image if selected
       let imageUrl: string | null = null;
       if (selectedImage) {
         imageUrl = await uploadImage(selectedImage);
@@ -151,13 +164,8 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
         description: 'Thank you for sharing your experience with us.',
       });
 
-      // Reset form
-      setRating(5);
-      setReviewText('');
-      setUserName('');
-      setUserLocation('');
-      removeImage();
-      
+      resetForm();
+      setIsOpen(false);
       onReviewSubmitted?.();
     } catch (error: any) {
       toast({
@@ -171,136 +179,165 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
   };
 
   return (
-    <div className="bg-card rounded-xl p-6 md:p-8 border border-border">
-      <h3 className="text-lg font-semibold mb-4">Share Your Experience</h3>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Star Rating */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Your Rating</label>
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setRating(star)}
-                onMouseEnter={() => setHoveredRating(star)}
-                onMouseLeave={() => setHoveredRating(0)}
-                className="p-1 transition-transform hover:scale-110"
-              >
-                <Star
-                  className={cn(
-                    'w-7 h-7 transition-colors',
-                    (hoveredRating || rating) >= star
-                      ? 'text-accent fill-accent'
-                      : 'text-muted-foreground'
-                  )}
-                />
-              </button>
-            ))}
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      {/* Compact Trigger Card */}
+      <DialogTrigger asChild>
+        <button className="bg-card rounded-xl p-6 border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer group text-left w-full max-w-sm mx-auto">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <MessageSquarePlus className="w-6 h-6 text-primary" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                Share Your Experience
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Help others by leaving a review
+              </p>
+            </div>
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star key={star} className="w-4 h-4 text-accent fill-accent" />
+              ))}
+            </div>
           </div>
-        </div>
+        </button>
+      </DialogTrigger>
 
-        {/* Name and Location */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Review Form Dialog */}
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl">Share Your Experience</DialogTitle>
+        </DialogHeader>
+        
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {/* Star Rating */}
           <div>
-            <label className="block text-sm font-medium mb-2">Your Name *</label>
-            <Input
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              placeholder="Enter your name"
-              maxLength={100}
+            <label className="block text-sm font-medium mb-2">Your Rating</label>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoveredRating(star)}
+                  onMouseLeave={() => setHoveredRating(0)}
+                  className="p-1 transition-transform hover:scale-110"
+                >
+                  <Star
+                    className={cn(
+                      'w-8 h-8 transition-colors',
+                      (hoveredRating || rating) >= star
+                        ? 'text-accent fill-accent'
+                        : 'text-muted-foreground'
+                    )}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Name and Location */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Your Name *</label>
+              <Input
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder="Enter your name"
+                maxLength={100}
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Location (optional)</label>
+              <Input
+                value={userLocation}
+                onChange={(e) => setUserLocation(e.target.value)}
+                placeholder="City, Country"
+                maxLength={100}
+              />
+            </div>
+          </div>
+
+          {/* Review Text */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Your Review *</label>
+            <Textarea
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              placeholder="Tell us about your experience with Rivervox..."
+              rows={4}
+              maxLength={500}
               required
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              {reviewText.length}/500 characters
+            </p>
           </div>
+
+          {/* Photo Upload */}
           <div>
-            <label className="block text-sm font-medium mb-2">Location (optional)</label>
-            <Input
-              value={userLocation}
-              onChange={(e) => setUserLocation(e.target.value)}
-              placeholder="City, Country"
-              maxLength={100}
+            <label className="block text-sm font-medium mb-2">Add a Photo (optional)</label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="hidden"
             />
-          </div>
-        </div>
-
-        {/* Review Text */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Your Review *</label>
-          <Textarea
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
-            placeholder="Tell us about your experience with Rivervox..."
-            rows={4}
-            maxLength={500}
-            required
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            {reviewText.length}/500 characters
-          </p>
-        </div>
-
-        {/* Photo Upload */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Add a Photo (optional)</label>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageSelect}
-            className="hidden"
-          />
-          
-          {imagePreview ? (
-            <div className="relative inline-block">
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-24 h-24 object-cover rounded-lg border border-border"
-              />
-              <button
+            
+            {imagePreview ? (
+              <div className="relative inline-block">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-24 h-24 object-cover rounded-lg border border-border"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center hover:bg-destructive/90 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <Button
                 type="button"
-                onClick={removeImage}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center hover:bg-destructive/90 transition-colors"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="gap-2"
               >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => fileInputRef.current?.click()}
-              className="gap-2"
-            >
-              <Camera className="w-4 h-4" />
-              Add Photo
-            </Button>
-          )}
-          <p className="text-xs text-muted-foreground mt-2">
-            Max 5MB. JPG, PNG, or WebP.
-          </p>
-        </div>
+                <Camera className="w-4 h-4" />
+                Add Photo
+              </Button>
+            )}
+            <p className="text-xs text-muted-foreground mt-2">
+              Max 5MB. JPG, PNG, or WebP.
+            </p>
+          </div>
 
-        {/* Submit Button */}
-        <Button 
-          type="submit" 
-          disabled={isSubmitting || isUploadingImage}
-          className="w-full sm:w-auto"
-        >
-          {isSubmitting || isUploadingImage ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              {isUploadingImage ? 'Uploading...' : 'Submitting...'}
-            </>
-          ) : (
-            <>
-              <Send className="w-4 h-4 mr-2" />
-              Submit Review
-            </>
-          )}
-        </Button>
-      </form>
-    </div>
+          {/* Submit Button */}
+          <Button 
+            type="submit" 
+            disabled={isSubmitting || isUploadingImage}
+            className="w-full"
+          >
+            {isSubmitting || isUploadingImage ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                {isUploadingImage ? 'Uploading...' : 'Submitting...'}
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4 mr-2" />
+                Submit Review
+              </>
+            )}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
