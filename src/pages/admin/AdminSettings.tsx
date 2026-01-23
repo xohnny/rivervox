@@ -56,7 +56,7 @@ const AdminSettings = () => {
             </div>
             <div>
               <Label>Currency</Label>
-              <Input defaultValue="USD ($)" className="mt-1" />
+              <Input defaultValue="BDT (৳)" className="mt-1" />
             </div>
           </div>
           <div>
@@ -82,12 +82,12 @@ const AdminSettings = () => {
         <div className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label>Standard Shipping Rate ($)</Label>
-              <Input type="number" defaultValue="10" className="mt-1" />
+              <Label>Standard Shipping Rate (৳)</Label>
+              <Input type="number" defaultValue="100" className="mt-1" />
             </div>
             <div>
-              <Label>Free Shipping Threshold ($)</Label>
-              <Input type="number" defaultValue="100" className="mt-1" />
+              <Label>Free Shipping Threshold (৳)</Label>
+              <Input type="number" defaultValue="2000" className="mt-1" />
             </div>
           </div>
           <div className="flex items-center justify-between py-3">
