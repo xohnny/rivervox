@@ -51,21 +51,21 @@ export const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-semibold uppercase tracking-wider text-sm">Customer Service</h4>
             <nav className="flex flex-col gap-2">
-              <Link to="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+            <Link to="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
                 Contact Us
               </Link>
-              <a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+              <Link to="/shipping-policy" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
                 Shipping Policy
-              </a>
-              <a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+              </Link>
+              <Link to="/returns-exchanges" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
                 Returns & Exchanges
-              </a>
-              <a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+              </Link>
+              <Link to="/size-guide" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
                 Size Guide
-              </a>
-              <a href="#" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
+              </Link>
+              <Link to="/faq" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
                 FAQ
-              </a>
+              </Link>
             </nav>
           </div>
 
@@ -96,8 +96,8 @@ export const Footer = () => {
               © {new Date().getFullYear()} Rivervox. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm text-primary-foreground/60">
-              <a href="#" className="hover:text-primary-foreground transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-primary-foreground transition-colors">Terms of Service</a>
+              <Link to="/privacy-policy" className="hover:text-primary-foreground transition-colors">Privacy Policy</Link>
+              <Link to="/terms-of-service" className="hover:text-primary-foreground transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>

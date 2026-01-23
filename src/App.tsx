@@ -19,6 +19,12 @@ import Account from "./pages/Account";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Wishlist from "./pages/Wishlist";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import ReturnsExchanges from "./pages/ReturnsExchanges";
+import SizeGuide from "./pages/SizeGuide";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 // Admin
@@ -55,6 +61,12 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+                <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                <Route path="/returns-exchanges" element={<ReturnsExchanges />} />
+                <Route path="/size-guide" element={<SizeGuide />} />
+                <Route path="/faq" element={<FAQ />} />
 
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminLayout />}>
