@@ -35,6 +35,8 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
   const lastTouchDistance = useRef<number | null>(null);
   const lastPanPosition = useRef({ x: 0, y: 0 });
   const isPanning = useRef(false);
+  const lastTapTime = useRef<number>(0);
+  const doubleTapTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Reset zoom when closing fullscreen or changing image
   useEffect(() => {
@@ -95,10 +97,37 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
     }
   }, [zoomLevel]);
 
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     lastTouchDistance.current = null;
     isPanning.current = false;
-  }, []);
+
+    // Double-tap detection
+    if (e.changedTouches.length === 1) {
+      const now = Date.now();
+      const timeDiff = now - lastTapTime.current;
+      
+      if (timeDiff < 300 && timeDiff > 0) {
+        // Double tap detected
+        e.preventDefault();
+        if (doubleTapTimeout.current) {
+          clearTimeout(doubleTapTimeout.current);
+          doubleTapTimeout.current = null;
+        }
+        
+        if (zoomLevel > 1) {
+          // Reset zoom
+          setZoomLevel(1);
+          setPanPosition({ x: 0, y: 0 });
+        } else {
+          // Zoom in to 2.5x at tap location
+          setZoomLevel(2.5);
+        }
+        lastTapTime.current = 0;
+      } else {
+        lastTapTime.current = now;
+      }
+    }
+  }, [zoomLevel]);
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
@@ -424,10 +453,10 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
             </>
           )}
 
-          {/* Mobile hint for pinch zoom */}
+          {/* Mobile hint for zoom gestures */}
           {zoomLevel === 1 && (
-            <div className="md:hidden absolute bottom-20 left-1/2 -translate-x-1/2 text-white/60 text-xs z-10">
-              Pinch to zoom
+            <div className="md:hidden absolute bottom-20 left-1/2 -translate-x-1/2 text-white/60 text-xs z-10 text-center">
+              Double-tap or pinch to zoom
             </div>
           )}
         </div>,
