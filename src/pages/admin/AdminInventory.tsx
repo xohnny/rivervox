@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useInventory } from '@/hooks/useInventory';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import StockAlerts from '@/components/admin/StockAlerts';
 import { cn } from '@/lib/utils';
 import {
   Select,
@@ -17,7 +16,7 @@ import {
 
 const AdminInventory = () => {
   const { isAdmin, loading: authLoading } = useAdminAuth();
-  const { products, alerts, stats, loading, updateStock, updateThreshold, acknowledgeAlert } = useInventory();
+  const { products, stats, loading, updateStock, updateThreshold } = useInventory();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [stockFilter, setStockFilter] = useState<string>('all');
@@ -131,15 +130,8 @@ const AdminInventory = () => {
         </Card>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Stock Alerts Panel */}
-        <div className="lg:col-span-1">
-          <StockAlerts alerts={alerts} onAcknowledge={acknowledgeAlert} />
-        </div>
-
-        {/* Products Table */}
-        <div className="lg:col-span-2">
-          <Card>
+      {/* Products Table - Full Width */}
+      <Card>
             <CardHeader>
               <CardTitle className="text-lg">Stock Levels</CardTitle>
               <div className="flex flex-col sm:flex-row gap-3 mt-3">
@@ -294,10 +286,8 @@ const AdminInventory = () => {
                   </tbody>
                 </table>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      </CardContent>
+    </Card>
     </div>
   );
 };
