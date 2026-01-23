@@ -35,7 +35,7 @@ export const Footer = () => {
           <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-4 md:gap-8">
             {/* Quick Links */}
             <div className="space-y-4">
-              <h4 className="font-semibold uppercase tracking-wider text-xs md:text-sm whitespace-nowrap">Quick Links</h4>
+              <h4 className="font-sans font-semibold uppercase tracking-wider text-xs md:text-sm whitespace-nowrap">Quick Links</h4>
               <nav className="flex flex-col gap-2">
                 <Link to="/shop" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
                   Shop All
@@ -57,7 +57,7 @@ export const Footer = () => {
 
             {/* Customer Service */}
             <div className="space-y-4 text-right md:text-left">
-              <h4 className="font-semibold uppercase tracking-wider text-xs md:text-sm whitespace-nowrap">Customer Service</h4>
+              <h4 className="font-sans font-semibold uppercase tracking-wider text-xs md:text-sm whitespace-nowrap">Customer Service</h4>
               
               <nav className="flex flex-col gap-2 items-end md:items-start">
                 <Link to="/contact" className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm">
@@ -81,7 +81,7 @@ export const Footer = () => {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className="font-semibold uppercase tracking-wider text-sm">Get in Touch</h4>
+            <h4 className="font-sans font-semibold uppercase tracking-wider text-sm">Get in Touch</h4>
             <div className="space-y-3">
               {/* Bangladesh */}
               <div className="flex items-start gap-3 text-sm text-primary-foreground/80">
