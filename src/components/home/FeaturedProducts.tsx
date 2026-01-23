@@ -28,8 +28,8 @@ export const FeaturedProducts = () => {
           </Link>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* Products Grid - Optimized mobile spacing */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
           {featuredProducts.map((product, index) => (
             <div
               key={product.id}
