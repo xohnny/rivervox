@@ -1,4 +1,6 @@
 import { useState } from 'react';
+
+const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
 import { Search, Eye, ShoppingBag, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -126,16 +128,16 @@ const AdminCustomers = () => {
         </div>
         <div className="bg-card border border-border rounded-xl p-4">
           <p className="text-2xl font-bold">
-            ${mockCustomers.reduce((sum, c) => sum + c.totalSpent, 0).toLocaleString()}
+            {formatPrice(mockCustomers.reduce((sum, c) => sum + c.totalSpent, 0))}
           </p>
           <p className="text-sm text-muted-foreground">Total Revenue</p>
         </div>
         <div className="bg-card border border-border rounded-xl p-4">
           <p className="text-2xl font-bold">
-            ${Math.round(
+            {formatPrice(Math.round(
               mockCustomers.reduce((sum, c) => sum + c.totalSpent, 0) /
                 mockCustomers.reduce((sum, c) => sum + c.orders, 0)
-            )}
+            ))}
           </p>
           <p className="text-sm text-muted-foreground">Avg. Order Value</p>
         </div>
@@ -202,7 +204,7 @@ const AdminCustomers = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span className="font-semibold text-primary">
-                      ${customer.totalSpent.toLocaleString()}
+                      {formatPrice(customer.totalSpent)}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -260,13 +262,13 @@ const AdminCustomers = () => {
                 </div>
                 <div className="bg-muted/50 rounded-lg p-3 text-center">
                   <p className="text-lg font-bold text-primary">
-                    ${selectedCustomer.totalSpent}
+                    {formatPrice(selectedCustomer.totalSpent)}
                   </p>
                   <p className="text-xs text-muted-foreground">Total Spent</p>
                 </div>
                 <div className="bg-muted/50 rounded-lg p-3 text-center">
                   <p className="text-lg font-bold">
-                    ${Math.round(selectedCustomer.totalSpent / selectedCustomer.orders)}
+                    {formatPrice(Math.round(selectedCustomer.totalSpent / selectedCustomer.orders))}
                   </p>
                   <p className="text-xs text-muted-foreground">Avg. Order</p>
                 </div>
@@ -286,7 +288,7 @@ const AdminCustomers = () => {
                         <p className="text-xs text-muted-foreground">{order.date}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold">${order.total}</p>
+                        <p className="font-semibold">{formatPrice(order.total)}</p>
                         <span className="text-xs capitalize text-muted-foreground">
                           {order.status}
                         </span>
