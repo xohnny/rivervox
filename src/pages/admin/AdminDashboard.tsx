@@ -49,12 +49,7 @@ const getStatusColor = (status: string) => {
 };
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
+  return `৳${value.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
 };
 
 const formatChange = (change: number) => {

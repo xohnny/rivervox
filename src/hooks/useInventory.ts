@@ -235,6 +235,7 @@ export const useInventory = () => {
       });
 
       await fetchProducts();
+      return true;
     } catch (error: any) {
       console.error('Error adding product:', error);
       toast({
@@ -242,6 +243,48 @@ export const useInventory = () => {
         description: 'Failed to add product',
         variant: 'destructive',
       });
+      return false;
+    }
+  };
+
+  const updateProduct = async (productId: string, product: Partial<InventoryProduct>) => {
+    try {
+      const updateData: Record<string, any> = {};
+      if (product.name !== undefined) updateData.name = product.name;
+      if (product.description !== undefined) updateData.description = product.description;
+      if (product.price !== undefined) updateData.price = product.price;
+      if (product.original_price !== undefined) updateData.original_price = product.original_price;
+      if (product.category !== undefined) updateData.category = product.category;
+      if (product.sizes !== undefined) updateData.sizes = product.sizes;
+      if (product.colors !== undefined) updateData.colors = product.colors;
+      if (product.images !== undefined) updateData.images = product.images;
+      if (product.stock !== undefined) updateData.stock = product.stock;
+      if (product.low_stock_threshold !== undefined) updateData.low_stock_threshold = product.low_stock_threshold;
+      if (product.featured !== undefined) updateData.featured = product.featured;
+      if (product.is_active !== undefined) updateData.is_active = product.is_active;
+
+      const { error } = await supabase
+        .from('products')
+        .update(updateData)
+        .eq('id', productId);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Product Updated',
+        description: 'Product has been updated successfully',
+      });
+
+      await fetchProducts();
+      return true;
+    } catch (error: any) {
+      console.error('Error updating product:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update product',
+        variant: 'destructive',
+      });
+      return false;
     }
   };
 
@@ -288,6 +331,7 @@ export const useInventory = () => {
     updateThreshold,
     acknowledgeAlert,
     addProduct,
+    updateProduct,
     deleteProduct,
     refetch: () => Promise.all([fetchProducts(), fetchAlerts()]),
   };
