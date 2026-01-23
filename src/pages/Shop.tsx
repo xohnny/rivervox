@@ -219,43 +219,7 @@ const Shop = () => {
             </div>
           </div>
 
-          {/* Desktop Price Filter */}
-          <div className="hidden md:flex items-center gap-6 py-4 px-6 bg-card border border-border rounded-xl">
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Price Range:</span>
-            </div>
-            <div className="flex-1 max-w-md">
-              <Slider
-                value={priceRange}
-                onValueChange={handlePriceChange}
-                min={minProductPrice}
-                max={maxProductPrice}
-                step={10}
-                className="w-full"
-              />
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="px-3 py-1.5 bg-secondary rounded-md font-medium min-w-[80px] text-center">
-                {formatPrice(priceRange[0])}
-              </span>
-              <span className="text-muted-foreground">–</span>
-              <span className="px-3 py-1.5 bg-secondary rounded-md font-medium min-w-[80px] text-center">
-                {formatPrice(priceRange[1])}
-              </span>
-            </div>
-            {hasActiveFilters && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={resetFilters}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-4 h-4 mr-1" />
-                Clear
-              </Button>
-            )}
-          </div>
+          {/* Desktop Price Filter - Hidden for now */}
         </div>
 
         {/* Mobile Filters Panel */}
@@ -290,29 +254,7 @@ const Shop = () => {
               </div>
             </div>
 
-            {/* Price Range */}
-            <div>
-              <span className="text-sm font-medium text-muted-foreground mb-3 block">Price Range</span>
-              <div className="px-2">
-                <Slider
-                  value={priceRange}
-                  onValueChange={handlePriceChange}
-                  min={minProductPrice}
-                  max={maxProductPrice}
-                  step={10}
-                  className="w-full mb-4"
-                />
-                <div className="flex items-center justify-between text-sm">
-                  <span className="px-3 py-1.5 bg-secondary rounded-md font-medium">
-                    {formatPrice(priceRange[0])}
-                  </span>
-                  <span className="text-muted-foreground">–</span>
-                  <span className="px-3 py-1.5 bg-secondary rounded-md font-medium">
-                    {formatPrice(priceRange[1])}
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* Price Range - Hidden for now */}
 
             {/* Sort */}
             <div>
@@ -362,14 +304,6 @@ const Shop = () => {
               <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
                 {categories.find(c => c.value === activeCategory)?.label}
                 <button onClick={() => handleCategoryChange('all')}>
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            )}
-            {(priceRange[0] !== minProductPrice || priceRange[1] !== maxProductPrice) && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                {formatPrice(priceRange[0])} – {formatPrice(priceRange[1])}
-                <button onClick={() => setPriceRange([minProductPrice, maxProductPrice])}>
                   <X className="w-3 h-3" />
                 </button>
               </span>
