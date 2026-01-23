@@ -82,14 +82,28 @@ export const Footer = () => {
           {/* Contact Info */}
           <div className="space-y-4">
             <h4 className="font-semibold uppercase tracking-wider text-sm">Get in Touch</h4>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
-                <MapPin className="w-4 h-4 flex-shrink-0" />
-                <span>123 Fashion Avenue, Dubai, UAE</span>
+            <div className="space-y-4">
+              {/* Bangladesh */}
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 text-sm text-primary-foreground/80">
+                  <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>4th Floor, Polwel Carnation Shopping Center, Uttara, Dhaka 1230, Bangladesh</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-primary-foreground/80 pl-7">
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span>+88 09638 579882</span>
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
-                <Phone className="w-4 h-4 flex-shrink-0" />
-                <span>+971 50 123 4567</span>
+              {/* USA */}
+              <div className="space-y-2">
+                <div className="flex items-start gap-3 text-sm text-primary-foreground/80">
+                  <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <span>4400 San Benito St Unit B, Santa Fe, New Mexico 87507, USA</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-primary-foreground/80 pl-7">
+                  <Phone className="w-4 h-4 flex-shrink-0" />
+                  <span>+1 (781) 870-4028</span>
+                </div>
               </div>
               <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Mail className="w-4 h-4 flex-shrink-0" />

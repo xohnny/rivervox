@@ -59,29 +59,40 @@ const Contact = () => {
             </div>
 
             <div className="space-y-6">
+              {/* Bangladesh Location */}
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Visit Our Store</h3>
+                  <h3 className="font-semibold mb-1">Bangladesh Office</h3>
                   <p className="text-muted-foreground text-sm">
-                    123 Fashion Avenue<br />
-                    Dubai Mall, Level 2<br />
-                    Dubai, United Arab Emirates
+                    4th Floor, Polwel Carnation Shopping Center<br />
+                    Uttara, Dhaka 1230<br />
+                    Bangladesh
+                  </p>
+                  <p className="text-muted-foreground text-sm mt-2">
+                    <Phone className="w-4 h-4 inline mr-2" />
+                    +88 09638 579882
                   </p>
                 </div>
               </div>
 
+              {/* USA Location */}
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-5 h-5 text-primary" />
+                  <MapPin className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-1">Call Us</h3>
+                  <h3 className="font-semibold mb-1">USA Office</h3>
                   <p className="text-muted-foreground text-sm">
-                    +971 50 123 4567<br />
-                    Mon - Sat, 9am - 9pm GST
+                    4400 San Benito St Unit B<br />
+                    Santa Fe, New Mexico 87507<br />
+                    USA
+                  </p>
+                  <p className="text-muted-foreground text-sm mt-2">
+                    <Phone className="w-4 h-4 inline mr-2" />
+                    +1 (781) 870-4028
                   </p>
                 </div>
               </div>
