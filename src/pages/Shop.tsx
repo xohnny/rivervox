@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Filter, Grid, LayoutGrid, X } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/products/ProductCard';
-import { sampleProducts } from '@/data/products';
+import { products } from '@/data/products';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -23,8 +23,8 @@ const Shop = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   const filteredProducts = useMemo(() => {
-    if (activeCategory === 'all') return sampleProducts;
-    return sampleProducts.filter((p) => p.category === activeCategory);
+    if (activeCategory === 'all') return products;
+    return products.filter((p) => p.category === activeCategory);
   }, [activeCategory]);
 
   const handleCategoryChange = (category: string) => {

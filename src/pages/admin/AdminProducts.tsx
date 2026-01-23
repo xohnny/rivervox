@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, Search, Edit, Trash2, MoreVertical, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { sampleProducts } from '@/data/products';
+import { products as initialProducts } from '@/data/products';
 import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -29,7 +29,7 @@ import {
 
 const AdminProducts = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [products, setProducts] = useState(sampleProducts);
+  const [products, setProducts] = useState(initialProducts);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const filteredProducts = products.filter((p) =>
