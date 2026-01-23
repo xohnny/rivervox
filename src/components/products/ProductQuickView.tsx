@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ShoppingBag, Check, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
+import { ShoppingBag, Check, ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { Product, ProductColor } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -28,6 +28,77 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
   const [isAdded, setIsAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lastTouchDistance = useRef<number | null>(null);
+  const lastPanPosition = useRef({ x: 0, y: 0 });
+  const isPanning = useRef(false);
+
+  // Reset zoom when closing fullscreen or changing image
+  useEffect(() => {
+    if (!isFullscreen) {
+      setZoomLevel(1);
+      setPanPosition({ x: 0, y: 0 });
+    }
+  }, [isFullscreen, currentImageIndex]);
+
+  const handleZoomIn = useCallback(() => {
+    setZoomLevel((prev) => Math.min(prev + 0.5, 4));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoomLevel((prev) => {
+      const newZoom = Math.max(prev - 0.5, 1);
+      if (newZoom === 1) setPanPosition({ x: 0, y: 0 });
+      return newZoom;
+    });
+  }, []);
+
+  const handleResetZoom = useCallback(() => {
+    setZoomLevel(1);
+    setPanPosition({ x: 0, y: 0 });
+  }, []);
+
+  // Pinch-to-zoom handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      const distance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      lastTouchDistance.current = distance;
+    } else if (e.touches.length === 1 && zoomLevel > 1) {
+      isPanning.current = true;
+      lastPanPosition.current = {
+        x: e.touches[0].clientX - panPosition.x,
+        y: e.touches[0].clientY - panPosition.y,
+      };
+    }
+  }, [zoomLevel, panPosition]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2 && lastTouchDistance.current !== null) {
+      e.preventDefault();
+      const distance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const scale = distance / lastTouchDistance.current;
+      setZoomLevel((prev) => Math.min(Math.max(prev * scale, 1), 4));
+      lastTouchDistance.current = distance;
+    } else if (e.touches.length === 1 && isPanning.current && zoomLevel > 1) {
+      const newX = e.touches[0].clientX - lastPanPosition.current.x;
+      const newY = e.touches[0].clientY - lastPanPosition.current.y;
+      setPanPosition({ x: newX, y: newY });
+    }
+  }, [zoomLevel]);
+
+  const handleTouchEnd = useCallback(() => {
+    lastTouchDistance.current = null;
+    isPanning.current = false;
+  }, []);
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
@@ -261,46 +332,103 @@ export const ProductQuickView = ({ product, open, onOpenChange }: ProductQuickVi
       {/* Fullscreen Image Lightbox - using portal to render at body level */}
       {isFullscreen && createPortal(
         <div 
-          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center animate-fade-in"
-          onClick={() => setIsFullscreen(false)}
+          ref={containerRef}
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center animate-fade-in touch-none"
+          onClick={() => zoomLevel === 1 && setIsFullscreen(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {/* Close Button */}
           <button
-            onClick={() => setIsFullscreen(false)}
-            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors z-10"
+            onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
+            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors z-20"
           >
             <X className="w-6 h-6 text-white" />
           </button>
 
-          {/* Image */}
-          <img
-            src={product.images[currentImageIndex]}
-            alt={product.name}
-            className="max-w-[95vw] max-h-[95vh] object-contain select-none"
+          {/* Desktop Zoom Controls */}
+          <div className="hidden md:flex absolute top-4 left-4 gap-2 z-20">
+            <button
+              onClick={(e) => { e.stopPropagation(); handleZoomIn(); }}
+              className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+              title="Zoom In"
+            >
+              <ZoomIn className="w-5 h-5 text-white" />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleZoomOut(); }}
+              className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+              title="Zoom Out"
+            >
+              <ZoomOut className="w-5 h-5 text-white" />
+            </button>
+            {zoomLevel !== 1 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); handleResetZoom(); }}
+                className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                title="Reset Zoom"
+              >
+                <RotateCcw className="w-5 h-5 text-white" />
+              </button>
+            )}
+            <span className="flex items-center px-3 text-white/80 text-sm">
+              {Math.round(zoomLevel * 100)}%
+            </span>
+          </div>
+
+          {/* Mobile Zoom Indicator */}
+          <div className="md:hidden absolute top-4 left-4 z-20">
+            <span className="px-3 py-2 rounded-full bg-white/10 text-white/80 text-sm">
+              {Math.round(zoomLevel * 100)}%
+            </span>
+          </div>
+
+          {/* Image Container */}
+          <div 
+            className="overflow-hidden flex items-center justify-center w-full h-full"
             onClick={(e) => e.stopPropagation()}
-          />
+          >
+            <img
+              ref={imageRef}
+              src={product.images[currentImageIndex]}
+              alt={product.name}
+              className="max-w-[95vw] max-h-[95vh] object-contain select-none transition-transform duration-100"
+              style={{
+                transform: `scale(${zoomLevel}) translate(${panPosition.x / zoomLevel}px, ${panPosition.y / zoomLevel}px)`,
+              }}
+              draggable={false}
+            />
+          </div>
 
           {/* Navigation for multiple images */}
-          {product.images.length > 1 && (
+          {product.images.length > 1 && zoomLevel === 1 && (
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors z-10"
               >
                 <ChevronLeft className="w-6 h-6 text-white" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors z-10"
               >
                 <ChevronRight className="w-6 h-6 text-white" />
               </button>
 
               {/* Image counter */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm">
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/80 text-sm z-10">
                 {currentImageIndex + 1} / {product.images.length}
               </div>
             </>
+          )}
+
+          {/* Mobile hint for pinch zoom */}
+          {zoomLevel === 1 && (
+            <div className="md:hidden absolute bottom-20 left-1/2 -translate-x-1/2 text-white/60 text-xs z-10">
+              Pinch to zoom
+            </div>
           )}
         </div>,
         document.body
