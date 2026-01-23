@@ -33,8 +33,8 @@ export const Hero = () => {
             </Link>
           </div>
 
-          {/* Trust Badges */}
-          <div className="flex items-center gap-8 mt-12 pt-8 border-t border-white/20">
+          {/* Trust Badges - Hidden on mobile */}
+          <div className="hidden md:flex items-center gap-8 mt-12 pt-8 border-t border-white/20">
             <div className="text-center">
               <span className="block text-2xl font-bold text-accent">500+</span>
               <span className="text-xs text-white/60 uppercase tracking-wider">Products</span>
