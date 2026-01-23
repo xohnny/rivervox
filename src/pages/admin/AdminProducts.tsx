@@ -36,6 +36,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import ProductImageUpload from '@/components/admin/ProductImageUpload';
 
 const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
 
@@ -59,11 +60,11 @@ const AdminProducts = () => {
     stock: '',
     sizes: '',
     colors: '',
-    images: '',
     lowStockThreshold: '10',
     featured: false,
     isActive: true,
   });
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const resetForm = () => {
     setFormData({
@@ -75,11 +76,11 @@ const AdminProducts = () => {
       stock: '',
       sizes: '',
       colors: '',
-      images: '',
       lowStockThreshold: '10',
       featured: false,
       isActive: true,
     });
+    setUploadedImages([]);
   };
 
   const filteredProducts = products.filter((p) => {
@@ -97,7 +98,6 @@ const AdminProducts = () => {
       const trimmed = c.trim();
       return { name: trimmed, hex: '#000000' };
     }).filter(c => c.name);
-    const imagesArray = formData.images.split(',').map(i => i.trim()).filter(Boolean);
 
     const success = await addProduct({
       name: formData.name,
@@ -107,7 +107,7 @@ const AdminProducts = () => {
       category: formData.category,
       sizes: sizesArray,
       colors: colorsArray,
-      images: imagesArray.length > 0 ? imagesArray : ['/placeholder.svg'],
+      images: uploadedImages.length > 0 ? uploadedImages : ['/placeholder.svg'],
       stock: parseInt(formData.stock) || 0,
       low_stock_threshold: parseInt(formData.lowStockThreshold) || 10,
       featured: formData.featured,
@@ -132,11 +132,11 @@ const AdminProducts = () => {
       stock: product.stock.toString(),
       sizes: product.sizes.join(', '),
       colors: product.colors.map(c => c.name).join(', '),
-      images: product.images.join(', '),
       lowStockThreshold: product.low_stock_threshold.toString(),
       featured: product.featured,
       isActive: product.is_active,
     });
+    setUploadedImages(product.images || []);
     setIsEditDialogOpen(true);
   };
 
@@ -151,7 +151,6 @@ const AdminProducts = () => {
       const existingColor = selectedProduct.colors.find(ec => ec.name.toLowerCase() === trimmed.toLowerCase());
       return { name: trimmed, hex: existingColor?.hex || '#000000' };
     }).filter(c => c.name);
-    const imagesArray = formData.images.split(',').map(i => i.trim()).filter(Boolean);
 
     const success = await updateProduct(selectedProduct.id, {
       name: formData.name,
@@ -161,7 +160,7 @@ const AdminProducts = () => {
       category: formData.category,
       sizes: sizesArray,
       colors: colorsArray,
-      images: imagesArray.length > 0 ? imagesArray : ['/placeholder.svg'],
+      images: uploadedImages.length > 0 ? uploadedImages : ['/placeholder.svg'],
       stock: parseInt(formData.stock) || 0,
       low_stock_threshold: parseInt(formData.lowStockThreshold) || 10,
       featured: formData.featured,
@@ -312,14 +311,13 @@ const AdminProducts = () => {
         />
       </div>
       <div>
-        <Label>Image URLs (comma-separated)</Label>
-        <Textarea
-          placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-          className="mt-1"
-          rows={2}
-          value={formData.images}
-          onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-        />
+        <Label>Product Images</Label>
+        <div className="mt-1">
+          <ProductImageUpload
+            images={uploadedImages}
+            onImagesChange={setUploadedImages}
+          />
+        </div>
       </div>
       <div className="flex items-center gap-6">
         <label className="flex items-center gap-2 cursor-pointer">
