@@ -182,22 +182,22 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {/* Compact Trigger Card - same width as testimonial cards */}
       <DialogTrigger asChild>
-        <button className="bg-card rounded-2xl p-8 md:p-10 shadow-premium border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer group text-left w-full">
-          <div className="flex items-center justify-between gap-6">
+        <button className="bg-card rounded-2xl p-6 md:p-10 shadow-premium border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300 cursor-pointer group text-left w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <MessageSquarePlus className="w-7 h-7 text-primary" />
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                <MessageSquarePlus className="w-6 h-6 md:w-7 md:h-7 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                <h3 className="text-base md:text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                   Share Your Experience
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-sm md:text-base text-muted-foreground">
                   Help others by leaving a review
                 </p>
               </div>
             </div>
-            <div className="flex gap-1">
+            <div className="flex gap-1 ml-16 sm:ml-0">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star key={star} className="w-5 h-5 text-accent fill-accent" />
               ))}
