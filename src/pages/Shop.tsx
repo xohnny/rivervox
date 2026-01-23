@@ -235,11 +235,11 @@ const Shop = () => {
             </div>
             <div className="flex items-center gap-2 text-sm">
               <span className="px-3 py-1.5 bg-secondary rounded-md font-medium min-w-[80px] text-center">
-                AED {priceRange[0]}
+                ${priceRange[0]}
               </span>
               <span className="text-muted-foreground">–</span>
               <span className="px-3 py-1.5 bg-secondary rounded-md font-medium min-w-[80px] text-center">
-                AED {priceRange[1]}
+                ${priceRange[1]}
               </span>
             </div>
             {hasActiveFilters && (
@@ -302,11 +302,11 @@ const Shop = () => {
                 />
                 <div className="flex items-center justify-between text-sm">
                   <span className="px-3 py-1.5 bg-secondary rounded-md font-medium">
-                    AED {priceRange[0]}
+                    ${priceRange[0]}
                   </span>
                   <span className="text-muted-foreground">–</span>
                   <span className="px-3 py-1.5 bg-secondary rounded-md font-medium">
-                    AED {priceRange[1]}
+                    ${priceRange[1]}
                   </span>
                 </div>
               </div>
@@ -366,7 +366,7 @@ const Shop = () => {
             )}
             {(priceRange[0] !== minProductPrice || priceRange[1] !== maxProductPrice) && (
               <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                AED {priceRange[0]} – {priceRange[1]}
+                ${priceRange[0]} – ${priceRange[1]}
                 <button onClick={() => setPriceRange([minProductPrice, maxProductPrice])}>
                   <X className="w-3 h-3" />
                 </button>
