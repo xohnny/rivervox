@@ -110,14 +110,6 @@ const Contact = () => {
                 </div>
               </div>
             </div>
-
-            {/* Map Placeholder */}
-            <div className="aspect-video bg-muted rounded-xl overflow-hidden">
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                <MapPin className="w-8 h-8 mr-2" />
-                Map Integration
-              </div>
-            </div>
           </div>
 
           {/* Contact Form */}
