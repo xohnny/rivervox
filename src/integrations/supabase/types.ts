@@ -245,6 +245,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          image_url: string | null
           is_approved: boolean
           rating: number
           review_text: string
@@ -256,6 +257,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          image_url?: string | null
           is_approved?: boolean
           rating: number
           review_text: string
@@ -267,6 +269,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          image_url?: string | null
           is_approved?: boolean
           rating?: number
           review_text?: string

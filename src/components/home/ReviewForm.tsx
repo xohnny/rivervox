@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Star, Send } from 'lucide-react';
+import { Star, Send, Camera, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 
@@ -22,6 +22,81 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
   const [userName, setUserName] = useState('');
   const [userLocation, setUserLocation] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please select an image file (JPG, PNG, etc.)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please select an image under 5MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSelectedImage(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+      setImagePreview(null);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    if (!user) return null;
+    
+    setIsUploadingImage(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('review-images')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('review-images')
+        .getPublicUrl(fileName);
+
+      return data.publicUrl;
+    } catch (error: any) {
+      console.error('Image upload error:', error);
+      toast({
+        title: 'Image upload failed',
+        description: 'Your review will be submitted without the image.',
+        variant: 'destructive',
+      });
+      return null;
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,12 +140,19 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
     setIsSubmitting(true);
 
     try {
+      // Upload image if selected
+      let imageUrl: string | null = null;
+      if (selectedImage) {
+        imageUrl = await uploadImage(selectedImage);
+      }
+
       const { error } = await supabase.from('reviews').insert({
         user_id: user.id,
         user_name: userName.trim().substring(0, 100),
         user_location: userLocation.trim().substring(0, 100) || null,
         rating,
         review_text: reviewText.trim().substring(0, 500),
+        image_url: imageUrl,
       });
 
       if (error) throw error;
@@ -85,6 +167,7 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
       setReviewText('');
       setUserName('');
       setUserLocation('');
+      removeImage();
       
       onReviewSubmitted?.();
     } catch (error: any) {
@@ -182,14 +265,59 @@ export const ReviewForm = ({ onReviewSubmitted }: ReviewFormProps) => {
           </p>
         </div>
 
+        {/* Photo Upload */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Add a Photo (optional)</label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageSelect}
+            className="hidden"
+          />
+          
+          {imagePreview ? (
+            <div className="relative inline-block">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-24 h-24 object-cover rounded-lg border border-border"
+              />
+              <button
+                type="button"
+                onClick={removeImage}
+                className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center hover:bg-destructive/90 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              className="gap-2"
+            >
+              <Camera className="w-4 h-4" />
+              Add Photo
+            </Button>
+          )}
+          <p className="text-xs text-muted-foreground mt-2">
+            Max 5MB. JPG, PNG, or WebP.
+          </p>
+        </div>
+
         {/* Submit Button */}
         <Button 
           type="submit" 
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploadingImage}
           className="w-full sm:w-auto"
         >
-          {isSubmitting ? (
-            'Submitting...'
+          {isSubmitting || isUploadingImage ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              {isUploadingImage ? 'Uploading...' : 'Submitting...'}
+            </>
           ) : (
             <>
               <Send className="w-4 h-4 mr-2" />

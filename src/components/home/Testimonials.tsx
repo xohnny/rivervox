@@ -20,6 +20,7 @@ interface Review {
   user_location: string | null;
   rating: number;
   review_text: string;
+  image_url: string | null;
   created_at: string;
 }
 
@@ -31,6 +32,7 @@ const fallbackTestimonials: Review[] = [
     user_location: 'Dubai, UAE',
     rating: 5,
     review_text: 'The quality of the thobes is exceptional. My husband was so impressed with the fabric and stitching. Will definitely be ordering again!',
+    image_url: null,
     created_at: new Date().toISOString(),
   },
   {
@@ -39,6 +41,7 @@ const fallbackTestimonials: Review[] = [
     user_location: 'London, UK',
     rating: 5,
     review_text: 'Finally found a store that understands modest fashion without compromising on style. The abayas are absolutely stunning and perfect for any occasion.',
+    image_url: null,
     created_at: new Date().toISOString(),
   },
   {
@@ -47,6 +50,7 @@ const fallbackTestimonials: Review[] = [
     user_location: 'New York, USA',
     rating: 5,
     review_text: 'Fast shipping and excellent customer service. The kurta I ordered fits perfectly and the material is breathable even in summer.',
+    image_url: null,
     created_at: new Date().toISOString(),
   },
   {
@@ -55,6 +59,7 @@ const fallbackTestimonials: Review[] = [
     user_location: 'Toronto, Canada',
     rating: 5,
     review_text: 'I ordered matching outfits for my kids and they love them! The colors are vibrant and the fabric is comfortable for all-day wear.',
+    image_url: null,
     created_at: new Date().toISOString(),
   },
   {
@@ -63,6 +68,7 @@ const fallbackTestimonials: Review[] = [
     user_location: 'Dhaka, Bangladesh',
     rating: 5,
     review_text: 'Best quality Islamic wear I have found online. The attention to detail and craftsmanship is remarkable. Highly recommend!',
+    image_url: null,
     created_at: new Date().toISOString(),
   },
 ];
@@ -118,9 +124,9 @@ export const Testimonials = () => {
     };
   }, [emblaApi, onSelect]);
 
-  // Get avatar for review (use default avatars in rotation)
-  const getAvatar = (index: number) => {
-    return defaultAvatars[index % defaultAvatars.length];
+  // Get avatar for review (use uploaded image or default avatars in rotation)
+  const getAvatar = (review: Review, index: number) => {
+    return review.image_url || defaultAvatars[index % defaultAvatars.length];
   };
 
   return (
@@ -175,7 +181,7 @@ export const Testimonials = () => {
                     {/* Author */}
                     <div className="flex items-center gap-4">
                       <img 
-                        src={getAvatar(index)} 
+                        src={getAvatar(review, index)} 
                         alt={review.user_name}
                         className="w-12 h-12 rounded-full object-cover"
                       />
