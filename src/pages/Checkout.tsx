@@ -57,8 +57,10 @@ const Checkout = () => {
   });
 
   // Shipping: 60 Taka for Dhaka, 100 Taka for outside Dhaka
-  const shippingCost = formData.city.toLowerCase() === 'dhaka' ? 60 : 100;
-  const grandTotal = totalPrice + shippingCost;
+  const shippingCostBDT = formData.city.toLowerCase() === 'dhaka' ? 60 : 100;
+  // Convert shipping to USD for total calculation (products are in USD)
+  const shippingCostUSD = shippingCostBDT / 110;
+  const grandTotal = totalPrice + shippingCostUSD;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +97,7 @@ const Checkout = () => {
           shipping_address: formData.address,
           shipping_city: formData.city,
           subtotal: totalPrice,
-          shipping_cost: shippingCost,
+          shipping_cost: shippingCostBDT,
           total: grandTotal,
           notes: formData.notes || null,
         })
@@ -410,7 +412,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>{formatPrice(shippingCost)}</span>
+                  <span>৳{shippingCostBDT}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
                   <span>Total</span>
