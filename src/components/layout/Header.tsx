@@ -4,6 +4,7 @@ import { ShoppingBag, User, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { CurrencySelector } from './CurrencySelector';
+import { NavLink } from '@/components/NavLink';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
@@ -24,8 +25,11 @@ export const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <span className="text-2xl md:text-3xl font-display font-bold text-primary">
+          <Link 
+            to="/" 
+            className="flex items-center group"
+          >
+            <span className="text-2xl md:text-3xl font-display font-bold text-primary transition-all duration-300 group-hover:scale-105">
               Rivervox
             </span>
           </Link>
@@ -33,16 +37,9 @@ export const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={cn(
-                  'nav-link text-sm uppercase tracking-wider',
-                  location.pathname === link.path && 'text-primary font-semibold'
-                )}
-              >
+              <NavLink key={link.path} to={link.path}>
                 {link.name}
-              </Link>
+              </NavLink>
             ))}
           </nav>
 
@@ -101,18 +98,20 @@ export const Header = () => {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <nav className="md:hidden py-4 border-t border-border animate-fade-in">
-            <div className="flex flex-col gap-2">
-              {navLinks.map((link) => (
+            <div className="flex flex-col gap-1">
+              {navLinks.map((link, index) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    'py-3 px-4 text-sm uppercase tracking-wider rounded-lg transition-colors',
+                    'py-3 px-4 text-sm uppercase tracking-wider rounded-lg transition-all duration-300',
+                    'transform hover:translate-x-2',
                     location.pathname === link.path
                       ? 'bg-primary text-primary-foreground font-semibold'
-                      : 'hover:bg-secondary'
+                      : 'hover:bg-secondary/80'
                   )}
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
                   {link.name}
                 </Link>
