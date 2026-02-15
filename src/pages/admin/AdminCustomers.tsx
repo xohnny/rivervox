@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
+const formatPrice = (price: number) => {
+  const usdPrice = price / 110;
+  return `$${usdPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
 import { Search, Eye, ShoppingBag, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

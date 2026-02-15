@@ -56,7 +56,7 @@ const AdminSettings = () => {
             </div>
             <div>
               <Label>Currency</Label>
-              <Input defaultValue="BDT (৳)" className="mt-1" />
+              <Input defaultValue="USD ($)" className="mt-1" disabled />
             </div>
           </div>
           <div>
@@ -82,11 +82,11 @@ const AdminSettings = () => {
         <div className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label>Standard Shipping Rate (৳)</Label>
+              <Label>Standard Shipping Rate ($)</Label>
               <Input type="number" defaultValue="100" className="mt-1" />
             </div>
             <div>
-              <Label>Free Shipping Threshold (৳)</Label>
+              <Label>Free Shipping Threshold ($)</Label>
               <Input type="number" defaultValue="2000" className="mt-1" />
             </div>
           </div>

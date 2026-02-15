@@ -149,7 +149,7 @@ const AdminOrders = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="font-semibold">${Number(order.total).toFixed(2)}</span>
+                        <span className="font-semibold">${(Number(order.total) / 110).toFixed(2)}</span>
                       </td>
                       <td className="px-6 py-4">
                         <Select
@@ -258,7 +258,7 @@ const AdminOrders = () => {
                         </p>
                         <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
                       </div>
-                      <p className="font-semibold">${(item.unit_price * item.quantity).toFixed(2)}</p>
+                      <p className="font-semibold">${((item.unit_price * item.quantity) / 110).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
@@ -268,15 +268,15 @@ const AdminOrders = () => {
               <div className="space-y-2 pt-4 border-t border-border">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>${Number(selectedOrder.subtotal).toFixed(2)}</span>
+                  <span>${(Number(selectedOrder.subtotal) / 110).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>${Number(selectedOrder.shipping_cost).toFixed(2)}</span>
+                  <span>${(Number(selectedOrder.shipping_cost) / 110).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-border">
                   <span className="font-semibold">Total</span>
-                  <span className="text-xl font-bold text-primary">${Number(selectedOrder.total).toFixed(2)}</span>
+                  <span className="text-xl font-bold text-primary">${(Number(selectedOrder.total) / 110).toFixed(2)}</span>
                 </div>
               </div>
 
