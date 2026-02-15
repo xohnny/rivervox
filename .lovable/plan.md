@@ -1,101 +1,73 @@
 
 
-# Full CMS: Edit All Website Content from Admin Panel
+# Phase 2: Footer and Header Content Management
 
-This is a large project that will turn your admin panel into a WordPress-like CMS where you can edit every piece of content on your website without touching code. We'll build this in phases, starting with the most impactful sections.
-
----
-
-## How It Works
-
-All website content (text, images, links) is currently hardcoded in the code. We'll move it into the database so the admin panel can read and update it. Every frontend page will then fetch its content from the database instead of using hardcoded values.
+Make the Footer and Header fully editable from the admin panel, following the same patterns established in Phase 1.
 
 ---
 
-## Phase 1 -- Homepage Content Manager
+## What You'll Be Able to Edit
 
-A new **"Pages"** section in the admin sidebar where you can edit:
+### Footer
+- **Brand section**: Store name, brand description
+- **Social media links**: Instagram, Facebook, Twitter, YouTube, Telegram URLs
+- **Quick Links**: Add/edit/remove links (label + URL)
+- **Customer Service Links**: Add/edit/remove links (label + URL)
+- **Contact Info**: Address, phone number, email
+- **Copyright text**
 
-- **Hero Section**: Title, subtitle, badge text (e.g. "New Collection 2026"), button labels, button links, and background image (upload)
-- **Features Bar**: The 4 feature items (icon selection, title, description)
-- **Categories Section**: Section title, subtitle, and each category's name, description, and image (upload)
-- **Testimonials Section**: Section title, subtitle (reviews are already database-driven)
-
----
-
-## Phase 2 -- Footer and Header Content
-
-- **Footer**: Brand description, social media links (Instagram, Facebook, Twitter, YouTube, Telegram), contact info (address, phone, email), quick links, and copyright text
-- **Header**: Logo text/image, navigation links
-
----
-
-## Phase 3 -- Static Pages Content
-
-Editable content for all informational pages:
-- **Contact Page**: Address, phone, email, heading text, description
-- **FAQ Page**: Add/edit/delete FAQ categories and questions
-- **Shipping Policy**: Full rich-text content
-- **Returns & Exchanges**: Full rich-text content
-- **Privacy Policy**: Full rich-text content
-- **Terms of Service**: Full rich-text content
-- **Size Guide**: Full content
-
----
-
-## Phase 4 -- SEO Settings per Page
-
-- Edit meta title, meta description, and keywords for every page from the admin panel
-- Open Graph image upload per page
+### Header
+- **Logo text** (or logo image if uploaded in store settings)
+- **Navigation links**: Add/edit/reorder links (label + URL)
 
 ---
 
 ## Technical Details
 
-### Database Changes
+### 1. Seed Default Content into Database
 
-A new `site_content` table to store all editable content:
+Insert the current hardcoded Footer and Header content into the `site_content` table so edits can begin immediately:
+- `page: 'layout', section: 'footer'` -- all footer content as JSON
+- `page: 'layout', section: 'header'` -- navigation links and logo text as JSON
 
-```text
-site_content
------------
-id          (uuid, primary key)
-page        (text)          -- e.g. 'home', 'footer', 'contact', 'faq'
-section     (text)          -- e.g. 'hero', 'features', 'categories'
-content     (jsonb)         -- flexible JSON for any content structure
-updated_at  (timestamptz)
-updated_by  (uuid, nullable)
-```
+### 2. New Admin Editor Components
 
-RLS: Admins can read/update. Public can read (since frontend pages need the content).
+**FooterEditor** (`src/components/admin/cms/FooterEditor.tsx`)
+- Brand name and description text fields
+- Social media URL inputs (Instagram, Facebook, Twitter, YouTube, Telegram)
+- Dynamic list editors for Quick Links and Customer Service Links (add/remove rows with label + path fields)
+- Contact info fields (address, phone, email)
+- Copyright text field
 
-### Admin UI
+**HeaderEditor** (`src/components/admin/cms/HeaderEditor.tsx`)
+- Logo text input
+- Dynamic list editor for navigation links (add/remove/reorder rows with label + path)
 
-- New **"Pages"** link in admin sidebar with sub-sections for each page
-- Each section gets a form with the right input types (text fields, image uploaders, link pickers, rich text for policy pages)
-- Live preview button to see changes before saving
+### 3. Update AdminPages
 
-### Frontend Changes
+Add two new tabs -- "Footer" and "Header" -- to the existing Pages editor at `/admin/pages`.
 
-- A `useSiteContent(page, section)` hook that fetches content from the database with caching
-- Each component (Hero, Footer, Categories, etc.) will use this hook instead of hardcoded values
-- Fallback to current hardcoded defaults if no database content exists (so nothing breaks)
+### 4. Update Frontend Components
 
-### Implementation Order
+**Footer.tsx**
+- Use `useSiteContent('layout', 'footer', defaultFooter)` to fetch content
+- Render all text, links, and social icons from database content
+- Fall back to current hardcoded values if no database content exists
 
-1. Create `site_content` table + RLS policies + seed with current hardcoded content
-2. Build the `useSiteContent` hook with React Query caching
-3. Build admin "Pages" editor UI (starting with Homepage sections)
-4. Update frontend components to use database content
-5. Repeat for Footer, Header, Contact, FAQ, and all static pages
-6. Add SEO settings editor
+**Header.tsx**
+- Use `useSiteContent('layout', 'header', defaultHeader)` to fetch navigation links and logo
+- Render navigation dynamically from database content
+- Fall back to current hardcoded values if no database content exists
 
----
+### 5. Files Changed
 
-## Important Notes
+| File | Action |
+|------|--------|
+| `src/components/admin/cms/FooterEditor.tsx` | Create |
+| `src/components/admin/cms/HeaderEditor.tsx` | Create |
+| `src/pages/admin/AdminPages.tsx` | Edit -- add Footer and Header tabs |
+| `src/components/layout/Footer.tsx` | Edit -- use `useSiteContent` hook |
+| `src/components/layout/Header.tsx` | Edit -- use `useSiteContent` hook |
 
-- This is a **very large feature** -- I recommend we build it **one phase at a time** so we can test each part properly
-- All existing content will be seeded as defaults, so nothing changes visually until you edit it in the admin panel
-- Image uploads will use the existing `store-assets` storage bucket
-- Shall I start with **Phase 1 (Homepage Content Manager)**?
+No database schema changes needed -- the existing `site_content` table supports this. Content will be seeded via an insert operation.
 
