@@ -16,7 +16,7 @@ import {
 const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'Shop', path: '/shop' },
-  { name: 'Contact Us', path: '/contact' },
+  { name: 'Contact', path: '/contact' },
 ];
 
 export const Header = () => {
