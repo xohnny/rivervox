@@ -161,7 +161,7 @@ const AdminDashboard = () => {
           <h1 className="text-3xl font-display font-bold">Dashboard</h1>
           <p className="text-muted-foreground mt-1">Welcome back! Here's your store overview.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2">
           <DateRangePicker 
             dateRange={dateRange} 
             onDateRangeChange={setDateRange} 
