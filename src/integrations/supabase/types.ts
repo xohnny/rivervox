@@ -375,6 +375,57 @@ export type Database = {
           },
         ]
       }
+      store_settings: {
+        Row: {
+          admin_email: string | null
+          customer_messages_notifications: boolean | null
+          enable_free_shipping: boolean | null
+          free_shipping_threshold: number | null
+          id: string
+          international_shipping: boolean | null
+          low_stock_alerts: boolean | null
+          new_order_notifications: boolean | null
+          phone_number: string | null
+          standard_shipping_rate: number | null
+          store_address: string | null
+          store_email: string | null
+          store_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          admin_email?: string | null
+          customer_messages_notifications?: boolean | null
+          enable_free_shipping?: boolean | null
+          free_shipping_threshold?: number | null
+          id?: string
+          international_shipping?: boolean | null
+          low_stock_alerts?: boolean | null
+          new_order_notifications?: boolean | null
+          phone_number?: string | null
+          standard_shipping_rate?: number | null
+          store_address?: string | null
+          store_email?: string | null
+          store_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          admin_email?: string | null
+          customer_messages_notifications?: boolean | null
+          enable_free_shipping?: boolean | null
+          free_shipping_threshold?: number | null
+          id?: string
+          international_shipping?: boolean | null
+          low_stock_alerts?: boolean | null
+          new_order_notifications?: boolean | null
+          phone_number?: string | null
+          standard_shipping_rate?: number | null
+          store_address?: string | null
+          store_email?: string | null
+          store_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
