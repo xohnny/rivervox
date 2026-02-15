@@ -155,7 +155,7 @@ export const Testimonials = () => {
                   key={review.id}
                   className="flex-[0_0_100%] md:flex-[0_0_33.333%] min-w-0 px-3"
                 >
-                  <div className="bg-card rounded-2xl p-8 md:p-10 shadow-premium relative">
+                  <div className="bg-card rounded-2xl p-8 md:p-10 shadow-premium relative h-full flex flex-col">
                     {/* Quote Icon */}
                     <div className="absolute top-6 right-6 md:top-8 md:right-8">
                       <Quote className="w-10 h-10 text-primary/10" />
@@ -175,7 +175,7 @@ export const Testimonials = () => {
                     </div>
 
                     {/* Testimonial Text */}
-                    <p className="text-lg md:text-xl text-foreground leading-relaxed mb-8">
+                    <p className="text-lg md:text-xl text-foreground leading-relaxed mb-8 flex-1">
                       "{review.review_text}"
                     </p>
 
