@@ -19,4 +19,4 @@ Disallow: /register
 Disallow: /checkout
 Disallow: /order-confirmation
 
-Sitemap: https://rivervox.lovable.app/sitemap.xml
+Sitemap: https://hmuhmyynazfpqttuurcj.supabase.co/functions/v1/generate-sitemap
