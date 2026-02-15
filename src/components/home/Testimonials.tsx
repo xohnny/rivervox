@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { ReviewForm } from './ReviewForm';
+import { useSiteContent } from '@/hooks/useSiteContent';
 
 // Import fallback avatar images
 import fatimaAhmed from '@/assets/testimonials/fatima-ahmed.jpg';
@@ -74,6 +75,7 @@ const fallbackTestimonials: Review[] = [
 ];
 
 export const Testimonials = () => {
+  const { content: headings } = useSiteContent('home', 'testimonials', { section_label: 'Testimonials', section_title: 'What Our Customers Say' });
   const [reviews, setReviews] = useState<Review[]>(fallbackTestimonials);
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
@@ -136,10 +138,10 @@ export const Testimonials = () => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <span className="text-accent font-medium text-sm uppercase tracking-[0.2em]">
-            Testimonials
+            {headings.section_label || 'Testimonials'}
           </span>
           <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">
-            What Our Customers Say
+            {headings.section_title || 'What Our Customers Say'}
           </h2>
           <p className="text-muted-foreground mt-3 max-w-lg mx-auto">
             Join thousands of satisfied customers who trust Rivervox for their Islamic fashion needs

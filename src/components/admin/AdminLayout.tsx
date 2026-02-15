@@ -14,11 +14,13 @@ import {
   DollarSign,
   Menu,
   X,
+  FileText,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const sidebarLinks = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, end: true },
+  { name: 'Pages', path: '/admin/pages', icon: FileText },
   { name: 'Products', path: '/admin/products', icon: Package },
   { name: 'Inventory', path: '/admin/inventory', icon: Warehouse },
   { name: 'Currency Rates', path: '/admin/pricing', icon: DollarSign },
