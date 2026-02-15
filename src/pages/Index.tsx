@@ -5,6 +5,7 @@ import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { Features } from '@/components/home/Features';
 import { Testimonials } from '@/components/home/Testimonials';
 import { SEO } from '@/components/SEO';
+import { HomeJsonLd } from '@/components/HomeJsonLd';
 
 const Index = () => {
   return (
@@ -15,6 +16,7 @@ const Index = () => {
         keywords="Islamic fashion, modest clothing, thobe, abaya, hijab, Muslim fashion, modest wear, Islamic clothing online, men thobe, women abaya, kids Islamic wear"
         canonicalPath="/"
       />
+      <HomeJsonLd />
       <Hero />
       <Features />
       <Categories />
