@@ -83,15 +83,6 @@ export const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-display font-semibold uppercase tracking-wider text-sm">Get in Touch</h4>
             <div className="space-y-3">
-              {/* Bangladesh */}
-              <div className="flex items-start gap-3 text-sm text-primary-foreground/80">
-                <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <span>4th Floor, Polwel Carnation Shopping Center, Uttara, Dhaka 1230, Bangladesh</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
-                <Phone className="w-4 h-4 flex-shrink-0" />
-                <a href="tel:+8809638579882" className="hover:underline">+88 09638 579882</a>
-              </div>
               {/* USA */}
               <div className="flex items-start gap-3 text-sm text-primary-foreground/80">
                 <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
