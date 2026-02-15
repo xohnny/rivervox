@@ -4,68 +4,55 @@ import categoryMen from '@/assets/category-men.jpg';
 import categoryWomen from '@/assets/category-women.jpg';
 import categoryChildren from '@/assets/category-children.jpg';
 import categoryAccessories from '@/assets/category-accessories.jpg';
+import { useSiteContent } from '@/hooks/useSiteContent';
 
-const categories = [
-  {
-    name: 'Men',
-    slug: 'men',
-    image: categoryMen,
-    description: 'Elegant thobes & kurtas',
-  },
-  {
-    name: 'Women',
-    slug: 'women',
-    image: categoryWomen,
-    description: 'Graceful abayas & hijabs',
-  },
-  {
-    name: 'Children',
-    slug: 'children',
-    image: categoryChildren,
-    description: 'Adorable modest wear',
-  },
-  {
-    name: 'Accessories',
-    slug: 'accessories',
-    image: categoryAccessories,
-    description: 'Complete your look',
-  },
-];
+const defaultImages: Record<string, string> = {
+  men: categoryMen,
+  women: categoryWomen,
+  children: categoryChildren,
+  accessories: categoryAccessories,
+};
+
+const defaultCategories = {
+  section_label: 'Shop by Category',
+  section_title: 'Explore Our Collections',
+  items: [
+    { name: 'Men', slug: 'men', description: 'Elegant thobes & kurtas', image: '' },
+    { name: 'Women', slug: 'women', description: 'Graceful abayas & hijabs', image: '' },
+    { name: 'Children', slug: 'children', description: 'Adorable modest wear', image: '' },
+    { name: 'Accessories', slug: 'accessories', description: 'Complete your look', image: '' },
+  ],
+};
 
 export const Categories = () => {
+  const { content } = useSiteContent('home', 'categories', defaultCategories);
+
   return (
     <section className="py-16 md:py-24 bg-secondary/30">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
         <div className="text-center mb-12">
           <span className="text-accent font-medium text-sm uppercase tracking-[0.2em]">
-            Shop by Category
+            {content.section_label}
           </span>
           <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">
-            Explore Our Collections
+            {content.section_title}
           </h2>
         </div>
 
-        {/* Category Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {categories.map((category, index) => (
+          {content.items.map((category: any, index: number) => (
             <Link
               key={category.slug}
               to={`/shop?category=${category.slug}`}
               className="group relative aspect-[3/4] rounded-xl overflow-hidden animate-fade-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Image */}
               <img
-                src={category.image}
+                src={category.image || defaultImages[category.slug] || categoryMen}
                 alt={category.name}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-
-              {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
-
-              {/* Content */}
               <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6">
                 <h3 className="text-white text-xl md:text-2xl font-display font-bold mb-1">
                   {category.name}
