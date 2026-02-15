@@ -34,6 +34,8 @@ const Account = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [fullName, setFullName] = useState(user?.user_metadata?.full_name || '');
+  const [savingProfile, setSavingProfile] = useState(false);
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -248,7 +250,8 @@ const Account = () => {
                       <Label>Full Name</Label>
                       <Input
                         type="text"
-                        defaultValue={user.user_metadata?.full_name || ''}
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
                         className="mt-2"
                       />
                     </div>
@@ -261,7 +264,31 @@ const Account = () => {
                         className="mt-2"
                       />
                     </div>
-                    <Button>Save Changes</Button>
+                    <Button
+                      onClick={async () => {
+                        setSavingProfile(true);
+                        try {
+                          const { error: authError } = await supabase.auth.updateUser({
+                            data: { full_name: fullName },
+                          });
+                          if (authError) throw authError;
+                          const { error: profileError } = await supabase
+                            .from('profiles')
+                            .update({ full_name: fullName })
+                            .eq('user_id', user.id);
+                          if (profileError) throw profileError;
+                          toast.success('Profile updated successfully');
+                        } catch (err: any) {
+                          toast.error(err.message || 'Failed to update profile');
+                        } finally {
+                          setSavingProfile(false);
+                        }
+                      }}
+                      disabled={savingProfile}
+                    >
+                      {savingProfile && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                      Save Changes
+                    </Button>
                   </div>
                 </>
               )}
