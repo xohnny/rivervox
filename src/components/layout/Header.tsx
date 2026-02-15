@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, User, Menu, X, Heart, ChevronDown } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useSiteContent } from '@/hooks/useSiteContent';
 import { cn } from '@/lib/utils';
 import {
   Select,
@@ -13,11 +14,19 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const navLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'Shop', path: '/shop' },
-  { name: 'Contact', path: '/contact' },
-];
+interface HeaderContent {
+  logoText: string;
+  navLinks: { label: string; path: string }[];
+}
+
+const defaultHeader: HeaderContent = {
+  logoText: 'Rivervox',
+  navLinks: [
+    { label: 'Home', path: '/' },
+    { label: 'Shop', path: '/shop' },
+    { label: 'Contact', path: '/contact' },
+  ],
+};
 
 export const Header = () => {
   const { totalItems, openCart } = useCart();
@@ -25,6 +34,7 @@ export const Header = () => {
   const { currency, setCurrency, currencies } = useCurrency();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { content } = useSiteContent<HeaderContent>('layout', 'header', defaultHeader);
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
@@ -32,19 +42,16 @@ export const Header = () => {
         <div className="flex items-center h-16 md:h-20">
           {/* Logo */}
           <div className="flex-1">
-            <Link 
-              to="/" 
-              className="inline-flex items-center group"
-            >
+            <Link to="/" className="inline-flex items-center group">
               <span className="text-2xl md:text-3xl font-display font-bold text-primary transition-all duration-300 group-hover:scale-105">
-                Rivervox
+                {content.logoText}
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation - Centered */}
           <nav className="hidden lg:flex items-center justify-center gap-8">
-            {navLinks.map((link) => (
+            {content.navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
@@ -53,7 +60,7 @@ export const Header = () => {
                   location.pathname === link.path && 'text-primary font-semibold'
                 )}
               >
-                {link.name}
+                {link.label}
               </Link>
             ))}
           </nav>
@@ -76,11 +83,7 @@ export const Header = () => {
 
             {/* Desktop only icons */}
             <div className="hidden lg:flex items-center gap-4">
-              <Link
-                to="/wishlist"
-                className="relative p-2 hover:bg-secondary rounded-full transition-colors"
-                aria-label="Wishlist"
-              >
+              <Link to="/wishlist" className="relative p-2 hover:bg-secondary rounded-full transition-colors" aria-label="Wishlist">
                 <Heart className="w-5 h-5 text-foreground" />
                 {wishlistItems > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
@@ -89,11 +92,7 @@ export const Header = () => {
                 )}
               </Link>
 
-              <button
-                onClick={openCart}
-                className="relative p-2 hover:bg-secondary rounded-full transition-colors"
-                aria-label="Open cart"
-              >
+              <button onClick={openCart} className="relative p-2 hover:bg-secondary rounded-full transition-colors" aria-label="Open cart">
                 <ShoppingBag className="w-5 h-5 text-foreground" />
                 {totalItems > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
@@ -102,21 +101,13 @@ export const Header = () => {
                 )}
               </button>
 
-              <Link
-                to="/account"
-                className="p-2 hover:bg-secondary rounded-full transition-colors"
-                aria-label="Account"
-              >
+              <Link to="/account" className="p-2 hover:bg-secondary rounded-full transition-colors" aria-label="Account">
                 <User className="w-5 h-5 text-foreground" />
               </Link>
             </div>
 
             {/* Mobile/Tablet: Only cart icon visible + hamburger */}
-            <button
-              onClick={openCart}
-              className="lg:hidden relative p-2 hover:bg-secondary rounded-full transition-colors"
-              aria-label="Open cart"
-            >
+            <button onClick={openCart} className="lg:hidden relative p-2 hover:bg-secondary rounded-full transition-colors" aria-label="Open cart">
               <ShoppingBag className="w-5 h-5 text-foreground" />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-accent-foreground text-xs font-bold rounded-full flex items-center justify-center animate-scale-in">
@@ -126,16 +117,8 @@ export const Header = () => {
             </button>
 
             {/* Mobile/Tablet Menu Toggle */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 hover:bg-secondary rounded-full transition-colors"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? (
-                <X className="w-5 h-5 text-foreground" />
-              ) : (
-                <Menu className="w-5 h-5 text-foreground" />
-              )}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="lg:hidden p-2 hover:bg-secondary rounded-full transition-colors" aria-label="Toggle menu">
+              {mobileMenuOpen ? <X className="w-5 h-5 text-foreground" /> : <Menu className="w-5 h-5 text-foreground" />}
             </button>
           </div>
         </div>
@@ -144,7 +127,7 @@ export const Header = () => {
         {mobileMenuOpen && (
           <nav className="lg:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col gap-1">
-              {navLinks.map((link, index) => (
+              {content.navLinks.map((link, index) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -158,14 +141,12 @@ export const Header = () => {
                   )}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  {link.name}
+                  {link.label}
                 </Link>
               ))}
 
-              {/* Divider */}
               <div className="my-3 border-t border-border" />
 
-              {/* Mobile utility links */}
               <Link
                 to="/wishlist"
                 onClick={() => setMobileMenuOpen(false)}
