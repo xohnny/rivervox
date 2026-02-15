@@ -86,7 +86,7 @@ export const Footer = () => {
               {/* USA */}
               <div className="flex items-start gap-3 text-sm text-primary-foreground/80">
                 <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <span>4400 San Benito St Unit B, Santa Fe, New Mexico 87507, USA</span>
+                <span>8206 Louisiana Blvd NE, Ste A #8412, Albuquerque, NM 87113, USA</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-primary-foreground/80">
                 <Phone className="w-4 h-4 flex-shrink-0" />
