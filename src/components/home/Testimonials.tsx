@@ -153,7 +153,7 @@ export const Testimonials = () => {
               {reviews.map((review, index) => (
                 <div
                   key={review.id}
-                  className="flex-[0_0_100%] md:flex-[0_0_33.333%] min-w-0 px-3"
+                  className="flex-[0_0_100%] lg:flex-[0_0_33.333%] min-w-0 px-3"
                 >
                   <div className="bg-card rounded-2xl p-8 md:p-10 shadow-premium relative h-full flex flex-col">
                     {/* Quote Icon */}
