@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { User, Package, Heart, Settings, LogOut, Loader2, ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -141,6 +142,7 @@ const Account = () => {
 
   return (
     <Layout>
+      <SEO title="My Account" description="Manage your Rivervox account, orders, and preferences." noindex />
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-display font-bold mb-8">My Account</h1>

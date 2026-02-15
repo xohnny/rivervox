@@ -1,8 +1,15 @@
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 
 const PrivacyPolicy = () => {
   return (
     <Layout>
+      <SEO
+        title="Privacy Policy"
+        description="Learn how Rivervox collects, uses, and protects your personal information. Read our full privacy policy."
+        canonicalPath="/privacy-policy"
+        keywords="Rivervox privacy policy, data protection, personal information"
+      />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-display font-bold mb-8">Privacy Policy</h1>

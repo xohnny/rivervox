@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Filter, Grid, LayoutGrid, X, ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { ProductCard } from '@/components/products/ProductCard';
 import { products } from '@/data/products';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -116,6 +117,12 @@ const Shop = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Shop Islamic Fashion"
+        description="Browse our collection of premium thobes, abayas, hijabs and modest fashion accessories. Filter by category, size and price. Free shipping available to US & UK."
+        keywords="buy thobe online, buy abaya online, Islamic clothing shop, modest fashion store, hijab shop, Muslim clothing USA, Muslim clothing UK"
+        canonicalPath="/shop"
+      />
       {/* Page Header */}
       <div className="bg-primary/5 py-12 md:py-16">
         <div className="container mx-auto px-4">

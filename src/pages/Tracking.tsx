@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Package, Truck, CheckCircle, Clock, MapPin, Loader2, XCircle } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
@@ -92,6 +93,12 @@ const Tracking = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Track Your Order"
+        description="Track your Rivervox order in real-time. Enter your order number to see shipping status and delivery updates."
+        keywords="track order, Rivervox order tracking, shipping status, delivery update"
+        canonicalPath="/tracking"
+      />
       {/* Page Header */}
       <div className="bg-primary/5 py-12 md:py-16">
         <div className="container mx-auto px-4">

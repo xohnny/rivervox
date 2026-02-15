@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { useWishlist } from '@/context/WishlistContext';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
@@ -19,6 +20,7 @@ const Wishlist = () => {
   if (items.length === 0) {
     return (
       <Layout>
+        <SEO title="My Wishlist" description="View and manage your saved Rivervox products." noindex />
         <div className="container mx-auto px-4 py-16 min-h-[60vh] flex flex-col items-center justify-center">
           <Heart className="w-16 h-16 text-muted-foreground/50 mb-4" />
           <h1 className="font-display text-2xl font-bold mb-2">Your Wishlist is Empty</h1>
@@ -35,6 +37,7 @@ const Wishlist = () => {
 
   return (
     <Layout>
+      <SEO title="My Wishlist" description="View and manage your saved Rivervox products." noindex />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

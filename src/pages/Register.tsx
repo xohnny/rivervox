@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { UserPlus, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,6 +58,12 @@ const Register = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Create an Account"
+        description="Join Rivervox to track orders, save your favorites, and enjoy a personalized shopping experience."
+        canonicalPath="/register"
+        noindex
+      />
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">

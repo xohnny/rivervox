@@ -1,8 +1,15 @@
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 
 const TermsOfService = () => {
   return (
     <Layout>
+      <SEO
+        title="Terms of Service"
+        description="Read the terms and conditions for using the Rivervox website and purchasing our Islamic fashion products."
+        canonicalPath="/terms-of-service"
+        keywords="Rivervox terms, terms of service, conditions of use"
+      />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-display font-bold mb-8">Terms of Service</h1>
