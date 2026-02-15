@@ -13,8 +13,8 @@ const ShippingPolicy = () => {
             <div className="p-6 bg-card border border-border rounded-xl flex items-start gap-4">
               <Truck className="w-8 h-8 text-primary shrink-0" />
               <div>
-                <h3 className="font-semibold">Free Shipping</h3>
-                <p className="text-sm text-muted-foreground">On orders over $150</p>
+                <h3 className="font-semibold">Flat Rate Shipping</h3>
+                <p className="text-sm text-muted-foreground">US $5.99 · UK $7.99</p>
               </div>
             </div>
             <div className="p-6 bg-card border border-border rounded-xl flex items-start gap-4">
@@ -27,8 +27,8 @@ const ShippingPolicy = () => {
             <div className="p-6 bg-card border border-border rounded-xl flex items-start gap-4">
               <Globe className="w-8 h-8 text-primary shrink-0" />
               <div>
-                <h3 className="font-semibold">International</h3>
-                <p className="text-sm text-muted-foreground">Worldwide delivery</p>
+                <h3 className="font-semibold">Delivery Areas</h3>
+                <p className="text-sm text-muted-foreground">United States & United Kingdom</p>
               </div>
             </div>
             <div className="p-6 bg-card border border-border rounded-xl flex items-start gap-4">
@@ -47,37 +47,27 @@ const ShippingPolicy = () => {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-3 pr-4 font-semibold">Region</th>
-                      <th className="text-left py-3 pr-4 font-semibold">Standard</th>
-                      <th className="text-left py-3 font-semibold">Express</th>
+                      <th className="text-left py-3 pr-4 font-semibold">Country</th>
+                      <th className="text-left py-3 pr-4 font-semibold">Rate</th>
+                      <th className="text-left py-3 font-semibold">Estimated Delivery</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y">
                     <tr>
-                      <td className="py-3 pr-4">UAE</td>
-                      <td className="py-3 pr-4">Free (3-5 days)</td>
-                      <td className="py-3">$10 (1-2 days)</td>
+                      <td className="py-3 pr-4">🇺🇸 United States</td>
+                      <td className="py-3 pr-4">$5.99</td>
+                      <td className="py-3">5-7 business days</td>
                     </tr>
                     <tr>
-                      <td className="py-3 pr-4">GCC Countries</td>
-                      <td className="py-3 pr-4">$15 (5-7 days)</td>
-                      <td className="py-3">$25 (2-3 days)</td>
-                    </tr>
-                    <tr>
-                      <td className="py-3 pr-4">Middle East</td>
-                      <td className="py-3 pr-4">$20 (7-10 days)</td>
-                      <td className="py-3">$35 (3-5 days)</td>
-                    </tr>
-                    <tr>
-                      <td className="py-3 pr-4">International</td>
-                      <td className="py-3 pr-4">$30 (10-15 days)</td>
-                      <td className="py-3">$50 (5-7 days)</td>
+                      <td className="py-3 pr-4">🇬🇧 United Kingdom</td>
+                      <td className="py-3 pr-4">$7.99</td>
+                      <td className="py-3">7-10 business days</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <p className="text-sm text-muted-foreground">
-                *Free shipping on all orders over $150 (standard delivery only)
+                We currently only ship to the United States and United Kingdom.
               </p>
             </section>
 
@@ -94,11 +84,7 @@ const ShippingPolicy = () => {
             <section className="space-y-4">
               <h2 className="text-2xl font-display font-semibold text-foreground">Order Tracking</h2>
               <p>
-                Once your order is dispatched, you will receive an email with your tracking number. You can track your order using our{' '}
-                <a href="/tracking" className="text-primary hover:underline">
-                  Order Tracking
-                </a>{' '}
-                page or directly on the carrier's website.
+                Once your order is dispatched, you will receive an email with your tracking number. You can track your order directly on the carrier's website.
               </p>
             </section>
 
@@ -110,13 +96,6 @@ const ShippingPolicy = () => {
                 <li>Someone should be available to receive the package</li>
                 <li>Signature may be required for high-value orders</li>
               </ul>
-            </section>
-
-            <section className="space-y-4">
-              <h2 className="text-2xl font-display font-semibold text-foreground">Customs & Import Duties</h2>
-              <p>
-                For international orders, customers are responsible for any customs duties, import taxes, or fees that may apply. These charges are determined by your country's customs authorities and are not included in our shipping costs.
-              </p>
             </section>
 
             <section className="space-y-4">
