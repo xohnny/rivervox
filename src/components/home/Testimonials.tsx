@@ -147,7 +147,7 @@ export const Testimonials = () => {
         </div>
 
         {/* Carousel */}
-        <div className="relative max-w-6xl mx-auto">
+        <div className="relative">
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex">
               {reviews.map((review, index) => (
