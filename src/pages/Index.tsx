@@ -15,6 +15,7 @@ const Index = () => {
         description="Shop elegant thobes, abayas, hijabs and modest fashion accessories at Rivervox. Premium quality Islamic clothing with free US & UK shipping on select orders."
         keywords="Islamic fashion, modest clothing, thobe, abaya, hijab, Muslim fashion, modest wear, Islamic clothing online, men thobe, women abaya, kids Islamic wear"
         canonicalPath="/"
+        pageKey="home"
       />
       <HomeJsonLd />
       <Hero />

@@ -25,6 +25,7 @@ const ReturnsExchanges = () => {
         description="Easy returns and exchanges at Rivervox. Learn about our hassle-free return policy, exchange process, and refund timelines."
         keywords="Rivervox returns, exchange policy, refund, return Islamic clothing"
         canonicalPath="/returns-exchanges"
+        pageKey="returns-exchanges"
       />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">

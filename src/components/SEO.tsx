@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSiteContent } from '@/hooks/useSiteContent';
 
 interface SEOProps {
   title: string;
@@ -7,11 +8,19 @@ interface SEOProps {
   canonicalPath?: string;
   ogType?: string;
   noindex?: boolean;
+  pageKey?: string;
+}
+
+interface SEOContent {
+  title: string;
+  description: string;
+  keywords: string;
+  ogImage: string;
 }
 
 const SITE_NAME = 'Rivervox';
 const BASE_URL = 'https://rivervox.lovable.app';
-const OG_IMAGE = 'https://storage.googleapis.com/gpt-engineer-file-uploads/FqnKB5xaC9c11k64ANJR4BzdL2D3/social-images/social-1769162893875-Screenshot 2026-01-23 160806.jpg';
+const DEFAULT_OG_IMAGE = 'https://storage.googleapis.com/gpt-engineer-file-uploads/FqnKB5xaC9c11k64ANJR4BzdL2D3/social-images/social-1769162893875-Screenshot 2026-01-23 160806.jpg';
 
 export const SEO = ({
   title,
@@ -20,9 +29,21 @@ export const SEO = ({
   canonicalPath,
   ogType = 'website',
   noindex = false,
+  pageKey,
 }: SEOProps) => {
+  const { content: seoOverrides } = useSiteContent<SEOContent | null>(
+    'seo',
+    pageKey || '__none__',
+    null
+  );
+
+  const finalTitle = seoOverrides?.title || title;
+  const finalDescription = seoOverrides?.description || description;
+  const finalKeywords = seoOverrides?.keywords || keywords;
+  const finalOgImage = seoOverrides?.ogImage || DEFAULT_OG_IMAGE;
+
   useEffect(() => {
-    const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
+    const fullTitle = finalTitle === SITE_NAME ? finalTitle : `${finalTitle} | ${SITE_NAME}`;
     document.title = fullTitle;
 
     const setMeta = (name: string, content: string, isProperty = false) => {
@@ -36,21 +57,21 @@ export const SEO = ({
       el.setAttribute('content', content);
     };
 
-    setMeta('description', description);
-    if (keywords) setMeta('keywords', keywords);
+    setMeta('description', finalDescription);
+    if (finalKeywords) setMeta('keywords', finalKeywords);
 
     // Open Graph
     setMeta('og:title', fullTitle, true);
-    setMeta('og:description', description, true);
+    setMeta('og:description', finalDescription, true);
     setMeta('og:type', ogType, true);
-    setMeta('og:image', OG_IMAGE, true);
+    setMeta('og:image', finalOgImage, true);
     if (canonicalPath) {
       setMeta('og:url', `${BASE_URL}${canonicalPath}`, true);
     }
 
     // Twitter
     setMeta('twitter:title', fullTitle);
-    setMeta('twitter:description', description);
+    setMeta('twitter:description', finalDescription);
 
     // Robots
     if (noindex) {
@@ -72,7 +93,7 @@ export const SEO = ({
     } else if (canonical) {
       canonical.remove();
     }
-  }, [title, description, keywords, canonicalPath, ogType, noindex]);
+  }, [finalTitle, finalDescription, finalKeywords, finalOgImage, canonicalPath, ogType, noindex]);
 
   return null;
 };

@@ -25,6 +25,7 @@ const TermsOfService = () => {
         title="Terms of Service"
         description="Read the terms and conditions for using the Rivervox website and purchasing our products."
         canonicalPath="/terms-of-service"
+        pageKey="terms-of-service"
         keywords="Rivervox terms, terms of service, conditions of use"
       />
       <div className="container mx-auto px-4 py-12 md:py-16">
