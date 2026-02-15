@@ -28,7 +28,7 @@ interface OrderNotification {
 function formatTelegramMessage(order: OrderNotification): string {
   const itemLines = order.items.map(
     (item, i) =>
-      `  ${i + 1}. ${item.product_name}\n     Size: ${item.selected_size} | Color: ${item.selected_color_name}\n     Qty: ${item.quantity} × ৳${item.unit_price} = ৳${item.quantity * item.unit_price}`
+      `  ${i + 1}. ${item.product_name}\n     Size: ${item.selected_size} | Color: ${item.selected_color_name}\n     Qty: ${item.quantity} × $${item.unit_price.toFixed(2)} = $${(item.quantity * item.unit_price).toFixed(2)}`
   ).join('\n');
 
   const now = new Date().toLocaleString('en-BD', { timeZone: 'Asia/Dhaka' });
@@ -47,9 +47,9 @@ function formatTelegramMessage(order: OrderNotification): string {
 🧾 *Items:*
 ${itemLines}
 
-💰 *Subtotal:* ৳${order.subtotal}
-🚚 *Shipping:* ৳${order.shipping_cost}
-✅ *Total:* ৳${order.total}${order.notes ? `\n\n📝 *Notes:* ${order.notes}` : ''}`;
+💰 *Subtotal:* $${order.subtotal.toFixed(2)}
+🚚 *Shipping:* $${order.shipping_cost.toFixed(2)}
+✅ *Total:* $${order.total.toFixed(2)}${order.notes ? `\n\n📝 *Notes:* ${order.notes}` : ''}`;
 }
 
 Deno.serve(async (req) => {
