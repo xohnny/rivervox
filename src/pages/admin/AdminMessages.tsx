@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Mail, MailOpen, Eye, Trash2, Reply } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
 
 interface Message {
   id: string;
@@ -20,54 +22,33 @@ interface Message {
   isRead: boolean;
 }
 
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    name: 'Aisha Mohammed',
-    email: 'aisha.m@email.com',
-    phone: '+971 50 999 8888',
-    message: 'Hello! I would like to know if you have the Emerald Silk Thobe available in size XXL? Also, do you offer international shipping to the UK?',
-    createdAt: '2024-01-23 14:30',
-    isRead: false,
-  },
-  {
-    id: '2',
-    name: 'Khalid Rashid',
-    email: 'khalid.r@email.com',
-    message: 'I placed an order last week (RV-001220) but haven\'t received any shipping updates. Could you please check the status?',
-    createdAt: '2024-01-23 10:15',
-    isRead: false,
-  },
-  {
-    id: '3',
-    name: 'Maryam Ali',
-    email: 'maryam.ali@email.com',
-    phone: '+971 55 777 6666',
-    message: 'Your Royal Abaya Collection is beautiful! Do you have it in burgundy color? I would love to order for my sisters wedding.',
-    createdAt: '2024-01-22 16:45',
-    isRead: true,
-  },
-  {
-    id: '4',
-    name: 'Yusuf Ahmed',
-    email: 'yusuf.a@email.com',
-    message: 'Great quality products! I wanted to ask about bulk orders for our community event. Do you offer wholesale pricing?',
-    createdAt: '2024-01-22 09:20',
-    isRead: true,
-  },
-  {
-    id: '5',
-    name: 'Layla Hassan',
-    email: 'layla.h@email.com',
-    phone: '+971 52 444 3333',
-    message: 'I received my order today and the Princess Abaya Set is gorgeous! My daughter loves it. Thank you so much for the quick delivery.',
-    createdAt: '2024-01-21 11:30',
-    isRead: true,
-  },
-];
-
 const AdminMessages = () => {
-  const [messages, setMessages] = useState(mockMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMessages = async () => {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setMessages(data.map((m: any) => ({
+        id: m.id,
+        name: m.name,
+        email: m.email,
+        phone: m.phone,
+        message: m.message,
+        createdAt: format(new Date(m.created_at), 'yyyy-MM-dd HH:mm'),
+        isRead: m.is_read,
+      })));
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
 
@@ -80,13 +61,15 @@ const AdminMessages = () => {
       message.message.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const markAsRead = (messageId: string) => {
+  const markAsRead = async (messageId: string) => {
+    await supabase.from('contact_messages').update({ is_read: true }).eq('id', messageId);
     setMessages((prev) =>
       prev.map((m) => (m.id === messageId ? { ...m, isRead: true } : m))
     );
   };
 
-  const deleteMessage = (messageId: string) => {
+  const deleteMessage = async (messageId: string) => {
+    await supabase.from('contact_messages').delete().eq('id', messageId);
     setMessages((prev) => prev.filter((m) => m.id !== messageId));
     setSelectedMessage(null);
   };
