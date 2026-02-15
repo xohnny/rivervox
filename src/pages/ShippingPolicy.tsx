@@ -1,9 +1,16 @@
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { Truck, Clock, Globe, Package } from 'lucide-react';
 
 const ShippingPolicy = () => {
   return (
     <Layout>
+      <SEO
+        title="Shipping Policy - US & UK Delivery"
+        description="Rivervox ships to the United States ($5.99) and United Kingdom ($7.99). Learn about delivery times, tracking, and our shipping process."
+        keywords="Rivervox shipping, US delivery, UK delivery, shipping rates, order tracking, Islamic fashion delivery"
+        canonicalPath="/shipping-policy"
+      />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-display font-bold mb-8">Shipping Policy</h1>

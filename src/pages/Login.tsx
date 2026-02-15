@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -33,6 +34,12 @@ const Login = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Sign In to Your Account"
+        description="Sign in to your Rivervox account to track orders, manage your wishlist, and shop faster."
+        canonicalPath="/login"
+        noindex
+      />
       <div className="container mx-auto px-4 py-16 min-h-[60vh] flex items-center justify-center">
         <div className="w-full max-w-md">
           <div className="card-premium p-8">

@@ -1,4 +1,5 @@
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { Link } from 'react-router-dom';
 import {
   Accordion,
@@ -118,6 +119,12 @@ const FAQ = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Frequently Asked Questions"
+        description="Find answers to common questions about Rivervox orders, shipping to US & UK, returns, sizing, and more. Get the help you need quickly."
+        keywords="Rivervox FAQ, Islamic fashion questions, shipping FAQ, returns policy, size guide help"
+        canonicalPath="/faq"
+      />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-display font-bold mb-4">Frequently Asked Questions</h1>

@@ -12,3 +12,11 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /account
+Disallow: /login
+Disallow: /register
+Disallow: /checkout
+Disallow: /order-confirmation
+
+Sitemap: https://rivervox.lovable.app/sitemap.xml

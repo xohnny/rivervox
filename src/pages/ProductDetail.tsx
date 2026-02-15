@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { products } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -61,6 +62,13 @@ const ProductDetail = () => {
 
   return (
     <Layout>
+      <SEO
+        title={product.name}
+        description={product.description || `Shop ${product.name} at Rivervox. Premium Islamic fashion with free shipping options to US & UK.`}
+        keywords={`${product.name}, ${product.category} fashion, Islamic clothing, modest fashion, buy ${product.name}`}
+        canonicalPath={`/product/${product.id}`}
+        ogType="product"
+      />
       {/* Breadcrumb */}
       <div className="bg-secondary/30 py-4">
         <div className="container mx-auto px-4">

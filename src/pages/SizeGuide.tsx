@@ -1,10 +1,17 @@
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { Ruler, Info } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const SizeGuide = () => {
   return (
     <Layout>
+      <SEO
+        title="Size Guide - Find Your Perfect Fit"
+        description="Use our detailed size guide to find the perfect fit for thobes, abayas, and other Islamic fashion. Includes measurements for men, women, and children."
+        keywords="thobe size guide, abaya size chart, Islamic clothing sizes, modest fashion measurements"
+        canonicalPath="/size-guide"
+      />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-display font-bold mb-4">Size Guide</h1>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, Check } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -49,6 +50,12 @@ const Contact = () => {
 
   return (
     <Layout>
+      <SEO
+        title="Contact Us"
+        description="Get in touch with Rivervox. Visit our store in Albuquerque, NM or send us a message. We're here to help with orders, sizing, and any questions."
+        keywords="contact Rivervox, Islamic fashion store contact, customer support, Rivervox address, Rivervox phone"
+        canonicalPath="/contact"
+      />
       {/* Page Header */}
       <div className="bg-primary/5 py-12 md:py-16">
         <div className="container mx-auto px-4">

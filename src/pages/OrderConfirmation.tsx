@@ -1,5 +1,6 @@
 import { useSearchParams, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { CheckCircle, Package, Truck, Home, CreditCard, Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
@@ -24,6 +25,7 @@ const OrderConfirmation = () => {
 
   return (
     <Layout>
+      <SEO title="Order Confirmed" description="Your Rivervox order has been placed successfully." noindex />
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-lg mx-auto text-center">
           {/* Success Icon */}

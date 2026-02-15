@@ -1,9 +1,16 @@
 import { Layout } from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 import { RotateCcw, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 const ReturnsExchanges = () => {
   return (
     <Layout>
+      <SEO
+        title="Returns & Exchanges"
+        description="Easy returns and exchanges at Rivervox. Learn about our hassle-free return policy, exchange process, and refund timelines."
+        keywords="Rivervox returns, exchange policy, refund, return Islamic clothing"
+        canonicalPath="/returns-exchanges"
+      />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-display font-bold mb-8">Returns & Exchanges</h1>
