@@ -160,8 +160,8 @@ const AdminOrders = () => {
                         >
                           <SelectTrigger className={cn('w-[140px] h-8', statusConfig.triggerColor)}>
                             <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-                              <statusConfig.icon className="w-3 h-3" />
-                              {statusConfig.label}
+                              <statusConfig.icon className="w-3 h-3 flex-shrink-0" />
+                              <span>{statusConfig.label}</span>
                             </span>
                           </SelectTrigger>
                           <SelectContent>
