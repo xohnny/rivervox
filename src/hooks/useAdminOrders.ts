@@ -18,6 +18,8 @@ export interface AdminOrder {
   shipping_cost: number;
   total: number;
   status: OrderStatus;
+  payment_method: string;
+  payment_status: string;
   notes: string | null;
   created_at: string;
   updated_at: string;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Eye, Package, Truck, CheckCircle, Clock, XCircle, Loader2 } from 'lucide-react';
+import { Search, Eye, Package, Truck, CheckCircle, Clock, XCircle, Loader2, CreditCard, Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -124,6 +124,7 @@ const AdminOrders = () => {
                   <th className="text-left px-6 py-4 text-sm font-semibold">Customer</th>
                   <th className="text-left px-6 py-4 text-sm font-semibold">Items</th>
                   <th className="text-left px-6 py-4 text-sm font-semibold">Total</th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold">Payment</th>
                   <th className="text-left px-6 py-4 text-sm font-semibold">Status</th>
                   <th className="text-left px-6 py-4 text-sm font-semibold">Date</th>
                   <th className="text-right px-6 py-4 text-sm font-semibold">Actions</th>
@@ -150,6 +151,25 @@ const AdminOrders = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className="font-semibold">${Number(order.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col gap-1">
+                          <span className="inline-flex items-center gap-1 text-xs font-medium">
+                            {order.payment_method === 'online' ? (
+                              <><CreditCard className="w-3 h-3" /> Online</>
+                            ) : (
+                              <><Banknote className="w-3 h-3" /> COD</>
+                            )}
+                          </span>
+                          <span className={cn(
+                            'inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full w-fit',
+                            order.payment_status === 'paid'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : 'bg-amber-100 text-amber-700'
+                          )}>
+                            {order.payment_status === 'paid' ? 'Paid' : 'Unpaid'}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <Select
@@ -284,6 +304,28 @@ const AdminOrders = () => {
                   </p>
                 </div>
               )}
+
+              {/* Payment Info */}
+              <div>
+                <h4 className="font-semibold text-sm mb-2">Payment</h4>
+                <div className="bg-muted/50 rounded-lg p-4 flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1.5 text-sm">
+                    {selectedOrder.payment_method === 'online' ? (
+                      <><CreditCard className="w-4 h-4" /> Online Payment</>
+                    ) : (
+                      <><Banknote className="w-4 h-4" /> Cash on Delivery</>
+                    )}
+                  </span>
+                  <span className={cn(
+                    'inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full',
+                    selectedOrder.payment_status === 'paid'
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : 'bg-amber-100 text-amber-700'
+                  )}>
+                    {selectedOrder.payment_status === 'paid' ? 'Paid' : 'Unpaid'}
+                  </span>
+                </div>
+              </div>
 
               {/* Status Update */}
               <div>

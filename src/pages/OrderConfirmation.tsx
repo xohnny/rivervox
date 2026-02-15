@@ -1,11 +1,26 @@
 import { useSearchParams, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { CheckCircle, Package, Truck, Home } from 'lucide-react';
+import { CheckCircle, Package, Truck, Home, CreditCard, Banknote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 const OrderConfirmation = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId') || 'RV-000000';
+  const [orderInfo, setOrderInfo] = useState<{ payment_method: string; payment_status: string } | null>(null);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      const { data } = await supabase
+        .from('orders')
+        .select('payment_method, payment_status')
+        .eq('order_number', orderId)
+        .single();
+      if (data) setOrderInfo(data);
+    };
+    if (orderId !== 'RV-000000') fetchOrder();
+  }, [orderId]);
 
   return (
     <Layout>
@@ -27,6 +42,28 @@ const OrderConfirmation = () => {
           <div className="bg-card border border-border rounded-xl p-6 mb-8 animate-fade-up-delay-2">
             <p className="text-sm text-muted-foreground mb-1">Order Number</p>
             <p className="text-2xl font-bold text-primary">{orderId}</p>
+            {orderInfo && (
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-muted">
+                  {orderInfo.payment_method === 'online' ? (
+                    <><CreditCard className="w-3 h-3" /> Online Payment</>
+                  ) : (
+                    <><Banknote className="w-3 h-3" /> Cash on Delivery</>
+                  )}
+                </span>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
+                  orderInfo.payment_status === 'paid'
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-amber-100 text-amber-700'
+                }`}>
+                  {orderInfo.payment_status === 'paid' ? (
+                    <><CheckCircle className="w-3 h-3" /> Paid</>
+                  ) : (
+                    <>Unpaid</>
+                  )}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Timeline */}
