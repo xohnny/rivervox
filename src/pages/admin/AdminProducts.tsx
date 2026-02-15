@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useInventory, InventoryProduct } from '@/hooks/useInventory';
+import { products as demoProducts } from '@/data/products';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import {
   AlertDialog,
@@ -42,6 +43,11 @@ import ProductColorPicker from '@/components/admin/ProductColorPicker';
 const formatPrice = (price: number) => {
   const usdPrice = price / 110;
   return `$${usdPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
+const getDemoImage = (productName: string): string => {
+  const demo = demoProducts.find(p => p.name.toLowerCase() === productName.toLowerCase());
+  return demo?.images?.[0] || '/placeholder.svg';
 };
 
 const AdminProducts = () => {
@@ -416,7 +422,7 @@ const AdminProducts = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 bg-muted rounded-lg overflow-hidden flex-shrink-0">
                         <img
-                          src={product.images[0] || '/placeholder.svg'}
+                          src={product.images[0] && product.images[0] !== '/placeholder.svg' ? product.images[0] : getDemoImage(product.name)}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
