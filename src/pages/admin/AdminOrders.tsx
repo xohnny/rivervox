@@ -24,11 +24,11 @@ import type { Database } from '@/integrations/supabase/types';
 type OrderStatus = Database['public']['Enums']['order_status'];
 
 const statusOptions = [
-  { value: 'pending', label: 'Pending', icon: Clock, color: 'bg-amber-100 text-amber-700' },
-  { value: 'processing', label: 'Processing', icon: Package, color: 'bg-blue-100 text-blue-700' },
-  { value: 'shipped', label: 'Shipped', icon: Truck, color: 'bg-purple-100 text-purple-700' },
-  { value: 'delivered', label: 'Delivered', icon: CheckCircle, color: 'bg-emerald-100 text-emerald-700' },
-  { value: 'cancelled', label: 'Cancelled', icon: XCircle, color: 'bg-red-100 text-red-700' },
+  { value: 'pending', label: 'Pending', icon: Clock, color: 'bg-amber-100 text-amber-700', triggerColor: 'border-amber-400 bg-amber-50' },
+  { value: 'processing', label: 'Processing', icon: Package, color: 'bg-blue-100 text-blue-700', triggerColor: 'border-blue-400 bg-blue-50' },
+  { value: 'shipped', label: 'Shipped', icon: Truck, color: 'bg-purple-100 text-purple-700', triggerColor: 'border-purple-400 bg-purple-50' },
+  { value: 'delivered', label: 'Delivered', icon: CheckCircle, color: 'bg-emerald-100 text-emerald-700', triggerColor: 'border-emerald-400 bg-emerald-50' },
+  { value: 'cancelled', label: 'Cancelled', icon: XCircle, color: 'bg-red-100 text-red-700', triggerColor: 'border-red-400 bg-red-50' },
 ];
 
 const AdminOrders = () => {
@@ -158,7 +158,7 @@ const AdminOrders = () => {
                             handleStatusUpdate(order.id, value as OrderStatus)
                           }
                         >
-                          <SelectTrigger className="w-[140px] h-8">
+                          <SelectTrigger className={cn('w-[140px] h-8', statusConfig.triggerColor)}>
                             <span
                               className={cn(
                                 'inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-medium rounded-full',
