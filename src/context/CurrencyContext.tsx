@@ -1,27 +1,50 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { currencies, countryToCurrency, getCurrencyByCode, type Currency } from '@/data/currencies';
+import { currencies as defaultCurrencies, countryToCurrency, getCurrencyByCode, mergeLiveRates, type Currency } from '@/data/currencies';
 import { supabase } from '@/integrations/supabase/client';
 
 interface CurrencyContextType {
   currency: Currency;
   setCurrency: (code: string) => void;
-  formatPrice: (bdtPrice: number) => string;
+  formatPrice: (usdPrice: number) => string;
   currencies: Currency[];
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
+  const [activeCurrencies, setActiveCurrencies] = useState<Currency[]>(defaultCurrencies);
   const [currency, setCurrencyState] = useState<Currency>(() => {
     const saved = localStorage.getItem('selectedCurrency');
     if (saved) {
       return getCurrencyByCode(saved);
     }
-    return getCurrencyByCode('USD'); // default until geo detected
+    return getCurrencyByCode('USD');
   });
 
+  // Fetch live exchange rates
   useEffect(() => {
-    // Only auto-detect if user hasn't manually selected
+    const fetchRates = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('fetch-exchange-rates');
+        if (!error && data?.rates) {
+          const merged = mergeLiveRates(data.rates);
+          setActiveCurrencies(merged);
+          // Update current currency with live rate
+          const saved = localStorage.getItem('selectedCurrency');
+          const code = saved || currency.code;
+          const updated = merged.find(c => c.code === code);
+          if (updated) setCurrencyState(updated);
+        }
+      } catch {
+        // Keep fallback rates
+      }
+    };
+
+    fetchRates();
+  }, []);
+
+  // Auto-detect currency by location
+  useEffect(() => {
     if (localStorage.getItem('selectedCurrency')) return;
 
     const detectCurrency = async () => {
@@ -29,7 +52,8 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
         const { data, error } = await supabase.functions.invoke('get-location');
         if (!error && data?.countryCode) {
           const currencyCode = countryToCurrency[data.countryCode] || 'USD';
-          setCurrencyState(getCurrencyByCode(currencyCode));
+          const found = activeCurrencies.find(c => c.code === currencyCode);
+          if (found) setCurrencyState(found);
         }
       } catch {
         // Keep default USD
@@ -37,18 +61,18 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     };
 
     detectCurrency();
-  }, []);
+  }, [activeCurrencies]);
 
   const setCurrency = (code: string) => {
-    const curr = getCurrencyByCode(code);
+    const curr = activeCurrencies.find(c => c.code === code) || getCurrencyByCode(code);
     setCurrencyState(curr);
     localStorage.setItem('selectedCurrency', code);
   };
 
-  const formatPrice = (bdtPrice: number): string => {
-    const converted = bdtPrice * currency.rate;
-    
-    // For currencies with large values (JPY, KRW, VND, IDR, etc.), no decimals
+  const formatPrice = (usdPrice: number): string => {
+    // Convert from USD to selected currency
+    const converted = usdPrice * currency.rate;
+
     const noDecimalCurrencies = ['JPY', 'KRW', 'VND', 'IDR', 'MMK', 'BDT', 'NGN', 'RUB'];
     const fractionDigits = noDecimalCurrencies.includes(currency.code) ? 0 : 2;
 
@@ -61,7 +85,7 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency, formatPrice, currencies }}>
+    <CurrencyContext.Provider value={{ currency, setCurrency, formatPrice, currencies: activeCurrencies }}>
       {children}
     </CurrencyContext.Provider>
   );
