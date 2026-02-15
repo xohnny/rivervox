@@ -77,8 +77,9 @@ export const Testimonials = () => {
   const [reviews, setReviews] = useState<Review[]>(fallbackTestimonials);
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
-    align: 'center',
+    align: 'start',
     skipSnaps: false,
+    slidesToScroll: 1,
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -146,13 +147,13 @@ export const Testimonials = () => {
         </div>
 
         {/* Carousel */}
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative max-w-6xl mx-auto">
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex">
               {reviews.map((review, index) => (
                 <div
                   key={review.id}
-                  className="flex-[0_0_100%] min-w-0 px-4"
+                  className="flex-[0_0_100%] md:flex-[0_0_33.333%] min-w-0 px-3"
                 >
                   <div className="bg-card rounded-2xl p-8 md:p-10 shadow-premium relative">
                     {/* Quote Icon */}
