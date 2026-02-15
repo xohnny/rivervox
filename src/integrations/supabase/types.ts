@@ -383,6 +383,7 @@ export type Database = {
           free_shipping_threshold: number | null
           id: string
           international_shipping: boolean | null
+          logo_url: string | null
           low_stock_alerts: boolean | null
           new_order_notifications: boolean | null
           phone_number: string | null
@@ -399,6 +400,7 @@ export type Database = {
           free_shipping_threshold?: number | null
           id?: string
           international_shipping?: boolean | null
+          logo_url?: string | null
           low_stock_alerts?: boolean | null
           new_order_notifications?: boolean | null
           phone_number?: string | null
@@ -415,6 +417,7 @@ export type Database = {
           free_shipping_threshold?: number | null
           id?: string
           international_shipping?: boolean | null
+          logo_url?: string | null
           low_stock_alerts?: boolean | null
           new_order_notifications?: boolean | null
           phone_number?: string | null

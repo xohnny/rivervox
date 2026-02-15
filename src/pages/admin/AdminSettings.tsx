@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Save, Store, Truck, Bell, Shield } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Save, Store, Truck, Bell, Shield, Upload, X, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,13 +23,16 @@ interface StoreSettings {
   low_stock_alerts: boolean;
   customer_messages_notifications: boolean;
   admin_email: string;
+  logo_url: string | null;
 }
 
 const AdminSettings = () => {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const [settings, setSettings] = useState<StoreSettings | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -51,6 +54,47 @@ const AdminSettings = () => {
 
   const updateField = <K extends keyof StoreSettings>(key: K, value: StoreSettings[K]) => {
     setSettings(prev => prev ? { ...prev, [key]: value } : prev);
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !settings) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Invalid file', description: 'Please upload an image file.', variant: 'destructive' });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Logo must be under 5MB.', variant: 'destructive' });
+      return;
+    }
+
+    setIsUploading(true);
+    const fileExt = file.name.split('.').pop();
+    const filePath = `logo-${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('store-assets')
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      toast({ title: 'Upload failed', description: uploadError.message, variant: 'destructive' });
+      setIsUploading(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage.from('store-assets').getPublicUrl(filePath);
+    updateField('logo_url', urlData.publicUrl);
+    setIsUploading(false);
+    toast({ title: 'Logo uploaded', description: 'Remember to save your changes.' });
+
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemoveLogo = () => {
+    updateField('logo_url', null);
   };
 
   const handleSave = async () => {
@@ -109,6 +153,59 @@ const AdminSettings = () => {
           <h2 className="text-lg font-display font-semibold">Store Information</h2>
         </div>
         <div className="space-y-4">
+          {/* Logo Upload */}
+          <div>
+            <Label>Store Logo</Label>
+            <div className="mt-2 flex items-center gap-4">
+              {settings.logo_url ? (
+                <div className="relative group">
+                  <img
+                    src={settings.logo_url}
+                    alt="Store logo"
+                    className="w-20 h-20 rounded-lg object-contain border border-border bg-muted"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveLogo}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-20 h-20 rounded-lg border-2 border-dashed border-border flex items-center justify-center bg-muted/50">
+                  <ImageIcon className="w-8 h-8 text-muted-foreground" />
+                </div>
+              )}
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                >
+                  {isUploading ? (
+                    <span className="animate-pulse">Uploading...</span>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4 mr-2" />
+                      {settings.logo_url ? 'Change Logo' : 'Upload Logo'}
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-muted-foreground mt-1">PNG, JPG or SVG. Max 5MB.</p>
+              </div>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <Label>Store Name</Label>
