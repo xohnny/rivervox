@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { User, Package, Heart, Settings, LogOut, Loader2, ChevronDown } from 'lucide-react';
+import { User, Package, Heart, Settings, LogOut, Loader2, ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/context/AuthContext';
 import { OrderHistory } from '@/components/account/OrderHistory';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
@@ -23,12 +25,52 @@ const Account = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('orders');
   const [signingOut, setSigningOut] = useState(false);
+  const [orderNotifications, setOrderNotifications] = useState(true);
+  const [promoNotifications, setPromoNotifications] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignOut = async () => {
     setSigningOut(true);
     await signOut();
     toast.success('Signed out successfully');
     navigate('/');
+  };
+
+  const handleChangePassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      toast.error('Please fill in all password fields');
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match');
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Password updated successfully');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      }
+    } catch {
+      toast.error('Failed to update password');
+    } finally {
+      setChangingPassword(false);
+    }
   };
 
   if (loading) {
@@ -239,18 +281,77 @@ const Account = () => {
               {activeTab === 'settings' && (
                 <>
                   <h2 className="text-xl font-semibold mb-6">Account Settings</h2>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-secondary/50 rounded-lg">
-                      <h3 className="font-medium mb-1">Email Notifications</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Manage your email preferences and notifications.
-                      </p>
+                  <div className="space-y-6">
+                    {/* Email Notifications */}
+                    <div className="p-4 bg-secondary/50 rounded-lg space-y-4">
+                      <div>
+                        <h3 className="font-medium mb-1">Email Notifications</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Manage your email preferences and notifications.
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="order-notif" className="cursor-pointer">Order updates & shipping</Label>
+                        <Switch id="order-notif" checked={orderNotifications} onCheckedChange={setOrderNotifications} />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="promo-notif" className="cursor-pointer">Promotions & new arrivals</Label>
+                        <Switch id="promo-notif" checked={promoNotifications} onCheckedChange={setPromoNotifications} />
+                      </div>
                     </div>
-                    <div className="p-4 bg-secondary/50 rounded-lg">
-                      <h3 className="font-medium mb-1">Password</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Update your account password.
-                      </p>
+
+                    {/* Password */}
+                    <div className="p-4 bg-secondary/50 rounded-lg space-y-4">
+                      <div>
+                        <h3 className="font-medium mb-1">Password</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Update your account password.
+                        </p>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <Label>New Password</Label>
+                          <div className="relative mt-1">
+                            <Input
+                              type={showNewPassword ? 'text' : 'password'}
+                              value={newPassword}
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              placeholder="Enter new password"
+                              className="pr-10"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowNewPassword(!showNewPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                              {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
+                        </div>
+                        <div>
+                          <Label>Confirm New Password</Label>
+                          <div className="relative mt-1">
+                            <Input
+                              type={showConfirmPassword ? 'text' : 'password'}
+                              value={confirmPassword}
+                              onChange={(e) => setConfirmPassword(e.target.value)}
+                              placeholder="Confirm new password"
+                              className="pr-10"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                              {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          </div>
+                        </div>
+                        <Button onClick={handleChangePassword} disabled={changingPassword}>
+                          {changingPassword ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                          Update Password
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </>
