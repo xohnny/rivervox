@@ -45,7 +45,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const { formatPrice, currency } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('online');
   const [cityOpen, setCityOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
@@ -383,50 +383,17 @@ const Checkout = () => {
                 <CreditCard className="w-5 h-5 text-primary" />
                 Payment Method
               </h2>
-              <div className="space-y-3 mb-6">
-                {/* Cash on Delivery */}
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('cod')}
-                  className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all ${
-                    paymentMethod === 'cod'
-                      ? 'bg-secondary/50 border-primary'
-                      : 'bg-card border-border hover:border-primary/50'
-                  }`}
-                >
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    paymentMethod === 'cod' ? 'bg-primary' : 'border-2 border-muted-foreground/30'
-                  }`}>
-                    {paymentMethod === 'cod' && <Check className="w-4 h-4 text-primary-foreground" />}
-                  </div>
-                  <Banknote className="w-5 h-5 text-primary" />
-                  <div className="text-left">
-                    <p className="font-medium">Cash on Delivery</p>
-                    <p className="text-sm text-muted-foreground">Pay when you receive</p>
-                  </div>
-                </button>
-
-                {/* Online Payment */}
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('online')}
-                  className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all ${
-                    paymentMethod === 'online'
-                      ? 'bg-secondary/50 border-primary'
-                      : 'bg-card border-border hover:border-primary/50'
-                  }`}
-                >
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    paymentMethod === 'online' ? 'bg-primary' : 'border-2 border-muted-foreground/30'
-                  }`}>
-                    {paymentMethod === 'online' && <Check className="w-4 h-4 text-primary-foreground" />}
+              <div className="mb-6">
+                <div className="w-full p-4 rounded-lg border-2 bg-secondary/50 border-primary flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-primary">
+                    <Check className="w-4 h-4 text-primary-foreground" />
                   </div>
                   <Globe className="w-5 h-5 text-primary" />
                   <div className="text-left">
                     <p className="font-medium">Online Payment</p>
                     <p className="text-sm text-muted-foreground">Pay securely online</p>
                   </div>
-                </button>
+                </div>
               </div>
               <Button
                 type="submit"
@@ -525,50 +492,17 @@ const Checkout = () => {
                 <CreditCard className="w-5 h-5 text-primary" />
                 Payment Method
               </h2>
-              <div className="space-y-3 mb-6">
-                {/* Cash on Delivery */}
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('cod')}
-                  className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all ${
-                    paymentMethod === 'cod'
-                      ? 'bg-secondary/50 border-primary'
-                      : 'bg-card border-border hover:border-primary/50'
-                  }`}
-                >
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    paymentMethod === 'cod' ? 'bg-primary' : 'border-2 border-muted-foreground/30'
-                  }`}>
-                    {paymentMethod === 'cod' && <Check className="w-4 h-4 text-primary-foreground" />}
-                  </div>
-                  <Banknote className="w-5 h-5 text-primary" />
-                  <div className="text-left">
-                    <p className="font-medium">Cash on Delivery</p>
-                    <p className="text-sm text-muted-foreground">Pay when you receive</p>
-                  </div>
-                </button>
-
-                {/* Online Payment */}
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('online')}
-                  className={`w-full p-4 rounded-lg border-2 flex items-center gap-3 transition-all ${
-                    paymentMethod === 'online'
-                      ? 'bg-secondary/50 border-primary'
-                      : 'bg-card border-border hover:border-primary/50'
-                  }`}
-                >
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    paymentMethod === 'online' ? 'bg-primary' : 'border-2 border-muted-foreground/30'
-                  }`}>
-                    {paymentMethod === 'online' && <Check className="w-4 h-4 text-primary-foreground" />}
+              <div className="mb-6">
+                <div className="w-full p-4 rounded-lg border-2 bg-secondary/50 border-primary flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-primary">
+                    <Check className="w-4 h-4 text-primary-foreground" />
                   </div>
                   <Globe className="w-5 h-5 text-primary" />
                   <div className="text-left">
                     <p className="font-medium">Online Payment</p>
                     <p className="text-sm text-muted-foreground">Pay securely online</p>
                   </div>
-                </button>
+                </div>
               </div>
               <Button
                 type="submit"
