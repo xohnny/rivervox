@@ -1,32 +1,70 @@
 
-## Fix: Icon placement in order status dropdown
+## Persist Admin Settings to Database
 
-**Problem:** The `SelectTrigger` component applies `[&>span]:line-clamp-1` to all direct child `<span>` elements. The `line-clamp-1` utility sets `display: -webkit-box` and `-webkit-box-orient: vertical`, which overrides your `inline-flex` and causes the icon to stack above the text.
+**Problem:** The Settings page uses hardcoded default values and the Save button only shows a toast without saving to the database. Changes are lost on every page reload.
 
-**Solution:** Wrap the icon and label inside a `<div>` instead of a `<span>`, so it won't be affected by the `[&>span]:line-clamp-1` selector. The `<div>` will use `flex items-center gap-1.5` to keep the icon to the left of the text.
+**Solution:** Create a `store_settings` database table and update the Settings page to load/save settings from the database.
 
-### Changes
+### Step 1: Create Database Table
 
-**File: `src/pages/admin/AdminOrders.tsx`**
+Create a `store_settings` table with a single-row design (key-value or single JSON row):
 
-In the orders table status column (around line 161-166), change the inner `<span>` wrapper to a `<div>`:
+```sql
+CREATE TABLE public.store_settings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  store_name TEXT DEFAULT 'Rivervox',
+  store_email TEXT DEFAULT 'hello@rivervox.com',
+  phone_number TEXT DEFAULT '+971 50 123 4567',
+  store_address TEXT DEFAULT '123 Fashion Avenue, Dubai Mall, Level 2, Dubai, UAE',
+  standard_shipping_rate NUMERIC DEFAULT 100,
+  free_shipping_threshold NUMERIC DEFAULT 2000,
+  enable_free_shipping BOOLEAN DEFAULT true,
+  international_shipping BOOLEAN DEFAULT true,
+  new_order_notifications BOOLEAN DEFAULT true,
+  low_stock_alerts BOOLEAN DEFAULT true,
+  customer_messages_notifications BOOLEAN DEFAULT true,
+  admin_email TEXT DEFAULT 'admin@rivervox.com',
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
 
-```tsx
-// Before
-<SelectTrigger className={cn('w-[140px] h-8', statusConfig.triggerColor)}>
-  <span className="inline-flex items-center gap-1.5 text-xs font-medium">
-    <statusConfig.icon className="w-3 h-3 flex-shrink-0" />
-    <span>{statusConfig.label}</span>
-  </span>
-</SelectTrigger>
+-- Insert default row
+INSERT INTO store_settings DEFAULT VALUES;
 
-// After
-<SelectTrigger className={cn('w-[140px] h-8', statusConfig.triggerColor)}>
-  <div className="inline-flex items-center gap-1.5 text-xs font-medium">
-    <statusConfig.icon className="w-3 h-3 flex-shrink-0" />
-    <span>{statusConfig.label}</span>
-  </div>
-</SelectTrigger>
+-- RLS: only admins can read/update
+ALTER TABLE store_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admins can read settings"
+  ON store_settings FOR SELECT
+  USING (public.has_role(auth.uid(), 'admin'));
+
+CREATE POLICY "Admins can update settings"
+  ON store_settings FOR UPDATE
+  USING (public.has_role(auth.uid(), 'admin'));
 ```
 
-This single-line change (replacing `<span>` with `<div>`) prevents the `line-clamp-1` style from interfering with the flex layout, placing the icon correctly to the left.
+### Step 2: Update AdminSettings.tsx
+
+- Replace hardcoded `defaultValue` with React state loaded from the database on mount.
+- Use `useState` for each field group (store info, shipping, notifications, security).
+- On page load, fetch the single row from `store_settings`.
+- On "Save Changes", update that row in the database.
+- Show loading skeleton while fetching initial data.
+
+### Technical Details
+
+**Data flow:**
+1. Page mounts -> fetch `store_settings` row -> populate form state
+2. User edits fields -> updates local state
+3. User clicks "Save" -> `supabase.from('store_settings').update({...}).eq('id', settingsId)` -> show success/error toast
+
+**Fields mapped:**
+- Store Name, Email, Phone, Address (text inputs)
+- Shipping Rate, Free Shipping Threshold (number inputs)
+- Free Shipping, International Shipping (switches)
+- Notification toggles (switches)
+- Admin Email (text input)
+- Password change will remain as-is (handled via auth, not stored in this table)
+
+**Files to modify:**
+- `src/pages/admin/AdminSettings.tsx` -- main changes to add data fetching and saving
+- One database migration for the new table
