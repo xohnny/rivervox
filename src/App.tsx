@@ -39,6 +39,7 @@ import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminInventory from "./pages/admin/AdminInventory";
 import AdminReviews from "./pages/admin/AdminReviews";
+import AdminPriceUpdate from "./pages/admin/AdminPriceUpdate";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ const App = () => (
                     <Route path="messages" element={<AdminMessages />} />
                     <Route path="settings" element={<AdminSettings />} />
                     <Route path="inventory" element={<AdminInventory />} />
+                    <Route path="pricing" element={<AdminPriceUpdate />} />
                   </Route>
 
                   {/* 404 */}
