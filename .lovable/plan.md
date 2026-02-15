@@ -1,59 +1,32 @@
 
+## Fix: Icon placement in order status dropdown
 
-# Live Currency Conversion Using Gemini AI
+**Problem:** The `SelectTrigger` component applies `[&>span]:line-clamp-1` to all direct child `<span>` elements. The `line-clamp-1` utility sets `display: -webkit-box` and `-webkit-box-orient: vertical`, which overrides your `inline-flex` and causes the icon to stack above the text.
 
-## Overview
-Replace the hardcoded exchange rates in `src/data/currencies.ts` with real-time rates fetched via a Gemini AI edge function. The function will ask Gemini for current USD-to-other-currency exchange rates and cache them to avoid excessive API calls.
+**Solution:** Wrap the icon and label inside a `<div>` instead of a `<span>`, so it won't be affected by the `[&>span]:line-clamp-1` selector. The `<div>` will use `flex items-center gap-1.5` to keep the icon to the left of the text.
 
-## How It Will Work
-1. A new edge function calls Gemini (via Lovable AI) asking for today's exchange rates from USD to all supported currencies
-2. Rates are cached in a database table so we don't call Gemini on every page load
-3. The frontend fetches cached rates on load and uses them for conversion
-4. Rates refresh once per day (or on demand)
-5. Hardcoded rates remain as fallback if the API call fails
+### Changes
 
-## Important Note
-AI-generated exchange rates are approximate and suitable for display purposes. For actual payment processing, a dedicated financial API would be recommended. This approach gives reasonably accurate "today's pricing" for browsing.
+**File: `src/pages/admin/AdminOrders.tsx`**
 
-## Technical Details
+In the orders table status column (around line 161-166), change the inner `<span>` wrapper to a `<div>`:
 
-### 1. Create Database Table for Cached Rates
-A new `exchange_rates` table to store fetched rates:
-- `id`, `base_currency` (USD), `rates` (JSONB with all currency rates), `fetched_at` (timestamp)
-- Public SELECT policy so all visitors can read rates
-- No RLS restriction needed since rates are public data
+```tsx
+// Before
+<SelectTrigger className={cn('w-[140px] h-8', statusConfig.triggerColor)}>
+  <span className="inline-flex items-center gap-1.5 text-xs font-medium">
+    <statusConfig.icon className="w-3 h-3 flex-shrink-0" />
+    <span>{statusConfig.label}</span>
+  </span>
+</SelectTrigger>
 
-### 2. Create Edge Function (`supabase/functions/fetch-exchange-rates/index.ts`)
-- Calls Lovable AI (Gemini) with a structured output request asking for current USD exchange rates for all ~37 supported currencies
-- Uses tool calling to extract structured JSON (currency code to rate mapping)
-- Stores/updates the result in the `exchange_rates` table
-- Returns the rates to the caller
-- Includes logic to skip fetching if rates were already fetched today (caching)
+// After
+<SelectTrigger className={cn('w-[140px] h-8', statusConfig.triggerColor)}>
+  <div className="inline-flex items-center gap-1.5 text-xs font-medium">
+    <statusConfig.icon className="w-3 h-3 flex-shrink-0" />
+    <span>{statusConfig.label}</span>
+  </div>
+</SelectTrigger>
+```
 
-### 3. Update `src/data/currencies.ts`
-- Keep hardcoded rates as fallback defaults
-- Change the `rate` field meaning from "1 BDT = X" to "1 USD = X" since admin uses USD as base
-- Add a helper to merge live rates into the currency list
-
-### 4. Update `src/context/CurrencyContext.tsx`
-- On mount, call the edge function to get today's rates
-- Merge live rates into the currencies list
-- Fall back to hardcoded rates if the fetch fails
-- Product prices in the database are in USD, so conversion becomes: `priceInLocal = priceInUSD * rate`
-
-### 5. Update Price Base Currency
-Currently prices seem to be stored as USD values in the database. The conversion logic will be updated so:
-- Base price = USD (as stored in DB and shown in admin)
-- Storefront: `displayPrice = basePrice * exchangeRate[selectedCurrency]`
-
-### Files to Create
-- `supabase/functions/fetch-exchange-rates/index.ts` -- Gemini-powered rate fetcher
-
-### Files to Modify
-- `src/data/currencies.ts` -- update rate base from BDT to USD, add merge helper
-- `src/context/CurrencyContext.tsx` -- fetch live rates on mount, update conversion logic
-- `supabase/config.toml` -- register new edge function
-
-### Database Changes
-- New `exchange_rates` table with public read access
-
+This single-line change (replacing `<span>` with `<div>`) prevents the `line-clamp-1` style from interfering with the flex layout, placing the icon correctly to the left.
