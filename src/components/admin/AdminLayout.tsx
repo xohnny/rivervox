@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   Warehouse,
   Star,
+  DollarSign,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,6 +18,7 @@ const sidebarLinks = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, end: true },
   { name: 'Products', path: '/admin/products', icon: Package },
   { name: 'Inventory', path: '/admin/inventory', icon: Warehouse },
+  { name: 'Pricing', path: '/admin/pricing', icon: DollarSign },
   { name: 'Orders', path: '/admin/orders', icon: ShoppingCart },
   { name: 'Customers', path: '/admin/customers', icon: Users },
   { name: 'Reviews', path: '/admin/reviews', icon: Star },
