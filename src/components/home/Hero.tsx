@@ -24,11 +24,11 @@ export const Hero = () => {
             Crafted with love, designed for the modern family.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-up-delay-3">
-            <Link to="/shop" className="btn-hero inline-flex items-center justify-center gap-2">
+            <Link to="/shop" className="btn-hero inline-flex items-center justify-center gap-2 min-w-[220px]">
               Shop Collection
               <ArrowRight className="w-5 h-5" />
             </Link>
-            <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white text-white font-semibold rounded-md hover:bg-white hover:text-foreground transition-all duration-300">
+            <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white text-white font-semibold rounded-md hover:bg-white hover:text-foreground transition-all duration-300 min-w-[220px]">
               Contact Us
             </Link>
           </div>
