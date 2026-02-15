@@ -28,8 +28,8 @@ export const Hero = () => {
               Shop Collection
               <ArrowRight className="w-5 h-5" />
             </Link>
-            <Link to="/shop?category=new" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white text-white font-semibold rounded-md hover:bg-white hover:text-foreground transition-all duration-300">
-              View New Arrivals
+            <Link to="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white text-white font-semibold rounded-md hover:bg-white hover:text-foreground transition-all duration-300">
+              Contact Us
             </Link>
           </div>
         </div>
