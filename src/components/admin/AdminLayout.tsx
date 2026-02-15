@@ -119,7 +119,7 @@ export const AdminLayout = () => {
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-64">
-        <div className="p-4 pt-18 lg:p-8 lg:pt-8">
+        <div className="p-4 pt-[4.5rem] lg:p-8 lg:pt-8">
           <Outlet />
         </div>
       </main>
