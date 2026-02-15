@@ -1,54 +1,101 @@
 
 
-## Stripe Payment Integration - Implementation Plan
+# Full CMS: Edit All Website Content from Admin Panel
 
-### Step 1: Database Migration
-Add payment tracking columns to the `orders` table:
-- `payment_method` (text, default 'cod') -- tracks COD vs online
-- `payment_status` (text, default 'unpaid') -- tracks unpaid/paid
-- `stripe_session_id` (text, nullable) -- links to Stripe session
+This is a large project that will turn your admin panel into a WordPress-like CMS where you can edit every piece of content on your website without touching code. We'll build this in phases, starting with the most impactful sections.
 
-### Step 2: Create `create-checkout-session` Edge Function
-A backend function that:
-- Receives order details (items, shipping cost, URLs)
-- Creates Stripe Checkout Session with BDT currency line items
-- Updates the order with the Stripe session ID
-- Returns the Stripe checkout URL for redirect
+---
 
-### Step 3: Create `stripe-webhook` Edge Function
-A backend function that:
-- Receives Stripe webhook events
-- On `checkout.session.completed`, updates the order's `payment_status` to "paid"
-- Supports optional webhook signature verification
+## How It Works
 
-### Step 4: Update `supabase/config.toml`
-Add entries for both new edge functions with `verify_jwt = false` (webhooks and checkout sessions don't use JWT auth).
+All website content (text, images, links) is currently hardcoded in the code. We'll move it into the database so the admin panel can read and update it. Every frontend page will then fetch its content from the database instead of using hardcoded values.
 
-### Step 5: Update `Checkout.tsx`
-- When "Cash on Delivery" is selected: current flow (unchanged)
-- When "Online Payment" is selected:
-  1. Save order to database with `payment_method: 'online'` and `payment_status: 'unpaid'`
-  2. Call `create-checkout-session` edge function
-  3. Redirect customer to Stripe's hosted checkout page
-  4. On success, Stripe redirects to the order confirmation page
-  5. Webhook updates `payment_status` to "paid" in the background
+---
 
-### Technical Details
+## Phase 1 -- Homepage Content Manager
 
-**Edge Function: `create-checkout-session`**
-- Converts order items to Stripe line items (BDT currency, amounts in paisa)
-- Adds shipping as a separate line item
-- Sets success/cancel redirect URLs
-- Stores order metadata in the Stripe session
+A new **"Pages"** section in the admin sidebar where you can edit:
 
-**Edge Function: `stripe-webhook`**
-- Handles `checkout.session.completed` event
-- Uses service role key to update order status
-- Supports optional `STRIPE_WEBHOOK_SECRET` for signature verification
+- **Hero Section**: Title, subtitle, badge text (e.g. "New Collection 2026"), button labels, button links, and background image (upload)
+- **Features Bar**: The 4 feature items (icon selection, title, description)
+- **Categories Section**: Section title, subtitle, and each category's name, description, and image (upload)
+- **Testimonials Section**: Section title, subtitle (reviews are already database-driven)
 
-**Checkout.tsx Changes**
-- Split `handleSubmit` to handle both payment methods
-- For online: create order first, then redirect to Stripe
-- For COD: existing flow unchanged
-- Include `payment_method` and `payment_status` fields in order insert
+---
+
+## Phase 2 -- Footer and Header Content
+
+- **Footer**: Brand description, social media links (Instagram, Facebook, Twitter, YouTube, Telegram), contact info (address, phone, email), quick links, and copyright text
+- **Header**: Logo text/image, navigation links
+
+---
+
+## Phase 3 -- Static Pages Content
+
+Editable content for all informational pages:
+- **Contact Page**: Address, phone, email, heading text, description
+- **FAQ Page**: Add/edit/delete FAQ categories and questions
+- **Shipping Policy**: Full rich-text content
+- **Returns & Exchanges**: Full rich-text content
+- **Privacy Policy**: Full rich-text content
+- **Terms of Service**: Full rich-text content
+- **Size Guide**: Full content
+
+---
+
+## Phase 4 -- SEO Settings per Page
+
+- Edit meta title, meta description, and keywords for every page from the admin panel
+- Open Graph image upload per page
+
+---
+
+## Technical Details
+
+### Database Changes
+
+A new `site_content` table to store all editable content:
+
+```text
+site_content
+-----------
+id          (uuid, primary key)
+page        (text)          -- e.g. 'home', 'footer', 'contact', 'faq'
+section     (text)          -- e.g. 'hero', 'features', 'categories'
+content     (jsonb)         -- flexible JSON for any content structure
+updated_at  (timestamptz)
+updated_by  (uuid, nullable)
+```
+
+RLS: Admins can read/update. Public can read (since frontend pages need the content).
+
+### Admin UI
+
+- New **"Pages"** link in admin sidebar with sub-sections for each page
+- Each section gets a form with the right input types (text fields, image uploaders, link pickers, rich text for policy pages)
+- Live preview button to see changes before saving
+
+### Frontend Changes
+
+- A `useSiteContent(page, section)` hook that fetches content from the database with caching
+- Each component (Hero, Footer, Categories, etc.) will use this hook instead of hardcoded values
+- Fallback to current hardcoded defaults if no database content exists (so nothing breaks)
+
+### Implementation Order
+
+1. Create `site_content` table + RLS policies + seed with current hardcoded content
+2. Build the `useSiteContent` hook with React Query caching
+3. Build admin "Pages" editor UI (starting with Homepage sections)
+4. Update frontend components to use database content
+5. Repeat for Footer, Header, Contact, FAQ, and all static pages
+6. Add SEO settings editor
+
+---
+
+## Important Notes
+
+- This is a **very large feature** -- I recommend we build it **one phase at a time** so we can test each part properly
+- All existing content will be seeded as defaults, so nothing changes visually until you edit it in the admin panel
+- Image uploads will use the existing `store-assets` storage bucket
+- Shall I start with **Phase 1 (Homepage Content Manager)**?
 
