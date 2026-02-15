@@ -10,6 +10,7 @@ import { FAQEditor } from '@/components/admin/cms/FAQEditor';
 import { PolicyEditor } from '@/components/admin/cms/PolicyEditor';
 import { SizeGuideEditor } from '@/components/admin/cms/SizeGuideEditor';
 import { SEOEditor } from '@/components/admin/cms/SEOEditor';
+import { SEOToolsEditor } from '@/components/admin/cms/SEOToolsEditor';
 
 const AdminPages = () => {
   return (
@@ -35,6 +36,7 @@ const AdminPages = () => {
           <TabsTrigger value="terms">Terms</TabsTrigger>
           <TabsTrigger value="size-guide">Size Guide</TabsTrigger>
           <TabsTrigger value="seo">SEO</TabsTrigger>
+          <TabsTrigger value="seo-tools">SEO Tools</TabsTrigger>
         </TabsList>
 
         <TabsContent value="hero"><HeroEditor /></TabsContent>
@@ -95,6 +97,7 @@ const AdminPages = () => {
         </TabsContent>
         <TabsContent value="size-guide"><SizeGuideEditor /></TabsContent>
         <TabsContent value="seo"><SEOEditor /></TabsContent>
+        <TabsContent value="seo-tools"><SEOToolsEditor /></TabsContent>
       </Tabs>
     </div>
   );

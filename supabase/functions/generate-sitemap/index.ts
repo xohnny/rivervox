@@ -8,19 +8,19 @@ const corsHeaders = {
 
 const BASE_URL = "https://rivervox.lovable.app";
 
-// Map SEO page keys to URL paths, priorities, and change frequencies
-const pageConfig: Record<string, { path: string; priority: string; changefreq: string }> = {
-  home: { path: "/", priority: "1.0", changefreq: "weekly" },
-  shop: { path: "/shop", priority: "0.9", changefreq: "daily" },
-  contact: { path: "/contact", priority: "0.7", changefreq: "monthly" },
-  faq: { path: "/faq", priority: "0.6", changefreq: "monthly" },
-  "shipping-policy": { path: "/shipping-policy", priority: "0.5", changefreq: "monthly" },
-  "returns-exchanges": { path: "/returns-exchanges", priority: "0.5", changefreq: "monthly" },
-  "privacy-policy": { path: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
-  "terms-of-service": { path: "/terms-of-service", priority: "0.3", changefreq: "yearly" },
-  "size-guide": { path: "/size-guide", priority: "0.5", changefreq: "monthly" },
-  tracking: { path: "/tracking", priority: "0.5", changefreq: "monthly" },
-};
+// Fallback page config if DB has no sitemap settings
+const fallbackPages = [
+  { key: "home", path: "/", priority: "1.0", changefreq: "weekly", enabled: true },
+  { key: "shop", path: "/shop", priority: "0.9", changefreq: "daily", enabled: true },
+  { key: "contact", path: "/contact", priority: "0.7", changefreq: "monthly", enabled: true },
+  { key: "faq", path: "/faq", priority: "0.6", changefreq: "monthly", enabled: true },
+  { key: "shipping-policy", path: "/shipping-policy", priority: "0.5", changefreq: "monthly", enabled: true },
+  { key: "returns-exchanges", path: "/returns-exchanges", priority: "0.5", changefreq: "monthly", enabled: true },
+  { key: "privacy-policy", path: "/privacy-policy", priority: "0.3", changefreq: "yearly", enabled: true },
+  { key: "terms-of-service", path: "/terms-of-service", priority: "0.3", changefreq: "yearly", enabled: true },
+  { key: "size-guide", path: "/size-guide", priority: "0.5", changefreq: "monthly", enabled: true },
+  { key: "tracking", path: "/tracking", priority: "0.5", changefreq: "monthly", enabled: true },
+];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -32,44 +32,68 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch all SEO entries and their last updated times
+    // Fetch sitemap config from DB
+    const { data: sitemapData } = await supabase
+      .from("site_content")
+      .select("content")
+      .eq("page", "config")
+      .eq("section", "sitemap")
+      .maybeSingle();
+
+    const config = sitemapData?.content as {
+      includeProducts?: boolean;
+      productPriority?: string;
+      productChangefreq?: string;
+      pages?: typeof fallbackPages;
+    } | null;
+
+    const pages = config?.pages || fallbackPages;
+    const includeProducts = config?.includeProducts !== false;
+    const productPriority = config?.productPriority || "0.8";
+    const productChangefreq = config?.productChangefreq || "weekly";
+
+    // Fetch SEO entry timestamps for lastmod
     const { data: seoEntries } = await supabase
       .from("site_content")
       .select("section, updated_at")
       .eq("page", "seo");
 
-    // Fetch active products for product pages
-    const { data: products } = await supabase
-      .from("products")
-      .select("id, name, updated_at")
-      .eq("is_active", true);
-
     const now = new Date().toISOString().split("T")[0];
 
-    // Build page URLs from SEO entries
-    const pageUrls = Object.entries(pageConfig).map(([key, config]) => {
-      const entry = seoEntries?.find((e) => e.section === key);
-      const lastmod = entry?.updated_at
-        ? new Date(entry.updated_at).toISOString().split("T")[0]
-        : now;
-      return `  <url>
-    <loc>${BASE_URL}${config.path}</loc>
+    // Build page URLs (only enabled pages)
+    const pageUrls = pages
+      .filter((p) => p.enabled)
+      .map((p) => {
+        const entry = seoEntries?.find((e) => e.section === p.key);
+        const lastmod = entry?.updated_at
+          ? new Date(entry.updated_at).toISOString().split("T")[0]
+          : now;
+        return `  <url>
+    <loc>${BASE_URL}${p.path}</loc>
     <lastmod>${lastmod}</lastmod>
-    <changefreq>${config.changefreq}</changefreq>
-    <priority>${config.priority}</priority>
+    <changefreq>${p.changefreq}</changefreq>
+    <priority>${p.priority}</priority>
   </url>`;
-    });
+      });
 
     // Add product detail pages
-    const productUrls = (products || []).map((p) => {
-      const lastmod = new Date(p.updated_at).toISOString().split("T")[0];
-      return `  <url>
+    let productUrls: string[] = [];
+    if (includeProducts) {
+      const { data: products } = await supabase
+        .from("products")
+        .select("id, updated_at")
+        .eq("is_active", true);
+
+      productUrls = (products || []).map((p) => {
+        const lastmod = new Date(p.updated_at).toISOString().split("T")[0];
+        return `  <url>
     <loc>${BASE_URL}/product/${p.id}</loc>
     <lastmod>${lastmod}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <changefreq>${productChangefreq}</changefreq>
+    <priority>${productPriority}</priority>
   </url>`;
-    });
+      });
+    }
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
