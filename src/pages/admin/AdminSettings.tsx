@@ -24,6 +24,8 @@ interface StoreSettings {
   customer_messages_notifications: boolean;
   admin_email: string;
   logo_url: string | null;
+  shipping_rate_us: number;
+  shipping_rate_uk: number;
 }
 
 const AdminSettings = () => {
@@ -242,14 +244,22 @@ const AdminSettings = () => {
           <h2 className="text-lg font-display font-semibold">Shipping Settings</h2>
         </div>
         <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">Set shipping rates per country. These rates are applied at checkout.</p>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label>Standard Shipping Rate ($)</Label>
-              <Input type="number" value={settings.standard_shipping_rate} onChange={e => updateField('standard_shipping_rate', Number(e.target.value))} className="mt-1" />
+              <Label>🇺🇸 US Shipping Rate ($)</Label>
+              <Input type="number" step="0.01" min="0" value={settings.shipping_rate_us} onChange={e => updateField('shipping_rate_us', Number(e.target.value))} className="mt-1" />
             </div>
             <div>
+              <Label>🇬🇧 UK Shipping Rate ($)</Label>
+              <Input type="number" step="0.01" min="0" value={settings.shipping_rate_uk} onChange={e => updateField('shipping_rate_uk', Number(e.target.value))} className="mt-1" />
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
               <Label>Free Shipping Threshold ($)</Label>
-              <Input type="number" value={settings.free_shipping_threshold} onChange={e => updateField('free_shipping_threshold', Number(e.target.value))} className="mt-1" />
+              <Input type="number" step="0.01" min="0" value={settings.free_shipping_threshold} onChange={e => updateField('free_shipping_threshold', Number(e.target.value))} className="mt-1" />
+              <p className="text-xs text-muted-foreground mt-1">Orders above this amount get free shipping. Set to 0 to disable.</p>
             </div>
           </div>
           <div className="flex items-center justify-between py-3">
@@ -258,13 +268,6 @@ const AdminSettings = () => {
               <p className="text-sm text-muted-foreground">Free shipping for orders above threshold</p>
             </div>
             <Switch checked={settings.enable_free_shipping} onCheckedChange={v => updateField('enable_free_shipping', v)} />
-          </div>
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <Label>International Shipping</Label>
-              <p className="text-sm text-muted-foreground">Allow orders from international customers</p>
-            </div>
-            <Switch checked={settings.international_shipping} onCheckedChange={v => updateField('international_shipping', v)} />
           </div>
         </div>
       </section>
