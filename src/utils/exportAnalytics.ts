@@ -1,5 +1,8 @@
 import { format } from 'date-fns';
 
+const BDT_TO_USD = 110;
+const toUSD = (bdt: number) => bdt / BDT_TO_USD;
+
 interface ExportData {
   salesStats: {
     todaySales: number;
@@ -44,10 +47,10 @@ export const exportToCSV = (data: ExportData) => {
   // Sales Summary
   csv += `SALES SUMMARY\n`;
   csv += `Metric,Value\n`;
-  csv += `Today's Sales,$${salesStats.todaySales.toFixed(2)}\n`;
-  csv += `Weekly Sales,$${salesStats.weeklySales.toFixed(2)}\n`;
-  csv += `Monthly Sales,$${salesStats.monthlySales.toFixed(2)}\n`;
-  csv += `Total Revenue,$${salesStats.totalRevenue.toFixed(2)}\n\n`;
+  csv += `Today's Sales,$${toUSD(salesStats.todaySales).toFixed(2)}\n`;
+  csv += `Weekly Sales,$${toUSD(salesStats.weeklySales).toFixed(2)}\n`;
+  csv += `Monthly Sales,$${toUSD(salesStats.monthlySales).toFixed(2)}\n`;
+  csv += `Total Revenue,$${toUSD(salesStats.totalRevenue).toFixed(2)}\n\n`;
   
   // Order Statistics
   csv += `ORDER STATISTICS\n`;
@@ -63,7 +66,7 @@ export const exportToCSV = (data: ExportData) => {
   csv += `DAILY SALES\n`;
   csv += `Date,Sales,Orders\n`;
   dailySales.forEach(day => {
-    csv += `${day.date},$${day.sales.toFixed(2)},${day.orders}\n`;
+    csv += `${day.date},$${toUSD(day.sales).toFixed(2)},${day.orders}\n`;
   });
   csv += `\n`;
   
@@ -71,7 +74,7 @@ export const exportToCSV = (data: ExportData) => {
   csv += `TOP PRODUCTS\n`;
   csv += `Product,Quantity Sold,Revenue\n`;
   topProducts.forEach(product => {
-    csv += `"${product.product_name}",${product.quantity},$${product.revenue.toFixed(2)}\n`;
+    csv += `"${product.product_name}",${product.quantity},$${toUSD(product.revenue).toFixed(2)}\n`;
   });
   
   // Download
@@ -94,7 +97,7 @@ export const exportToPDF = (data: ExportData) => {
   if (!printWindow) return;
   
   const formatCurrency = (value: number) => 
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value / BDT_TO_USD);
   
   const html = `
     <!DOCTYPE html>

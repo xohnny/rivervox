@@ -39,7 +39,10 @@ import {
 import ProductImageUpload from '@/components/admin/ProductImageUpload';
 import ProductColorPicker from '@/components/admin/ProductColorPicker';
 
-const formatPrice = (price: number) => `৳${price.toLocaleString('en-BD', { maximumFractionDigits: 0 })}`;
+const formatPrice = (price: number) => {
+  const usdPrice = price / 110;
+  return `$${usdPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
 
 const AdminProducts = () => {
   const { isAdmin, loading: authLoading } = useAdminAuth();
@@ -240,7 +243,7 @@ const AdminProducts = () => {
       </div>
       <div className="grid md:grid-cols-3 gap-4">
         <div>
-          <Label>Price (৳) *</Label>
+          <Label>Price (USD) *</Label>
           <Input 
             type="number" 
             placeholder="0" 
@@ -251,7 +254,7 @@ const AdminProducts = () => {
           />
         </div>
         <div>
-          <Label>Original Price (৳)</Label>
+          <Label>Original Price (USD)</Label>
           <Input 
             type="number" 
             placeholder="0" 

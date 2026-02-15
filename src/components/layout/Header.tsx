@@ -1,9 +1,17 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, User, Menu, X, Heart } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Heart, ChevronDown } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -15,6 +23,7 @@ const navLinks = [
 export const Header = () => {
   const { totalItems, openCart } = useCart();
   const { totalItems: wishlistItems } = useWishlist();
+  const { currency, setCurrency, currencies } = useCurrency();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -50,6 +59,20 @@ export const Header = () => {
 
           {/* Right Icons - Desktop */}
           <div className="flex items-center gap-2 md:gap-4">
+            {/* Currency Selector */}
+            <Select value={currency.code} onValueChange={setCurrency}>
+              <SelectTrigger className="w-[85px] h-8 text-xs border-border/50 bg-transparent">
+                <SelectValue>{currency.symbol} {currency.code}</SelectValue>
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                {currencies.map((c) => (
+                  <SelectItem key={c.code} value={c.code} className="text-xs">
+                    {c.symbol} {c.code} — {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             {/* Desktop only icons */}
             <div className="hidden lg:flex items-center gap-4">
               <Link
