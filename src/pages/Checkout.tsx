@@ -4,6 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { formatUSD } from '@/data/currencies';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -42,7 +43,7 @@ const Checkout = () => {
   const { toast } = useToast();
   const { items, totalPrice, clearCart } = useCart();
   const { user } = useAuth();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
   const [cityOpen, setCityOpen] = useState(false);
@@ -416,14 +417,24 @@ const Checkout = () => {
                   <span>Total</span>
                   <span className="text-primary">{formatPrice(grandTotal)}</span>
                 </div>
+                {currency.code !== 'BDT' && (
+                  <p className="text-xs text-muted-foreground text-right">
+                    ≈ ৳{grandTotal.toLocaleString('en-BD', { maximumFractionDigits: 0 })} BDT
+                  </p>
+                )}
               </div>
 
-              {/* Shipping Notice */}
-              <p className="text-xs text-muted-foreground text-center mt-4">
-                {formData.city.toLowerCase() === 'dhaka' 
-                  ? 'Dhaka delivery: ৳60' 
-                  : 'Outside Dhaka delivery: ৳100'}
-              </p>
+              {/* Currency & Shipping Notice */}
+              <div className="bg-muted/50 rounded-lg p-3 mt-4 space-y-1">
+                <p className="text-xs text-muted-foreground text-center">
+                  Prices shown in {currency.name} ({currency.symbol}). Final charge will be processed at the equivalent rate.
+                </p>
+                <p className="text-xs text-muted-foreground text-center">
+                  {formData.city.toLowerCase() === 'dhaka' 
+                    ? `Dhaka delivery: ${formatPrice(60)}` 
+                    : `Outside Dhaka delivery: ${formatPrice(100)}`}
+                </p>
+              </div>
             </div>
 
             {/* Payment Method Card - Desktop only */}
