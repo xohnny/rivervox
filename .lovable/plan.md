@@ -1,85 +1,59 @@
 
 
-# Geo-Based Currency Detection and Multi-Currency Support
+# Live Currency Conversion Using Gemini AI
 
 ## Overview
-Automatically detect the visitor's location using a free geolocation API and display prices in their local currency. Users can also manually switch currencies. All base prices are stored in BDT in the database, but the admin panel displays everything in USD as the business reporting currency.
+Replace the hardcoded exchange rates in `src/data/currencies.ts` with real-time rates fetched via a Gemini AI edge function. The function will ask Gemini for current USD-to-other-currency exchange rates and cache them to avoid excessive API calls.
 
 ## How It Will Work
-1. When a user visits the site, their country is detected via a free IP geolocation API
-2. The appropriate currency is selected automatically (e.g., EUR for Europe, GBP for UK, BDT for Bangladesh)
-3. Prices throughout the site update to show the local currency
-4. A small currency selector in the header lets users manually switch if needed
-5. Admin panel displays all prices in USD only (business reporting currency)
-6. Orders are stored in BDT in the database but shown in USD in admin views
+1. A new edge function calls Gemini (via Lovable AI) asking for today's exchange rates from USD to all supported currencies
+2. Rates are cached in a database table so we don't call Gemini on every page load
+3. The frontend fetches cached rates on load and uses them for conversion
+4. Rates refresh once per day (or on demand)
+5. Hardcoded rates remain as fallback if the API call fails
 
-## Supported Currencies
-Around 30+ major world currencies including USD, EUR, GBP, INR, SAR, AED, MYR, IDR, PKR, CAD, AUD, SGD, JPY, KRW, TRY, EGP, BDT, and more. Exchange rates will be hardcoded with reasonable values.
+## Important Note
+AI-generated exchange rates are approximate and suitable for display purposes. For actual payment processing, a dedicated financial API would be recommended. This approach gives reasonably accurate "today's pricing" for browsing.
 
 ## Technical Details
 
-### 1. Create Currency Data File (`src/data/currencies.ts`)
-- Define ~30+ currencies with: code, symbol, name, exchange rate from BDT
-- Define a country-to-currency mapping (country code to currency code)
-- Include a BDT-to-USD rate for admin panel conversion
+### 1. Create Database Table for Cached Rates
+A new `exchange_rates` table to store fetched rates:
+- `id`, `base_currency` (USD), `rates` (JSONB with all currency rates), `fetched_at` (timestamp)
+- Public SELECT policy so all visitors can read rates
+- No RLS restriction needed since rates are public data
 
-### 2. Create Geolocation Edge Function (`supabase/functions/get-location/index.ts`)
-- Use a free IP geolocation service to detect the user's country from their IP
-- Returns the country code to the frontend
-- Fallback to USD if detection fails
+### 2. Create Edge Function (`supabase/functions/fetch-exchange-rates/index.ts`)
+- Calls Lovable AI (Gemini) with a structured output request asking for current USD exchange rates for all ~37 supported currencies
+- Uses tool calling to extract structured JSON (currency code to rate mapping)
+- Stores/updates the result in the `exchange_rates` table
+- Returns the rates to the caller
+- Includes logic to skip fetching if rates were already fetched today (caching)
 
-### 3. Upgrade `src/context/CurrencyContext.tsx`
-- On mount, call the geolocation edge function to detect country
-- Map country to currency using the currency data
-- Store selected currency in localStorage for persistence
-- Expose: `formatPrice()`, `currency`, `setCurrency()`, `currencies` list
-- Convert prices: `priceInLocal = priceInBDT * exchangeRate`
+### 3. Update `src/data/currencies.ts`
+- Keep hardcoded rates as fallback defaults
+- Change the `rate` field meaning from "1 BDT = X" to "1 USD = X" since admin uses USD as base
+- Add a helper to merge live rates into the currency list
 
-### 4. Add Currency Selector to Header (`src/components/layout/Header.tsx`)
-- Small dropdown showing current currency code/symbol
-- Lets users manually override the auto-detected currency
+### 4. Update `src/context/CurrencyContext.tsx`
+- On mount, call the edge function to get today's rates
+- Merge live rates into the currencies list
+- Fall back to hardcoded rates if the fetch fails
+- Product prices in the database are in USD, so conversion becomes: `priceInLocal = priceInUSD * rate`
 
-### 5. Update All Storefront Price Components
-Files already using `useCurrency` / `formatPrice` from the context will automatically work since the context handles conversion. These include:
-- ProductCard, ProductQuickView, ProductDetail
-- CartSlider, Checkout
-- Wishlist, OrderConfirmation
-- Shop page
-
-### 6. Admin Pages -- USD Only
-All admin pages will use a dedicated USD `formatPrice` helper (not the CurrencyContext). Files to update:
-- `src/pages/admin/AdminDashboard.tsx`
-- `src/pages/admin/AdminOrders.tsx`
-- `src/pages/admin/AdminProducts.tsx`
-- `src/pages/admin/AdminCustomers.tsx`
-- `src/pages/admin/AdminSettings.tsx`
-- `src/pages/admin/AdminInventory.tsx`
-
-Each will use a helper like:
-```text
-const formatPrice = (bdtPrice: number) => {
-  const usdPrice = bdtPrice / BDT_TO_USD_RATE;
-  return `$${usdPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-};
-```
-
-### 7. Checkout Adjustments
-- Show converted price in user's local currency for reference
-- Note: "You will be charged the equivalent in your local currency"
-- Store order total in BDT in the database
+### 5. Update Price Base Currency
+Currently prices seem to be stored as USD values in the database. The conversion logic will be updated so:
+- Base price = USD (as stored in DB and shown in admin)
+- Storefront: `displayPrice = basePrice * exchangeRate[selectedCurrency]`
 
 ### Files to Create
-- `src/data/currencies.ts` -- currency definitions, exchange rates, and country mapping
-- `supabase/functions/get-location/index.ts` -- IP geolocation edge function
+- `supabase/functions/fetch-exchange-rates/index.ts` -- Gemini-powered rate fetcher
 
 ### Files to Modify
-- `src/context/CurrencyContext.tsx` -- full rewrite with geo detection + conversion
-- `src/components/layout/Header.tsx` -- add currency selector dropdown
-- `src/pages/Checkout.tsx` -- show local currency equivalent + note
-- `src/pages/admin/AdminDashboard.tsx` -- switch to USD formatting
-- `src/pages/admin/AdminOrders.tsx` -- switch to USD formatting
-- `src/pages/admin/AdminProducts.tsx` -- switch to USD formatting
-- `src/pages/admin/AdminCustomers.tsx` -- switch to USD formatting
-- `src/pages/admin/AdminSettings.tsx` -- switch to USD formatting
-- `src/pages/admin/AdminInventory.tsx` -- switch to USD formatting
+- `src/data/currencies.ts` -- update rate base from BDT to USD, add merge helper
+- `src/context/CurrencyContext.tsx` -- fetch live rates on mount, update conversion logic
+- `supabase/config.toml` -- register new edge function
+
+### Database Changes
+- New `exchange_rates` table with public read access
 
