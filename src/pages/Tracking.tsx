@@ -98,6 +98,7 @@ const Tracking = () => {
         description="Track your Rivervox order in real-time. Enter your order number to see shipping status and delivery updates."
         keywords="track order, Rivervox order tracking, shipping status, delivery update"
         canonicalPath="/tracking"
+        pageKey="tracking"
       />
       {/* Page Header */}
       <div className="bg-primary/5 py-12 md:py-16">

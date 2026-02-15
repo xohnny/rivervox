@@ -122,6 +122,7 @@ const Shop = () => {
         description="Browse our collection of premium thobes, abayas, hijabs and modest fashion accessories. Filter by category, size and price. Free shipping available to US & UK."
         keywords="buy thobe online, buy abaya online, Islamic clothing shop, modest fashion store, hijab shop, Muslim clothing USA, Muslim clothing UK"
         canonicalPath="/shop"
+        pageKey="shop"
       />
       {/* Page Header */}
       <div className="bg-primary/5 py-12 md:py-16">

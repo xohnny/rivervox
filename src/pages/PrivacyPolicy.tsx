@@ -25,6 +25,7 @@ const PrivacyPolicy = () => {
         title="Privacy Policy"
         description="Learn how Rivervox collects, uses, and protects your personal information."
         canonicalPath="/privacy-policy"
+        pageKey="privacy-policy"
         keywords="Rivervox privacy policy, data protection, personal information"
       />
       <div className="container mx-auto px-4 py-12 md:py-16">

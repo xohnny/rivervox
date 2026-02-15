@@ -37,6 +37,7 @@ const ShippingPolicy = () => {
         description="Rivervox ships to the United States and United Kingdom. Learn about delivery times, tracking, and our shipping process."
         keywords="Rivervox shipping, US delivery, UK delivery, shipping rates"
         canonicalPath="/shipping-policy"
+        pageKey="shipping-policy"
       />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">

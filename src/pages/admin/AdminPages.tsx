@@ -9,6 +9,7 @@ import { ContactEditor } from '@/components/admin/cms/ContactEditor';
 import { FAQEditor } from '@/components/admin/cms/FAQEditor';
 import { PolicyEditor } from '@/components/admin/cms/PolicyEditor';
 import { SizeGuideEditor } from '@/components/admin/cms/SizeGuideEditor';
+import { SEOEditor } from '@/components/admin/cms/SEOEditor';
 
 const AdminPages = () => {
   return (
@@ -33,6 +34,7 @@ const AdminPages = () => {
           <TabsTrigger value="privacy">Privacy</TabsTrigger>
           <TabsTrigger value="terms">Terms</TabsTrigger>
           <TabsTrigger value="size-guide">Size Guide</TabsTrigger>
+          <TabsTrigger value="seo">SEO</TabsTrigger>
         </TabsList>
 
         <TabsContent value="hero"><HeroEditor /></TabsContent>
@@ -92,6 +94,7 @@ const AdminPages = () => {
           />
         </TabsContent>
         <TabsContent value="size-guide"><SizeGuideEditor /></TabsContent>
+        <TabsContent value="seo"><SEOEditor /></TabsContent>
       </Tabs>
     </div>
   );

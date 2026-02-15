@@ -63,6 +63,7 @@ const SizeGuide = () => {
         description="Use our detailed size guide to find the perfect fit for thobes, abayas, and other Islamic fashion."
         keywords="thobe size guide, abaya size chart, Islamic clothing sizes"
         canonicalPath="/size-guide"
+        pageKey="size-guide"
       />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-4xl mx-auto">

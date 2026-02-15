@@ -34,6 +34,7 @@ const FAQ = () => {
         description="Find answers to common questions about Rivervox orders, shipping, returns, sizing, and more."
         keywords="Rivervox FAQ, Islamic fashion questions, shipping FAQ, returns policy"
         canonicalPath="/faq"
+        pageKey="faq"
       />
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">

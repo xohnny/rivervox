@@ -70,6 +70,7 @@ const Contact = () => {
         description="Get in touch with Rivervox. Visit our store or send us a message. We're here to help with orders, sizing, and any questions."
         keywords="contact Rivervox, Islamic fashion store contact, customer support"
         canonicalPath="/contact"
+        pageKey="contact"
       />
       <div className="bg-primary/5 py-12 md:py-16">
         <div className="container mx-auto px-4">
