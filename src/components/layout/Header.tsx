@@ -29,19 +29,21 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center h-16 md:h-20">
           {/* Logo */}
-          <Link 
-            to="/" 
-            className="flex items-center group"
-          >
-            <span className="text-2xl md:text-3xl font-display font-bold text-primary transition-all duration-300 group-hover:scale-105">
-              Rivervox
-            </span>
-          </Link>
+          <div className="flex-1">
+            <Link 
+              to="/" 
+              className="inline-flex items-center group"
+            >
+              <span className="text-2xl md:text-3xl font-display font-bold text-primary transition-all duration-300 group-hover:scale-105">
+                Rivervox
+              </span>
+            </Link>
+          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          {/* Desktop Navigation - Centered */}
+          <nav className="hidden lg:flex items-center justify-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -57,7 +59,7 @@ export const Header = () => {
           </nav>
 
           {/* Right Icons - Desktop */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex-1 flex items-center justify-end gap-2 md:gap-4">
             {/* Currency Selector */}
             <Select value={currency.code} onValueChange={setCurrency}>
               <SelectTrigger className="w-[85px] h-8 text-xs border-border/50 bg-transparent">
