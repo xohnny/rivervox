@@ -1,56 +1,54 @@
 
 
-## Stripe Payment Integration
+## Stripe Payment Integration - Implementation Plan
 
-### Overview
-Integrate Stripe into your store to enable online payments at checkout. This will allow customers to pay securely with credit/debit cards when they select the "Online Payment" option.
+### Step 1: Database Migration
+Add payment tracking columns to the `orders` table:
+- `payment_method` (text, default 'cod') -- tracks COD vs online
+- `payment_status` (text, default 'unpaid') -- tracks unpaid/paid
+- `stripe_session_id` (text, nullable) -- links to Stripe session
 
-### How It Works
+### Step 2: Create `create-checkout-session` Edge Function
+A backend function that:
+- Receives order details (items, shipping cost, URLs)
+- Creates Stripe Checkout Session with BDT currency line items
+- Updates the order with the Stripe session ID
+- Returns the Stripe checkout URL for redirect
 
-1. **Enable Stripe** -- Connect your Stripe account to this project by providing your Stripe secret key.
+### Step 3: Create `stripe-webhook` Edge Function
+A backend function that:
+- Receives Stripe webhook events
+- On `checkout.session.completed`, updates the order's `payment_status` to "paid"
+- Supports optional webhook signature verification
 
-2. **Create a payment edge function** -- A backend function that creates a Stripe Checkout Session when a customer places an order with "Online Payment" selected.
+### Step 4: Update `supabase/config.toml`
+Add entries for both new edge functions with `verify_jwt = false` (webhooks and checkout sessions don't use JWT auth).
 
-3. **Update the checkout flow**:
-   - When "Cash on Delivery" is selected, the current flow remains unchanged.
-   - When "Online Payment" is selected, the customer is redirected to Stripe's hosted checkout page to complete payment.
-   - After successful payment, they return to the order confirmation page.
-
-4. **Order status tracking** -- Orders placed via Stripe will be marked as "paid" once payment is confirmed.
-
-### What You Need
-- A **Stripe account** (free to create at stripe.com)
-- Your **Stripe Secret Key** (found in Stripe Dashboard under Developers > API Keys)
-- You can use **test mode** keys first to try it out before going live
+### Step 5: Update `Checkout.tsx`
+- When "Cash on Delivery" is selected: current flow (unchanged)
+- When "Online Payment" is selected:
+  1. Save order to database with `payment_method: 'online'` and `payment_status: 'unpaid'`
+  2. Call `create-checkout-session` edge function
+  3. Redirect customer to Stripe's hosted checkout page
+  4. On success, Stripe redirects to the order confirmation page
+  5. Webhook updates `payment_status` to "paid" in the background
 
 ### Technical Details
 
-**Step 1**: Enable the Stripe integration and provide your secret key.
+**Edge Function: `create-checkout-session`**
+- Converts order items to Stripe line items (BDT currency, amounts in paisa)
+- Adds shipping as a separate line item
+- Sets success/cancel redirect URLs
+- Stores order metadata in the Stripe session
 
-**Step 2**: Create an edge function (`create-checkout-session`) that:
-- Receives order details (items, shipping, totals)
-- Creates line items in Stripe
-- Returns a Stripe Checkout Session URL
+**Edge Function: `stripe-webhook`**
+- Handles `checkout.session.completed` event
+- Uses service role key to update order status
+- Supports optional `STRIPE_WEBHOOK_SECRET` for signature verification
 
-**Step 3**: Update `Checkout.tsx`:
-- When payment method is "online" and user clicks "Place Order", call the edge function
-- Redirect the user to Stripe's payment page
-- On success, redirect back to the order confirmation page
-- Save the order to the database with payment status
-
-**Step 4**: Add a webhook edge function (`stripe-webhook`) to:
-- Listen for `checkout.session.completed` events
-- Update the order's payment status in the database
-
-### Flow Summary
-
-```text
-Customer selects "Online Payment"
-  --> Clicks "Place Order"
-  --> Order saved to database (status: pending_payment)
-  --> Redirected to Stripe Checkout page
-  --> Completes payment on Stripe
-  --> Stripe webhook updates order to "paid"
-  --> Customer redirected to Order Confirmation page
-```
+**Checkout.tsx Changes**
+- Split `handleSubmit` to handle both payment methods
+- For online: create order first, then redirect to Stripe
+- For COD: existing flow unchanged
+- Include `payment_method` and `payment_status` fields in order insert
 
