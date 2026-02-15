@@ -160,11 +160,14 @@ export type Database = {
           id: string
           notes: string | null
           order_number: string
+          payment_method: string
+          payment_status: string
           shipping_address: string
           shipping_city: string
           shipping_cost: number
           shipping_country: string
           status: Database["public"]["Enums"]["order_status"]
+          stripe_session_id: string | null
           subtotal: number
           total: number
           updated_at: string
@@ -178,11 +181,14 @@ export type Database = {
           id?: string
           notes?: string | null
           order_number: string
+          payment_method?: string
+          payment_status?: string
           shipping_address: string
           shipping_city: string
           shipping_cost?: number
           shipping_country?: string
           status?: Database["public"]["Enums"]["order_status"]
+          stripe_session_id?: string | null
           subtotal: number
           total: number
           updated_at?: string
@@ -196,11 +202,14 @@ export type Database = {
           id?: string
           notes?: string | null
           order_number?: string
+          payment_method?: string
+          payment_status?: string
           shipping_address?: string
           shipping_city?: string
           shipping_cost?: number
           shipping_country?: string
           status?: Database["public"]["Enums"]["order_status"]
+          stripe_session_id?: string | null
           subtotal?: number
           total?: number
           updated_at?: string

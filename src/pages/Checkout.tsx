@@ -99,6 +99,8 @@ const Checkout = () => {
           shipping_cost: shippingCost,
           total: grandTotal,
           notes: formData.notes || null,
+          payment_method: paymentMethod === 'online' ? 'online' : 'cod',
+          payment_status: 'unpaid',
         })
         .select()
         .single();
@@ -124,6 +126,61 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
+      // If online payment, redirect to Stripe
+      if (paymentMethod === 'online') {
+        const { data: sessionData, error: sessionError } = await supabase.functions.invoke(
+          'create-checkout-session',
+          {
+            body: {
+              order_id: order.order_number,
+              items: orderItems.map((item) => ({
+                product_name: item.product_name,
+                unit_price: item.unit_price,
+                quantity: item.quantity,
+              })),
+              shipping_cost: shippingCost,
+              success_url: `${window.location.origin}/order-confirmation?orderId=${order.order_number}`,
+              cancel_url: `${window.location.origin}/checkout`,
+            },
+          }
+        );
+
+        if (sessionError || !sessionData?.url) {
+          throw new Error(sessionError?.message || 'Failed to create payment session');
+        }
+
+        // Send Telegram notification (fire-and-forget)
+        const notifyPayload = {
+          order_number: order.order_number,
+          customer_name: formData.name,
+          customer_phone: formData.phone,
+          customer_email: formData.email || undefined,
+          shipping_address: formData.address,
+          shipping_city: formData.city,
+          subtotal: totalPrice,
+          shipping_cost: shippingCost,
+          total: grandTotal,
+          items: orderItems.map((item) => ({
+            product_name: item.product_name,
+            quantity: item.quantity,
+            unit_price: item.unit_price,
+            selected_size: item.selected_size,
+            selected_color_name: item.selected_color_name,
+          })),
+          notes: formData.notes || undefined,
+          payment_method: 'online',
+        };
+        supabase.functions.invoke('notify-order', { body: notifyPayload }).catch((err) =>
+          console.error('Telegram notification failed:', err)
+        );
+
+        clearCart();
+        // Redirect to Stripe Checkout
+        window.location.href = sessionData.url;
+        return;
+      }
+
+      // Cash on Delivery flow
       // Send Telegram notification (fire-and-forget)
       const notifyPayload = {
         order_number: order.order_number,
@@ -143,6 +200,7 @@ const Checkout = () => {
           selected_color_name: item.selected_color_name,
         })),
         notes: formData.notes || undefined,
+        payment_method: 'cod',
       };
       supabase.functions.invoke('notify-order', { body: notifyPayload }).catch((err) =>
         console.error('Telegram notification failed:', err)
