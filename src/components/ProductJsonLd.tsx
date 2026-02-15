@@ -13,7 +13,7 @@ export const ProductJsonLd = ({ product }: ProductJsonLdProps) => {
     const reviews = getProductReviews(product.id);
     const avgRating = getAverageRating(product.id);
 
-    const jsonLd: Record<string, unknown> = {
+    const productJsonLd: Record<string, unknown> = {
       '@context': 'https://schema.org',
       '@type': 'Product',
       name: product.name,
@@ -35,7 +35,7 @@ export const ProductJsonLd = ({ product }: ProductJsonLdProps) => {
     };
 
     if (reviews.length > 0) {
-      jsonLd.aggregateRating = {
+      productJsonLd.aggregateRating = {
         '@type': 'AggregateRating',
         ratingValue: avgRating.toFixed(1),
         reviewCount: reviews.length,
@@ -44,20 +44,38 @@ export const ProductJsonLd = ({ product }: ProductJsonLdProps) => {
       };
     }
 
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.id = `jsonld-product-${product.id}`;
-    script.textContent = JSON.stringify(jsonLd);
+    const categoryLabel = product.category.charAt(0).toUpperCase() + product.category.slice(1);
+    const breadcrumbJsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Shop', item: `${BASE_URL}/shop` },
+        { '@type': 'ListItem', position: 3, name: categoryLabel, item: `${BASE_URL}/shop?category=${product.category}` },
+        { '@type': 'ListItem', position: 4, name: product.name },
+      ],
+    };
 
-    // Remove previous if exists
-    const existing = document.getElementById(`jsonld-product-${product.id}`);
-    if (existing) existing.remove();
+    const entries: [string, unknown][] = [
+      [`jsonld-product-${product.id}`, productJsonLd],
+      [`jsonld-breadcrumb-${product.id}`, breadcrumbJsonLd],
+    ];
 
-    document.head.appendChild(script);
+    entries.forEach(([id, data]) => {
+      const existing = document.getElementById(id as string);
+      if (existing) existing.remove();
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = id as string;
+      script.textContent = JSON.stringify(data);
+      document.head.appendChild(script);
+    });
 
     return () => {
-      const el = document.getElementById(`jsonld-product-${product.id}`);
-      if (el) el.remove();
+      entries.forEach(([id]) => {
+        const el = document.getElementById(id as string);
+        if (el) el.remove();
+      });
     };
   }, [product]);
 
