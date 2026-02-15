@@ -14,6 +14,7 @@ import { ImageZoom } from '@/components/products/ImageZoom';
 import { ProductReviews } from '@/components/products/ProductReviews';
 import { StarRating } from '@/components/products/StarRating';
 import { getAverageRating, getProductReviews } from '@/data/reviews';
+import { ProductJsonLd } from '@/components/ProductJsonLd';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -69,6 +70,7 @@ const ProductDetail = () => {
         canonicalPath={`/product/${product.id}`}
         ogType="product"
       />
+      <ProductJsonLd product={product} />
       {/* Breadcrumb */}
       <div className="bg-secondary/30 py-4">
         <div className="container mx-auto px-4">
