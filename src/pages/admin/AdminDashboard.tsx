@@ -49,8 +49,7 @@ const getStatusColor = (status: string) => {
 };
 
 const formatCurrency = (value: number) => {
-  const usdValue = value / 110;
-  return `$${usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `৳${value.toLocaleString('en-BD')}`;
 };
 
 const formatChange = (change: number) => {
