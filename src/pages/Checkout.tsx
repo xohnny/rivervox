@@ -62,7 +62,7 @@ const Checkout = () => {
   const { user } = useAuth();
   const { formatPrice, currency } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [paymentMethod] = useState<'online'>('online');
+  const [_paymentMethod] = useState<'online'>('online');
   const [regionOpen, setRegionOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({
@@ -77,7 +77,8 @@ const Checkout = () => {
     notes: '',
   });
 
-  const shippingCost = 0; // Free shipping or set your rates
+  // US: $5.99, UK: $7.99
+  const shippingCost = formData.country === 'US' ? 5.99 : 7.99;
   const grandTotal = totalPrice + shippingCost;
 
   const regions = getRegions(formData.country);
@@ -487,7 +488,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}</span>
+                  <span>{formatPrice(shippingCost)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
                   <span>Total</span>
