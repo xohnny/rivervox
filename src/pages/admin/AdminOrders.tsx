@@ -149,7 +149,7 @@ const AdminOrders = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="font-semibold">৳{Number(order.total).toLocaleString('en-BD')}</span>
+                        <span className="font-semibold">${Number(order.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       </td>
                       <td className="px-6 py-4">
                         <Select
@@ -258,7 +258,7 @@ const AdminOrders = () => {
                         </p>
                         <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
                       </div>
-                      <p className="font-semibold">৳{(item.unit_price * item.quantity).toLocaleString('en-BD')}</p>
+                      <p className="font-semibold">${(item.unit_price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                   ))}
                 </div>
@@ -268,15 +268,15 @@ const AdminOrders = () => {
               <div className="space-y-2 pt-4 border-t border-border">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>৳{Number(selectedOrder.subtotal).toLocaleString('en-BD')}</span>
+                  <span>${Number(selectedOrder.subtotal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>৳{Number(selectedOrder.shipping_cost).toLocaleString('en-BD')}</span>
+                  <span>${Number(selectedOrder.shipping_cost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-border">
                   <span className="font-semibold">Total</span>
-                  <span className="text-xl font-bold text-primary">৳{Number(selectedOrder.total).toLocaleString('en-BD')}</span>
+                  <span className="text-xl font-bold text-primary">${Number(selectedOrder.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
 

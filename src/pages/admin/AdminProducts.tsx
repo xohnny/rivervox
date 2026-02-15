@@ -41,7 +41,7 @@ import ProductImageUpload from '@/components/admin/ProductImageUpload';
 import ProductColorPicker from '@/components/admin/ProductColorPicker';
 
 const formatPrice = (price: number) => {
-  return `৳${price.toLocaleString('en-BD')}`;
+  return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
 const getDemoImage = (productName: string): string => {
