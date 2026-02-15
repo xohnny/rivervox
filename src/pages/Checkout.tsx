@@ -124,6 +124,30 @@ const Checkout = () => {
 
       if (itemsError) throw itemsError;
 
+      // Send Telegram notification (fire-and-forget)
+      const notifyPayload = {
+        order_number: order.order_number,
+        customer_name: formData.name,
+        customer_phone: formData.phone,
+        customer_email: formData.email || undefined,
+        shipping_address: formData.address,
+        shipping_city: formData.city,
+        subtotal: totalPrice,
+        shipping_cost: shippingCost,
+        total: grandTotal,
+        items: orderItems.map((item) => ({
+          product_name: item.product_name,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          selected_size: item.selected_size,
+          selected_color_name: item.selected_color_name,
+        })),
+        notes: formData.notes || undefined,
+      };
+      supabase.functions.invoke('notify-order', { body: notifyPayload }).catch((err) =>
+        console.error('Telegram notification failed:', err)
+      );
+
       // Clear cart and redirect
       clearCart();
       toast({
