@@ -57,7 +57,7 @@ const Checkout = () => {
     notes: '',
   });
 
-  // Shipping: 60 Taka for Dhaka, 100 Taka for outside Dhaka
+  // Shipping: $60 for Dhaka, $100 for outside Dhaka
   const shippingCost = formData.city.toLowerCase() === 'dhaka' ? 60 : 100;
   const grandTotal = totalPrice + shippingCost;
 
@@ -441,9 +441,9 @@ const Checkout = () => {
                   <span>Total</span>
                   <span className="text-primary">{formatPrice(grandTotal)}</span>
                 </div>
-                {currency.code !== 'BDT' && (
+                {currency.code !== 'USD' && (
                   <p className="text-xs text-muted-foreground text-right">
-                    ≈ ৳{grandTotal.toLocaleString('en-BD', { maximumFractionDigits: 0 })} BDT
+                    ≈ ${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
                   </p>
                 )}
               </div>
