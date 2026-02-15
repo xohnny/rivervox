@@ -49,7 +49,7 @@ const getStatusColor = (status: string) => {
 };
 
 const formatCurrency = (value: number) => {
-  return `৳${value.toLocaleString('en-BD')}`;
+  return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
 const formatChange = (change: number) => {
