@@ -48,7 +48,6 @@ export const AdminLayout = () => {
         <h1 className="text-lg font-display font-bold text-sidebar-foreground ml-3">
           Rivervox
         </h1>
-        <span className="text-xs text-sidebar-foreground/60 ml-2">Admin</span>
       </header>
 
       {/* Overlay */}
