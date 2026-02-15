@@ -5,6 +5,10 @@ import { CategoriesEditor } from '@/components/admin/cms/CategoriesEditor';
 import { TestimonialsEditor } from '@/components/admin/cms/TestimonialsEditor';
 import { FooterEditor } from '@/components/admin/cms/FooterEditor';
 import { HeaderEditor } from '@/components/admin/cms/HeaderEditor';
+import { ContactEditor } from '@/components/admin/cms/ContactEditor';
+import { FAQEditor } from '@/components/admin/cms/FAQEditor';
+import { PolicyEditor } from '@/components/admin/cms/PolicyEditor';
+import { SizeGuideEditor } from '@/components/admin/cms/SizeGuideEditor';
 
 const AdminPages = () => {
   return (
@@ -22,6 +26,13 @@ const AdminPages = () => {
           <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
           <TabsTrigger value="header">Header</TabsTrigger>
           <TabsTrigger value="footer">Footer</TabsTrigger>
+          <TabsTrigger value="contact">Contact</TabsTrigger>
+          <TabsTrigger value="faq">FAQ</TabsTrigger>
+          <TabsTrigger value="shipping">Shipping</TabsTrigger>
+          <TabsTrigger value="returns">Returns</TabsTrigger>
+          <TabsTrigger value="privacy">Privacy</TabsTrigger>
+          <TabsTrigger value="terms">Terms</TabsTrigger>
+          <TabsTrigger value="size-guide">Size Guide</TabsTrigger>
         </TabsList>
 
         <TabsContent value="hero"><HeroEditor /></TabsContent>
@@ -30,6 +41,57 @@ const AdminPages = () => {
         <TabsContent value="testimonials"><TestimonialsEditor /></TabsContent>
         <TabsContent value="header"><HeaderEditor /></TabsContent>
         <TabsContent value="footer"><FooterEditor /></TabsContent>
+        <TabsContent value="contact"><ContactEditor /></TabsContent>
+        <TabsContent value="faq"><FAQEditor /></TabsContent>
+        <TabsContent value="shipping">
+          <PolicyEditor
+            page="shipping-policy"
+            title="Shipping Policy"
+            defaultContent={{
+              heading: 'Shipping Policy',
+              sections: [],
+            }}
+          />
+        </TabsContent>
+        <TabsContent value="returns">
+          <PolicyEditor
+            page="returns-exchanges"
+            title="Returns & Exchanges"
+            defaultContent={{
+              heading: 'Returns & Exchanges',
+              sections: [],
+            }}
+          />
+        </TabsContent>
+        <TabsContent value="privacy">
+          <PolicyEditor
+            page="privacy-policy"
+            title="Privacy Policy"
+            showIntro
+            showLastUpdated
+            defaultContent={{
+              heading: 'Privacy Policy',
+              intro: '',
+              lastUpdated: '',
+              sections: [],
+            }}
+          />
+        </TabsContent>
+        <TabsContent value="terms">
+          <PolicyEditor
+            page="terms-of-service"
+            title="Terms of Service"
+            showIntro
+            showLastUpdated
+            defaultContent={{
+              heading: 'Terms of Service',
+              intro: '',
+              lastUpdated: '',
+              sections: [],
+            }}
+          />
+        </TabsContent>
+        <TabsContent value="size-guide"><SizeGuideEditor /></TabsContent>
       </Tabs>
     </div>
   );
