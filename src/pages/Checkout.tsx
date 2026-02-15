@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { useCart } from '@/context/CartContext';
@@ -65,6 +65,7 @@ const Checkout = () => {
   const [_paymentMethod] = useState<'online'>('online');
   const [regionOpen, setRegionOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [shippingRates, setShippingRates] = useState({ us: 5.99, uk: 7.99, freeThreshold: 0, freeEnabled: false });
   const [formData, setFormData] = useState({
     name: '',
     email: user?.email || '',
@@ -77,8 +78,26 @@ const Checkout = () => {
     notes: '',
   });
 
-  // US: $5.99, UK: $7.99
-  const shippingCost = formData.country === 'US' ? 5.99 : 7.99;
+  useEffect(() => {
+    const fetchRates = async () => {
+      const { data } = await supabase
+        .from('store_settings')
+        .select('shipping_rate_us, shipping_rate_uk, free_shipping_threshold, enable_free_shipping')
+        .maybeSingle();
+      if (data) {
+        setShippingRates({
+          us: (data as any).shipping_rate_us ?? 5.99,
+          uk: (data as any).shipping_rate_uk ?? 7.99,
+          freeThreshold: data.free_shipping_threshold ?? 0,
+          freeEnabled: data.enable_free_shipping ?? false,
+        });
+      }
+    };
+    fetchRates();
+  }, []);
+
+  const baseShipping = formData.country === 'US' ? shippingRates.us : shippingRates.uk;
+  const shippingCost = (shippingRates.freeEnabled && shippingRates.freeThreshold > 0 && totalPrice >= shippingRates.freeThreshold) ? 0 : baseShipping;
   const grandTotal = totalPrice + shippingCost;
 
   const regions = getRegions(formData.country);
@@ -488,7 +507,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>{formatPrice(shippingCost)}</span>
+                  <span>{shippingCost === 0 ? 'Free' : formatPrice(shippingCost)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
                   <span>Total</span>

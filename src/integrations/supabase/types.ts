@@ -396,6 +396,8 @@ export type Database = {
           low_stock_alerts: boolean | null
           new_order_notifications: boolean | null
           phone_number: string | null
+          shipping_rate_uk: number | null
+          shipping_rate_us: number | null
           standard_shipping_rate: number | null
           store_address: string | null
           store_email: string | null
@@ -413,6 +415,8 @@ export type Database = {
           low_stock_alerts?: boolean | null
           new_order_notifications?: boolean | null
           phone_number?: string | null
+          shipping_rate_uk?: number | null
+          shipping_rate_us?: number | null
           standard_shipping_rate?: number | null
           store_address?: string | null
           store_email?: string | null
@@ -430,6 +434,8 @@ export type Database = {
           low_stock_alerts?: boolean | null
           new_order_notifications?: boolean | null
           phone_number?: string | null
+          shipping_rate_uk?: number | null
+          shipping_rate_us?: number | null
           standard_shipping_rate?: number | null
           store_address?: string | null
           store_email?: string | null
