@@ -207,8 +207,8 @@ export const Testimonials = () => {
           <button
             onClick={scrollPrev}
             className={cn(
-              'absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12',
-              'w-12 h-12 rounded-full bg-card shadow-md flex items-center justify-center',
+              'absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-12',
+              'w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-card shadow-md flex items-center justify-center',
               'transition-all duration-200 hover:bg-primary hover:text-primary-foreground',
               'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
             )}
@@ -219,8 +219,8 @@ export const Testimonials = () => {
           <button
             onClick={scrollNext}
             className={cn(
-              'absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12',
-              'w-12 h-12 rounded-full bg-card shadow-md flex items-center justify-center',
+              'absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-12',
+              'w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-card shadow-md flex items-center justify-center',
               'transition-all duration-200 hover:bg-primary hover:text-primary-foreground',
               'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
             )}
