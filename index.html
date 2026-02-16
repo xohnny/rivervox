@@ -4,31 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Font preloading for faster load -->
+    <!-- DNS prefetch & preconnect for faster external resource loading -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://hmuhmyynazfpqttuurcj.supabase.co">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://hmuhmyynazfpqttuurcj.supabase.co" crossorigin>
+
+    <!-- Font loading with display=swap for instant text rendering -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Ubuntu:wght@300;400;500;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Ubuntu:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Ubuntu:wght@300;400;500;700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Ubuntu:wght@300;400;500;700&display=swap"></noscript>
+
+    <!-- Preload hero image for instant above-the-fold rendering -->
+    <link rel="preload" as="image" href="/src/assets/hero-banner.jpg" />
+
     <title>Rivervox | Premium Islamic Fashion</title>
     <meta name="description" content="Discover premium Islamic-inspired fashion for the modern family. Elegant thobes, abayas, hijabs and accessories crafted with love.">
     <meta name="author" content="Rivervox" />
     <meta name="keywords" content="Islamic fashion, modest fashion, thobe, abaya, hijab, Muslim clothing, premium fashion">
 
-    
-    
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/FqnKB5xaC9c11k64ANJR4BzdL2D3/social-images/social-1769162893875-Screenshot 2026-01-23 160806.jpg">
-
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@Rivervox" />
     <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/FqnKB5xaC9c11k64ANJR4BzdL2D3/social-images/social-1769162893875-Screenshot 2026-01-23 160806.jpg">
     
-    <link rel="preload" as="image" href="/src/assets/hero-banner.jpg" />
     <link rel="icon" href="/favicon.ico" />
     <meta property="og:title" content="Rivervox | Premium Islamic Fashion">
-  <meta name="twitter:title" content="Rivervox | Premium Islamic Fashion">
-  <meta property="og:description" content="Discover premium Islamic-inspired fashion for the modern family. Elegant thobes, abayas, hijabs and accessories crafted with love.">
-  <meta name="twitter:description" content="Discover premium Islamic-inspired fashion for the modern family. Elegant thobes, abayas, hijabs and accessories crafted with love.">
+    <meta name="twitter:title" content="Rivervox | Premium Islamic Fashion">
+    <meta property="og:description" content="Discover premium Islamic-inspired fashion for the modern family. Elegant thobes, abayas, hijabs and accessories crafted with love.">
+    <meta name="twitter:description" content="Discover premium Islamic-inspired fashion for the modern family. Elegant thobes, abayas, hijabs and accessories crafted with love.">
+
+    <!-- Critical inline styles for instant first paint -->
+    <style>
+      body { margin: 0; font-family: 'Ubuntu', system-ui, -apple-system, sans-serif; }
+      #root { min-height: 100vh; }
+      .animate-spin { animation: spin 1s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
 
   <body>

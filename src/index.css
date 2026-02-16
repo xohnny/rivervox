@@ -119,6 +119,12 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Ubuntu', sans-serif;
+    text-rendering: optimizeSpeed;
+  }
+
+  /* GPU-accelerate all animations for smoother performance */
+  img, video {
+    content-visibility: auto;
   }
 
   h1, h2 {
@@ -375,5 +381,11 @@
   /* Safe area for mobile bottom nav */
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Below-fold sections: defer rendering until near viewport */
+  .content-deferred {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
   }
 }
