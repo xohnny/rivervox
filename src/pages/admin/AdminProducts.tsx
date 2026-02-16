@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/select';
 import { useInventory, InventoryProduct } from '@/hooks/useInventory';
 import { products as demoProducts } from '@/data/products';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,7 +50,6 @@ const getDemoImage = (productName: string): string => {
 };
 
 const AdminProducts = () => {
-  const { isAdmin, loading: authLoading } = useAdminAuth();
   const { products, loading, addProduct, updateProduct, deleteProduct } = useInventory();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -191,19 +190,10 @@ const AdminProducts = () => {
     await updateProduct(product.id, { is_active: !product.is_active });
   };
 
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-display font-bold text-destructive">Access Denied</h2>
-        <p className="text-muted-foreground mt-2">You don't have permission to view this page.</p>
       </div>
     );
   }

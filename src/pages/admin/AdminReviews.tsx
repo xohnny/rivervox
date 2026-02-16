@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAdminAuthContext } from '@/context/AdminAuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -40,7 +40,7 @@ interface Review {
 }
 
 const AdminReviews = () => {
-  const { isAdmin, loading: authLoading } = useAdminAuth();
+  const { isAdmin } = useAdminAuthContext();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved'>('all');
@@ -109,22 +109,6 @@ const AdminReviews = () => {
     },
   });
 
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="text-center py-12">
-        <h1 className="text-2xl font-bold text-destructive">Access Denied</h1>
-        <p className="text-muted-foreground mt-2">You don't have permission to view this page.</p>
-      </div>
-    );
-  }
 
   const filteredReviews = reviews?.filter((review) => {
     if (filter === 'pending') return !review.is_approved;

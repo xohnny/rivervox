@@ -18,7 +18,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { useOrderAnalytics } from '@/hooks/useOrderAnalytics';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+
 import { DateRangePicker } from '@/components/admin/DateRangePicker';
 import { Button } from '@/components/ui/button';
 import {
@@ -58,7 +58,6 @@ const formatChange = (change: number) => {
 };
 
 const AdminDashboard = () => {
-  const { isAdmin, loading: authLoading } = useAdminAuth();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: subDays(new Date(), 7),
     to: new Date(),
@@ -92,22 +91,6 @@ const AdminDashboard = () => {
     });
   };
 
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-display font-bold text-destructive">Access Denied</h2>
-        <p className="text-muted-foreground mt-2">You don't have permission to view this page.</p>
-      </div>
-    );
-  }
 
   const stats = [
     {
