@@ -187,6 +187,8 @@ export const Testimonials = () => {
                         src={getAvatar(review, index)} 
                         alt={review.user_name}
                         className="w-12 h-12 rounded-full object-cover"
+                        loading="lazy"
+                        decoding="async"
                       />
                       <div>
                         <p className="font-semibold text-foreground">
