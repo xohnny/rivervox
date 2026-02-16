@@ -19,10 +19,18 @@ const Index = () => {
       />
       <HomeJsonLd />
       <Hero />
-      <Features />
-      <Categories />
-      <FeaturedProducts />
-      <Testimonials />
+      <div className="content-deferred">
+        <Features />
+      </div>
+      <div className="content-deferred">
+        <Categories />
+      </div>
+      <div className="content-deferred">
+        <FeaturedProducts />
+      </div>
+      <div className="content-deferred">
+        <Testimonials />
+      </div>
     </Layout>
   );
 };
