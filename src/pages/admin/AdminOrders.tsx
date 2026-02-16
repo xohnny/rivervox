@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useAdminOrders, type AdminOrder } from '@/hooks/useAdminOrders';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+
 import type { Database } from '@/integrations/supabase/types';
 
 type OrderStatus = Database['public']['Enums']['order_status'];
@@ -32,7 +32,6 @@ const statusOptions = [
 ];
 
 const AdminOrders = () => {
-  const { isAdmin, loading: authLoading } = useAdminAuth();
   const { orders, loading: ordersLoading, updateOrderStatus } = useAdminOrders();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -58,22 +57,6 @@ const AdminOrders = () => {
     return statusOptions.find((s) => s.value === status) || statusOptions[0];
   };
 
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-display font-bold text-destructive">Access Denied</h2>
-        <p className="text-muted-foreground mt-2">You don't have permission to view this page.</p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">

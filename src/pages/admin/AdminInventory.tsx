@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useInventory } from '@/hooks/useInventory';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+
 import { cn } from '@/lib/utils';
 import {
   Select,
@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/select';
 
 const AdminInventory = () => {
-  const { isAdmin, loading: authLoading } = useAdminAuth();
   const { products, stats, loading, updateStock, updateThreshold } = useInventory();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -24,18 +23,10 @@ const AdminInventory = () => {
   const [editStock, setEditStock] = useState<number>(0);
   const [editThreshold, setEditThreshold] = useState<number>(0);
 
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-muted-foreground">Unauthorized access</p>
       </div>
     );
   }

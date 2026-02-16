@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { AdminAuthProvider } from '@/context/AdminAuthContext';
+import { Loader2 } from 'lucide-react';
 import {
   LayoutDashboard,
   Package,
@@ -34,8 +37,28 @@ const sidebarLinks = [
 export const AdminLayout = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isAdmin, loading, user } = useAdminAuth();
 
   const closeSidebar = () => setSidebarOpen(false);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-display font-bold text-destructive">Access Denied</h2>
+          <p className="text-muted-foreground mt-2">You don't have permission to view this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-muted/30">
@@ -121,7 +144,9 @@ export const AdminLayout = () => {
       {/* Main Content */}
       <main className="flex-1 lg:ml-64">
         <div className="p-4 pt-[4.5rem] lg:p-8 lg:pt-8">
-          <Outlet />
+          <AdminAuthProvider value={{ isAdmin, user }}>
+            <Outlet />
+          </AdminAuthProvider>
         </div>
       </main>
     </div>
