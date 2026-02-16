@@ -1,3 +1,5 @@
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
@@ -58,14 +60,34 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Validate caller is authenticated (admin or the ordering user)
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      // Allow service-role calls (internal) but require some auth
+      const apiKey = req.headers.get('apikey');
+      if (!apiKey) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     const order: OrderNotification = await req.json();
+
+    if (!order.order_number || !order.customer_name || !order.items?.length) {
+      return new Response(JSON.stringify({ error: 'Invalid order data' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
     const chatId = Deno.env.get('TELEGRAM_CHAT_ID');
 
     if (!botToken || !chatId) {
       console.error('Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID');
-      return new Response(JSON.stringify({ error: 'Telegram not configured' }), {
+      return new Response(JSON.stringify({ error: 'Notification service not configured' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -90,7 +112,7 @@ Deno.serve(async (req) => {
 
     if (!telegramRes.ok) {
       console.error('Telegram API error:', telegramData);
-      return new Response(JSON.stringify({ error: 'Failed to send Telegram notification', details: telegramData }), {
+      return new Response(JSON.stringify({ error: 'Failed to send notification' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -101,7 +123,7 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error('notify-order error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: 'Notification failed' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

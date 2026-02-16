@@ -14,35 +14,71 @@ serve(async (req) => {
   }
 
   try {
-    const { order_id, items, shipping_cost, success_url, cancel_url } = await req.json();
+    const { order_id, success_url, cancel_url } = await req.json();
 
-    if (!order_id || !items?.length) {
-      throw new Error("order_id and items are required");
+    if (!order_id || typeof order_id !== "string") {
+      return new Response(JSON.stringify({ error: "order_id is required" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Fetch order and items from database - never trust client-supplied prices
+    const { data: order, error: orderError } = await supabaseAdmin
+      .from("orders")
+      .select("*, order_items(*)")
+      .eq("order_number", order_id.toUpperCase())
+      .single();
+
+    if (orderError || !order) {
+      return new Response(JSON.stringify({ error: "Order not found" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 404,
+      });
+    }
+
+    if (order.payment_status === "paid") {
+      return new Response(JSON.stringify({ error: "Order already paid" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    if (!order.order_items?.length) {
+      return new Response(JSON.stringify({ error: "Order has no items" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Build line items from order items (prices in BDT, Stripe expects paisa)
-    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map(
+    // Build line items from DB data (prices in BDT, Stripe expects paisa)
+    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = order.order_items.map(
       (item: { product_name: string; unit_price: number; quantity: number }) => ({
         price_data: {
           currency: "bdt",
           product_data: { name: item.product_name },
-          unit_amount: Math.round(item.unit_price * 100), // BDT to paisa
+          unit_amount: Math.round(item.unit_price * 100),
         },
         quantity: item.quantity,
       })
     );
 
-    // Add shipping as a line item
-    if (shipping_cost > 0) {
+    // Add shipping from DB
+    if (order.shipping_cost > 0) {
       lineItems.push({
         price_data: {
           currency: "bdt",
           product_data: { name: "Shipping" },
-          unit_amount: Math.round(shipping_cost * 100),
+          unit_amount: Math.round(order.shipping_cost * 100),
         },
         quantity: 1,
       });
@@ -57,11 +93,6 @@ serve(async (req) => {
     });
 
     // Update order with stripe session id
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
-
     await supabaseAdmin
       .from("orders")
       .update({ stripe_session_id: session.id })
@@ -73,7 +104,7 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("Checkout session error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: "Failed to create checkout session" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
