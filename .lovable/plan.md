@@ -1,73 +1,37 @@
 
 
-# Phase 2: Footer and Header Content Management
+## Fix: Admin Panel Loading Spinner on Every Page Navigation
 
-Make the Footer and Header fully editable from the admin panel, following the same patterns established in Phase 1.
+### Problem
+Every time you click a sidebar link in the admin panel, a loading spinner appears because each admin page independently checks your admin permissions by querying the database. This means navigating from Dashboard to Orders to Reviews (etc.) triggers a new database call each time, showing a spinner while it completes.
 
----
+### Solution
+Move the admin authentication check to the `AdminLayout` component (the parent wrapper) so it only runs once. All child pages will inherit the result instantly -- no more spinners when switching between admin pages.
 
-## What You'll Be Able to Edit
+### Technical Details
 
-### Footer
-- **Brand section**: Store name, brand description
-- **Social media links**: Instagram, Facebook, Twitter, YouTube, Telegram URLs
-- **Quick Links**: Add/edit/remove links (label + URL)
-- **Customer Service Links**: Add/edit/remove links (label + URL)
-- **Contact Info**: Address, phone number, email
-- **Copyright text**
+**1. Create an AdminAuthContext** (`src/context/AdminAuthContext.tsx`)
+- A new context that holds the admin auth state (isAdmin, loading, user)
+- This will be provided at the AdminLayout level so all child routes share the same auth state
 
-### Header
-- **Logo text** (or logo image if uploaded in store settings)
-- **Navigation links**: Add/edit/reorder links (label + URL)
+**2. Update AdminLayout** (`src/components/admin/AdminLayout.tsx`)
+- Import and use `useAdminAuth` here once
+- Wrap the `<Outlet />` with the new `AdminAuthContext.Provider`
+- Show the loading spinner and access-denied states at this level only
 
----
+**3. Update all admin pages** to use the shared context instead of calling `useAdminAuth()` individually:
+- `AdminDashboard.tsx` - remove `useAdminAuth`, use context
+- `AdminProducts.tsx` - remove `useAdminAuth`, use context
+- `AdminOrders.tsx` - remove `useAdminAuth`, use context
+- `AdminInventory.tsx` - remove `useAdminAuth`, use context
+- `AdminReviews.tsx` - remove `useAdminAuth`, use context
 
-## Technical Details
+Pages that don't use `useAdminAuth` (AdminCustomers, AdminMessages, AdminSettings, AdminPages, AdminPriceUpdate) need no changes.
 
-### 1. Seed Default Content into Database
+**4. Cache the admin auth query** using React Query in `useAdminAuth` with a `staleTime` so even if the hook is called again, it returns cached results instantly instead of re-fetching.
 
-Insert the current hardcoded Footer and Header content into the `site_content` table so edits can begin immediately:
-- `page: 'layout', section: 'footer'` -- all footer content as JSON
-- `page: 'layout', section: 'header'` -- navigation links and logo text as JSON
-
-### 2. New Admin Editor Components
-
-**FooterEditor** (`src/components/admin/cms/FooterEditor.tsx`)
-- Brand name and description text fields
-- Social media URL inputs (Instagram, Facebook, Twitter, YouTube, Telegram)
-- Dynamic list editors for Quick Links and Customer Service Links (add/remove rows with label + path fields)
-- Contact info fields (address, phone, email)
-- Copyright text field
-
-**HeaderEditor** (`src/components/admin/cms/HeaderEditor.tsx`)
-- Logo text input
-- Dynamic list editor for navigation links (add/remove/reorder rows with label + path)
-
-### 3. Update AdminPages
-
-Add two new tabs -- "Footer" and "Header" -- to the existing Pages editor at `/admin/pages`.
-
-### 4. Update Frontend Components
-
-**Footer.tsx**
-- Use `useSiteContent('layout', 'footer', defaultFooter)` to fetch content
-- Render all text, links, and social icons from database content
-- Fall back to current hardcoded values if no database content exists
-
-**Header.tsx**
-- Use `useSiteContent('layout', 'header', defaultHeader)` to fetch navigation links and logo
-- Render navigation dynamically from database content
-- Fall back to current hardcoded values if no database content exists
-
-### 5. Files Changed
-
-| File | Action |
-|------|--------|
-| `src/components/admin/cms/FooterEditor.tsx` | Create |
-| `src/components/admin/cms/HeaderEditor.tsx` | Create |
-| `src/pages/admin/AdminPages.tsx` | Edit -- add Footer and Header tabs |
-| `src/components/layout/Footer.tsx` | Edit -- use `useSiteContent` hook |
-| `src/components/layout/Header.tsx` | Edit -- use `useSiteContent` hook |
-
-No database schema changes needed -- the existing `site_content` table supports this. Content will be seeded via an insert operation.
+### Result
+- Admin auth is checked once when you first enter `/admin`
+- Navigating between admin sidebar pages will be instant with zero loading spinners
+- The sidebar and layout remain visible throughout navigation
 
