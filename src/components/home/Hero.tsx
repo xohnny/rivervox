@@ -22,7 +22,7 @@ export const Hero = () => {
   return (
     <section className="relative min-h-[80vh] md:min-h-[90vh] flex items-center overflow-hidden">
       <div className="absolute inset-0">
-        <img src={bgImage} alt="Rivervox Premium Fashion" className="w-full h-full object-cover" />
+        <img src={bgImage} alt="Rivervox Premium Fashion" className="w-full h-full object-cover" loading="eager" fetchPriority="high" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/50 to-transparent" />
       </div>
 
