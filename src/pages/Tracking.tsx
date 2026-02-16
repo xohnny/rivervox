@@ -42,6 +42,11 @@ const Tracking = () => {
     const searchId = searchOrderId || orderId;
     
     if (!searchId) return;
+
+    if (!phone.trim()) {
+      setError('Phone number is required to track your order.');
+      return;
+    }
     
     setError('');
     setIsSearching(true);
@@ -51,6 +56,7 @@ const Tracking = () => {
         .from('orders')
         .select('*, order_items(*)')
         .eq('order_number', searchId.toUpperCase())
+        .eq('customer_phone', phone.trim())
         .maybeSingle();
 
       if (searchError) throw searchError;
@@ -58,7 +64,7 @@ const Tracking = () => {
       if (data) {
         setOrder(data as OrderWithItems);
       } else {
-        setError('Order not found. Please check your order ID and try again.');
+        setError('Order not found. Please check your order ID and phone number.');
         setOrder(null);
       }
     } catch (err) {
@@ -129,12 +135,13 @@ const Tracking = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Phone Number (Optional)</label>
+              <label className="block text-sm font-medium mb-2">Phone Number <span className="text-destructive">*</span></label>
               <Input
                 type="tel"
                 placeholder="Your phone number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                required
               />
             </div>
           </div>

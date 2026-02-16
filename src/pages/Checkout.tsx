@@ -179,12 +179,6 @@ const Checkout = () => {
         {
           body: {
             order_id: order.order_number,
-            items: orderItems.map((item) => ({
-              product_name: item.product_name,
-              unit_price: item.unit_price,
-              quantity: item.quantity,
-            })),
-            shipping_cost: shippingCost,
             success_url: `${window.location.origin}/order-confirmation?orderId=${order.order_number}`,
             cancel_url: `${window.location.origin}/checkout`,
           },
